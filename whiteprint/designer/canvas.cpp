@@ -12,10 +12,10 @@
 Canvas::Canvas(QWidget *parent) : QWidget(parent)
 {
     m_scene = new WAScene();
-    m_scene->setSceneRect(0,0,2000,2000);
+	m_scene->setSceneRect(-1000,-1000,4000,4000);
 
     m_view = new QGraphicsView(m_scene);
-    m_view->setBackgroundBrush(QColor(240,240,240));
+	m_view->setBackgroundBrush(QColor(240,240,240));
     m_view->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     m_view->setRenderHint(QPainter::Antialiasing, true);
     m_view->setDragMode(QGraphicsView::RubberBandDrag);

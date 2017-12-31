@@ -1,6 +1,7 @@
 #include "handleframe.h"
 
 #include <QDebug>
+#include <QtMath>
 
 ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int buffer) :
     QGraphicsItem(parent),
@@ -24,7 +25,7 @@ ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int buffer) :
     m_shadow->setOffset(0,0);
     m_shadow->setColor(QColor(0,0,0));
     m_shadow->setBlurRadius(4);
-    this->setGraphicsEffect(m_shadow);
+	this->setGraphicsEffect(m_shadow);
 
     this->setAcceptHoverEvents(true);
 }
@@ -47,7 +48,12 @@ int ItemHandle::getMouseState()
 
 QRectF ItemHandle::rect() const
 {
-	return QRectF(boundingRect().x() + 2, boundingRect().y() + 2, boundingRect().width() - 4, boundingRect().height() - 4);
+	return QRectF(0, 0, m_width, m_height);
+}
+
+QRectF ItemHandle::boundingRect() const
+{
+	return QRectF(rect().x() - 2, rect().y() - 2, rect().width() + 4, rect().height() + 4);
 }
 
 QRectF ItemHandle::rectAdjusted() const
@@ -110,11 +116,6 @@ void ItemHandle::hoverEnterEvent ( QGraphicsSceneHoverEvent * )
     //    this->update(0,0,m_width,m_height);
 }
 
-QRectF ItemHandle::boundingRect() const
-{
-    return QRectF(0,0,m_width,m_height);
-}
-
 
 void ItemHandle::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
@@ -133,15 +134,15 @@ void ItemHandle::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QWi
  *
  *******************************/
 
-HandleFrame::HandleFrame(int buffer):
+HandleFrame::HandleFrame(int buffer, qreal grid):
     m_dragStart(0,0),
-    m_gridSpace(1),
     m_cornerDragStart(0,0),
     m_buffer(buffer),
-    m_resizeOnly(false)
+	m_gridSpace(grid),
+	m_resizeOnly(false),
+	m_shiftModifier(false),
+	m_rect(QRectF(0,0,10,10))
 {
-    m_isDragging = false;
-
     m_corners[0] = new ItemHandle(this,ItemHandle::TopLeft, m_buffer);
     m_corners[1] = new ItemHandle(this,ItemHandle::Top, m_buffer);
     m_corners[2] = new ItemHandle(this,ItemHandle::TopRight, m_buffer);
@@ -155,8 +156,7 @@ HandleFrame::HandleFrame(int buffer):
     this->setBrush(QBrush(Qt::NoBrush));
     this->setVisible(false);
     this->setAcceptHoverEvents(true);
-    this->setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren
-                   );
+	this->setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren);
 }
 
 
@@ -165,6 +165,16 @@ HandleFrame::HandleFrame(int buffer):
  * Properties
  *
  ***************************************************/
+
+QRectF HandleFrame::boundingRect() const
+{
+	return QRectF(rect().x() - 2*buffer(), rect().y() - 2*buffer(), rect().width() + buffer() * 4, rect().height() + buffer() * 4);
+}
+
+QRectF HandleFrame::rectAdjusted() const
+{
+	return QRectF(rect().x() + 0.5, rect().y() + 0.5, rect().width() - 1, rect().height() - 1);
+}
 
 int HandleFrame::buffer() const
 {
@@ -177,12 +187,6 @@ void HandleFrame::setHost(ItemBase *host)
     m_host = host;
 }
 
-
-bool HandleFrame::isDragging()
-{
-    return m_isDragging;
-}
-
 void HandleFrame::setIsResize(bool resizeOnly)
 {
     m_resizeOnly = resizeOnly;
@@ -190,7 +194,12 @@ void HandleFrame::setIsResize(bool resizeOnly)
 
 bool HandleFrame::isResize()
 {
-    return m_resizeOnly;
+	return m_resizeOnly;
+}
+
+bool HandleFrame::setShiftModifier(bool modifier)
+{
+	m_shiftModifier = modifier;
 }
 
 /***************************************************
@@ -201,12 +210,34 @@ bool HandleFrame::isResize()
 
 void HandleFrame::adjustSize(int x, int y)
 {
-    this->setRect(
+	qreal m_width = this->rect().width();
+	qreal m_height = this->rect().height();
+
+	if(m_shiftModifier){
+
+		qreal ratio = qMax(m_width / m_height, m_height / m_width);
+
+		if(m_height > m_width){
+			m_width = m_width + x;
+			m_height = m_width * ratio;
+
+		}else if(m_height <= m_width){
+			m_height = m_height + y;
+			m_width = m_height * ratio;
+		}
+
+
+	} else {
+		m_width += x;
+		m_height += y;
+	}
+
+	this->setRect(
                 this->rect().x(),
                 this->rect().y(),
-                this->rect().width() + x,
-                this->rect().height() + y
-                );
+				round(m_width),
+				round(m_height)
+				);
 }
 
 
@@ -214,40 +245,39 @@ void HandleFrame::mapToHost()
 {
         QPointF mapScene = m_host->mapFromScene(this->scenePos());
         QPointF mapItem = m_host->mapToParent(mapScene);
-        QPointF offset(m_buffer, m_buffer);
 
-        m_host->setPos(mapItem + offset);
+		m_host->setPos(mapItem);
 }
 
 
 void HandleFrame::setCornerPositions()
 {
-    qreal posX = rect().x();
-    qreal posY = rect().y();
-    qreal width = rect().width();
-    qreal height = rect().height();
+	qreal posX = rect().x() - buffer();
+	qreal posY = rect().y() - buffer();
+	qreal width = rect().width() + 2 * buffer();
+	qreal height = rect().height() + 2 * buffer();
 
     m_corners[0]->setPos(posX, posY); // TopLeft
-    m_corners[1]->setPos(posX + width / 2 - m_buffer, posY); // Top
-    m_corners[2]->setPos(posX + width - 2 * m_buffer,  posY); // TopRight
-    m_corners[3]->setPos(posX + width - 2 * m_buffer,  posY + height / 2 - m_buffer); // Right
-    m_corners[4]->setPos(posX + width - 2 * m_buffer, posY + height - 2 * m_buffer); // BottomRight
-    m_corners[5]->setPos(posX + width / 2 - m_buffer, posY + height - 2 * m_buffer); // Bottom
-    m_corners[6]->setPos(posX, posY + height - 2 * m_buffer); // BottomLeft
-    m_corners[7]->setPos(posX, posY + height / 2 - m_buffer); // Left
+	m_corners[1]->setPos(posX + width / 2 - buffer(), posY); // Top
+	m_corners[2]->setPos(posX + width - 2 * buffer(),  posY); // TopRight
+	m_corners[3]->setPos(posX + width - 2 * buffer(),  posY + height / 2 - buffer()); // Right
+	m_corners[4]->setPos(posX + width - 2 * buffer(), posY + height - 2 * buffer()); // BottomRight
+	m_corners[5]->setPos(posX + width / 2 - buffer(), posY + height - 2 * buffer()); // Bottom
+	m_corners[6]->setPos(posX, posY + height - 2 * buffer()); // BottomLeft
+	m_corners[7]->setPos(posX, posY + height / 2 - buffer()); // Left
 
     if(!m_host) return;
 
-    QRectF drawableRect(posX, posY, width - 2 * m_buffer, height - 2 * m_buffer);
-    m_host->setRect(drawableRect);
+	m_host->setRect(rect());
 
     mapToHost();
 
-//    qDebug() << "---------------------- " ;
-//    qDebug() << "HandleFrame: HandleFrame Scene Pos: " << scenePos();
-//    qDebug() << "HandleFrame: Host Scene Pos: " << m_host->scenePos();
-//    qDebug() << "HandleFrame: Handle InnerFramePos: " << drawablePoint << "/" << pos();
-//    qDebug() << "HandleFrame: Handle InnerFrameSize: " << drawableRect << "/" << boundingRect();
+//	qDebug() << "---------------------- " ;
+//	qDebug() << "HandleFrame: HandleFrame Scene Pos: " << scenePos();
+//	qDebug() << "HandleFrame: Host Scene Pos: " << m_host->scenePos();
+//	qDebug() << "HandleFrame: Handle InnerFramePos: " << rect() << "/" << pos();
+//	qDebug() << "HandleFrame: Handle InnerFrameSize: " << boundingRect();
+//	qDebug() << "---------------------- " ;
 
 }
 
@@ -273,7 +303,7 @@ void HandleFrame::installFilter()
 bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
 {
     ItemHandle * corner = dynamic_cast<ItemHandle *>(watched);
-    if ( corner == NULL) return false; // not expected to get here
+	if ( corner == NULL) return false;
 
     QGraphicsSceneMouseEvent * mevent = dynamic_cast<QGraphicsSceneMouseEvent*>(event);
     if ( mevent == NULL)
@@ -384,6 +414,7 @@ bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
         // if the mouse is being dragged, calculate a new size and also re-position
         // the box to give the appearance of dragging the corner out/in to resize the box
 
+
         int xMoved = corner->mouseDownX - x;
         int yMoved = corner->mouseDownY - y;
 
@@ -396,7 +427,7 @@ bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
         int deltaWidth  =   newWidth - this->rect().width() ;
         int deltaHeight =   newHeight - this->rect().height() ;
 
-        adjustSize(  deltaWidth ,   deltaHeight);
+		adjustSize(  deltaWidth ,   deltaHeight);
 
         deltaWidth *= (-1);
         deltaHeight *= (-1);
@@ -438,7 +469,6 @@ bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
 void HandleFrame::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
     event->setAccepted(true);
-    m_isDragging = false;
    // this->setPos( ( static_cast<int>(this->x()) / m_gridSpace) * m_gridSpace, (static_cast<int>(this->y()) / m_gridSpace) * m_gridSpace );
 }
 
@@ -446,7 +476,6 @@ void HandleFrame::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 void HandleFrame::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
     event->setAccepted(true);
-    m_isDragging = true;
     m_dragStart = event->pos();
 
 }
@@ -454,13 +483,15 @@ void HandleFrame::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 
 void HandleFrame::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 {
-    if(!m_resizeOnly){
-        QPointF newPos = event->pos() ;
-        QPointF m_loc = (newPos - m_dragStart);
-        QPointF origin(this->pos() + m_loc);
-        this->setPos(origin);
 
-        mapToHost();
+    if(!m_resizeOnly){
+		QPointF newPos = event->pos() ;
+		QPointF m_loc = (newPos - m_dragStart);
+		QPointF origin(this->pos() + m_loc);
+		//this->setPos(origin);
+		this->setPos( ( static_cast<int>(origin.x()) / m_gridSpace) * m_gridSpace, (static_cast<int>(origin.y()) / m_gridSpace) * m_gridSpace );
+
+		mapToHost();
     }
 
 }
@@ -473,14 +504,8 @@ void HandleFrame::hoverEnterEvent ( QGraphicsSceneHoverEvent * ){}
 void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 
-    int posX = this->rect().x();
-    int posY = this->rect().y();
-
-    painter->setPen(this->pen());
-
-	QRectF selection(posX + m_buffer + 0.5, posY + m_buffer + 0.5, this->rect().width() - 2 * m_buffer - 1, this->rect().height() - 2 * m_buffer - 1);
-    painter->drawRect(selection);
-
+    painter->setPen(this->pen());	
+	painter->drawRect(rectAdjusted());
 
 }
 

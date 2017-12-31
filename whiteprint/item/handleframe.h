@@ -58,10 +58,10 @@ public:
 
 private:
 
-    virtual QRectF boundingRect() const; ///< must be re-implemented in this class to provide the diminsions of the box to the QGraphicsView
-    virtual void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget); ///< must be re-implemented here to pain the box on the paint-event
-    virtual void hoverEnterEvent ( QGraphicsSceneHoverEvent * event ); ///< must be re-implemented to handle mouse hover enter events
-    virtual void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event ); ///< must be re-implemented to handle mouse hover leave events
+	virtual QRectF boundingRect() const;
+	virtual void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	virtual void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
+	virtual void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
 
     // once the hover event handlers are implemented in this class,
     // the mouse events must allow be implemented because of
@@ -87,17 +87,20 @@ private:
 class HandleFrame : public QGraphicsRectItem
 {
 public:
-    HandleFrame(int buffer = 3);
+	HandleFrame(int buffer = 3, qreal grid = 1);
 
     // Properties
+	virtual QRectF boundingRect() const;
+	virtual QRectF rectAdjusted() const;
+
     int buffer() const;
     void setGridSpace(int space);
     void setHost(ItemBase *host);
-    bool isDragging();
     void setCornerPositions();
     void installFilter();
     void setIsResize(bool resizeOnly);
     bool isResize();
+	bool setShiftModifier(bool modifier);
 
 private:
 
@@ -107,8 +110,12 @@ private:
     ItemBase *  m_host;
     ItemHandle* m_corners[8];
     int         m_buffer;
-    bool        m_isDragging;
     bool        m_resizeOnly;
+	QRectF		m_rect;
+	bool		m_shiftModifier;
+
+	void adjustSize(int x, int y);
+	void mapToHost();
 
     virtual void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget); ///< must be re-implemented here to pain the box on the paint-event
     virtual void hoverEnterEvent ( QGraphicsSceneHoverEvent * event ); ///< must be re-implemented to handle mouse hover enter events
@@ -122,9 +129,6 @@ private:
 //    virtual void mousePressEvent(QGraphicsSceneDragDropEvent *event);
     virtual bool sceneEventFilter ( QGraphicsItem * watched, QEvent * event ) ;
 
-
-    void adjustSize(int x, int y);
-    void mapToHost();
 
 };
 

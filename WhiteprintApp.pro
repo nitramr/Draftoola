@@ -22,7 +22,8 @@ SOURCES += whiteprint/main.cpp\
     whiteprint/item/itembase.cpp \
     whiteprint/item/stroke.cpp \
     whiteprint/item/fills.cpp \
-    whiteprint/item/gradient.cpp
+    whiteprint/item/gradient.cpp \
+    whiteprint/item/waoval.cpp
 
 HEADERS  += whiteprint/mainwindow.h \
     whiteprint/designer/canvas.h \
@@ -34,6 +35,7 @@ HEADERS  += whiteprint/mainwindow.h \
     whiteprint/item/itemstruct.h \
     whiteprint/item/stroke.h \
     whiteprint/item/fills.h \
-    whiteprint/item/gradient.h
+    whiteprint/item/gradient.h \
+    whiteprint/item/waoval.h
 
 FORMS    += whiteprint/mainwindow.ui

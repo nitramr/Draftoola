@@ -36,12 +36,9 @@ void WARect::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    // draw background
-	painter->fillRect(this->rect(), this->fills());
-
-    // draw stroke
+	painter->setBrush(this->fills());
 	painter->setPen(this->stroke());
-	painter->drawRoundedRect(rectAdjusted(),m_radius,m_radius);
+	painter->drawRoundedRect(this->rectAdjusted(), m_radius, m_radius);
 
 
 }

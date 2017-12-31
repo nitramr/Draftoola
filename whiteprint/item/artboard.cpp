@@ -96,6 +96,23 @@ void Artboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+//	const int gridSize = 25;
+
+//	qreal left = int(rect().left()) - (int(rect().left()) % gridSize);
+//	qreal top = int(rect().top()) - (int(rect().top()) % gridSize);
+
+//	QVarLengthArray<QLineF, 100> lines;
+
+//	for (qreal x = left; x < rect().right(); x += gridSize)
+//		lines.append(QLineF(x + 0.5, rect().top(), x + 0.5, rect().bottom()));
+//	for (qreal y = top; y < rect().bottom(); y += gridSize)
+//		lines.append(QLineF(rect().left(), y + 0.5, rect().right(), y + 0.5));
+
+//	//qDebug() << lines.size();
+
+//	painter->setPen(QPen(QColor(200,200,200)));
+//	painter->drawLines(lines.data(), lines.size());
+
 
 }
 

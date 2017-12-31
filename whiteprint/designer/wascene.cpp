@@ -5,7 +5,7 @@
 
 WAScene::WAScene(QObject *parent) : QGraphicsScene(parent)
 {
-   m_handleBuffer = 5;
+   m_handleBuffer = 3;
    m_handleFrame = new HandleFrame(m_handleBuffer);
    m_handleFrame->setZValue(99999999);
    this->addItem(m_handleFrame);
@@ -14,6 +14,50 @@ WAScene::WAScene(QObject *parent) : QGraphicsScene(parent)
 
    connect(this, SIGNAL(selectionChanged()), this,SLOT(updateHandleFrame()));
 }
+
+void WAScene::keyPressEvent(QKeyEvent *e)
+{
+	switch(e->key())
+	{
+	case Qt::Key_Left :
+		qDebug() << "left";
+
+		break;
+	case Qt::Key_Right :
+		qDebug() << "right";
+
+		break;
+	case Qt::Key_Up :
+		qDebug() << "up";
+
+		break;
+	case Qt::Key_Down :
+		qDebug() << "down";
+		break;
+
+	case Qt::Key_Shift :
+		qDebug() << "shift";
+		m_handleFrame->setShiftModifier(true);
+		break;
+	}
+
+	QGraphicsScene::keyPressEvent(e);
+}
+
+void WAScene::keyReleaseEvent(QKeyEvent *e)
+{
+	switch(e->key())
+	{
+	case Qt::Key_Shift :
+		qDebug() << "shift released";
+		m_handleFrame->setShiftModifier(false);
+		break;
+	}
+
+	QGraphicsScene::keyReleaseEvent(e);
+}
+
+
 
 void WAScene::updateHandleFrame()
 {
@@ -31,14 +75,13 @@ void WAScene::updateHandleFrame()
 
                 QRectF frameRect = m_itemBase->rect();
 
-                QRectF rect(frameRect.x(), frameRect.y(), frameRect.width() + 2 * m_handleBuffer, frameRect.height() + 2 * m_handleBuffer);
                 qreal posX = m_itemBase->scenePos().x();
                 qreal posY = m_itemBase->scenePos().y();
 
                 m_handleFrame->setVisible(true);
                // m_handleFrame->setIsResize(false);
-                m_handleFrame->setPos(posX - m_handleBuffer, posY - m_handleBuffer);
-                m_handleFrame->setRect(rect);
+				m_handleFrame->setPos(posX , posY);
+				m_handleFrame->setRect(frameRect);
                 m_handleFrame->setHost(m_itemBase);
                 m_handleFrame->setCornerPositions();
 
@@ -49,14 +92,13 @@ void WAScene::updateHandleFrame()
 
                 QRectF frameRect = artboard->rect();
 
-                QRectF rect(frameRect.x(), frameRect.y(), frameRect.width() + 2 * m_handleBuffer, frameRect.height() + 2 * m_handleBuffer);
                 qreal posX = artboard->scenePos().x();
                 qreal posY = artboard->scenePos().y();
 
                 m_handleFrame->setVisible(true);
               //  m_handleFrame->setIsResize(true);
-                m_handleFrame->setPos(posX - m_handleBuffer, posY - m_handleBuffer);
-                m_handleFrame->setRect(rect);
+				m_handleFrame->setPos(posX , posY );
+				m_handleFrame->setRect(frameRect);
                 m_handleFrame->setHost(artboard);
                 m_handleFrame->setCornerPositions();
 

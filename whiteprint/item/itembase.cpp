@@ -133,8 +133,8 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+	painter->setBrush(fills());
 	painter->setPen(stroke());
-	painter->fillRect(rect(), fills());
 	painter->drawRect(rectAdjusted());
 
 }
