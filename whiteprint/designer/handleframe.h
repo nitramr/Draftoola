@@ -46,6 +46,8 @@ public:
 
     explicit ItemHandle(QGraphicsItem *parent = 0,  Handle corner = Handle::TopLeft, int buffer = 3);
 
+    void setScaleFactor(qreal factor);
+
     Handle getCorner(); ///< allows the owner to find out which coner this is
     void setMouseState(int); ///< allows the owner to record the current mouse state
     int  getMouseState(); ///< allows the owner to get the current mouse state
@@ -81,18 +83,28 @@ private:
     Handle  m_corner;
     int     m_mouseButtonState;
     int     m_buffer;
+    qreal   m_scaleFactor;
 
 };
 
-class HandleFrame : public QGraphicsRectItem
+class HandleFrame : public QObject, public QGraphicsRectItem
 {
+
+    Q_OBJECT
+
 public:
-	HandleFrame(int buffer = 3, qreal grid = 1);
+    HandleFrame(int buffer = 3, qreal grid = 1, QObject * parent = 0);
 
     // Properties
 	virtual QRectF boundingRect() const;
 	virtual QRectF rectAdjusted() const;
+    virtual QRectF scaleRect() const;
+    virtual void moveBy(qreal dx, qreal dy);
 
+    void setPen(QPen pen);
+    QPen pen() const;
+    void setScaleFactor(qreal factor);
+    qreal scaleFactor() const;
     int buffer() const;
     void setGridSpace(int space);
     void setHost(ItemBase *host);
@@ -100,7 +112,7 @@ public:
     void installFilter();
     void setIsResize(bool resizeOnly);
     bool isResize();
-	bool setShiftModifier(bool modifier);
+    void setShiftModifier(bool modifier);
 
 private:
 
@@ -110,9 +122,13 @@ private:
     ItemBase *  m_host;
     ItemHandle* m_corners[8];
     int         m_buffer;
+    int         m_bufferBak;
     bool        m_resizeOnly;
 	QRectF		m_rect;
 	bool		m_shiftModifier;
+    QPen        m_pen;
+    qreal       m_scaleFactor;
+    bool        m_isZoom;
 
 	void adjustSize(int x, int y);
 	void mapToHost();
@@ -129,6 +145,8 @@ private:
 //    virtual void mousePressEvent(QGraphicsSceneDragDropEvent *event);
     virtual bool sceneEventFilter ( QGraphicsItem * watched, QEvent * event ) ;
 
+signals:
+    void emitItemChange();
 
 };
 

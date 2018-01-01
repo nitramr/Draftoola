@@ -2,6 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDockWidget>
+
+#include "designer/itemproperties.h"
+#include "designer/outliner.h"
+#include "designer/canvas.h"
+#include "item/itembase.h"
+#include "item/artboard.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +24,18 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    Outliner * m_outliner;
+    ItemProperties * m_properties;
+    Canvas * m_canvas;
+
+    QDockWidget * m_outlinerDock;
+    QDockWidget * m_propertiesDock;
+
+
+public slots:
+    void setActiveItem(ItemBase *item);
+
 };
 
 #endif // MAINWINDOW_H

@@ -8,6 +8,7 @@
 #include <QMap>
 
 #include "wascene.h"
+#include "waview.h"
 #include "whiteprint/item/itembase.h"
 #include "whiteprint/item/artboard.h"
 
@@ -15,21 +16,19 @@ class Canvas : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Canvas(QWidget *parent = 0);
+    explicit Canvas(QRectF rect = QRectF(-2000, -2000, 4000,4000), QWidget *parent = 0);
 
 	QGraphicsScene * scene();
 
 	//Members
-	void addItem(ItemBase *item, qreal x, qreal y, ItemBase *parent = 0);
+    void addItem(ItemBase *item, qreal x = 0, qreal y = 0, ItemBase *parent = 0);
 
 private:
     WAScene * m_scene;
-    QGraphicsView * m_view;
+    WAView * m_view;
 
 	QMap<QString,Artboard*>*m_artboardList;
 
-	// Helper
-    void fakeContent();
 
 signals:
 

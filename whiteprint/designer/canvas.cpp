@@ -9,12 +9,12 @@
 #include <QGraphicsBlurEffect>
 
 
-Canvas::Canvas(QWidget *parent) : QWidget(parent)
+Canvas::Canvas(QRectF rect, QWidget *parent) : QWidget(parent)
 {
     m_scene = new WAScene();
-	m_scene->setSceneRect(-1000,-1000,4000,4000);
+    m_scene->setSceneRect(rect);
 
-    m_view = new QGraphicsView(m_scene);
+    m_view = new WAView(m_scene);
 	m_view->setBackgroundBrush(QColor(240,240,240));
     m_view->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     m_view->setRenderHint(QPainter::Antialiasing, true);
@@ -30,8 +30,6 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent)
     m_layout->setMargin(0);
 
     this->setLayout(m_layout);
-
-    fakeContent();
 
 }
 
@@ -58,6 +56,7 @@ void Canvas::addItem(ItemBase *item, qreal x, qreal y, ItemBase *parent)
 
 		m_scene->addItem(m_artboard);
 		m_artboardList->insert(m_artboard->name(), m_artboard);
+        m_artboard->setPos(x,y);
 
 	}else{ // Item is no Artboard
 
@@ -93,21 +92,3 @@ void Canvas::addItem(ItemBase *item, qreal x, qreal y, ItemBase *parent)
  * Helper
  *
  ***************************************************/
-
-void Canvas::fakeContent()
-{
-
-    Artboard *artboard = new Artboard("Artboard1");
-    artboard->setPos(this->width()/2,100);
-    m_scene->addItem(artboard);
-	m_artboardList->insert(artboard->name(), artboard);
-
-	qDebug() << "Init active Panel" << m_scene->activePanel();
-
-//    WARect * rect = new WARect(5,10,30,30);
-//    rect->setParentItem(artboard->canvas());
-
-
-
-
-}

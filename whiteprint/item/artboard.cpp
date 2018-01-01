@@ -11,7 +11,8 @@
 ArtboardLabel::ArtboardLabel(QString name, QGraphicsItem *parent) : QGraphicsSimpleTextItem(name, parent)
 {
     this->setFlags(QGraphicsItem::ItemIsSelectable |
-                   QGraphicsItem::ItemIsFocusable
+                   QGraphicsItem::ItemIsFocusable |
+                   QGraphicsItem::ItemIgnoresTransformations
                    );
 }
 
@@ -51,6 +52,7 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : ItemBase(
 
     this->setFlag(QGraphicsItem::ItemIsPanel, true);
     this->setAcceptHoverEvents(true);
+    this->setName(name);
 }
 
 /***************************************************

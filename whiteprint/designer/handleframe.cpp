@@ -9,7 +9,8 @@ ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int buffer) :
     mouseDownY(0),
     m_Pen(),
     m_corner(corner),
-    m_mouseButtonState(kMouseReleased)
+    m_mouseButtonState(kMouseReleased),
+    m_scaleFactor(1.0)
 {
     setParentItem(parent);
 
@@ -28,6 +29,8 @@ ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int buffer) :
 	this->setGraphicsEffect(m_shadow);
 
     this->setAcceptHoverEvents(true);
+
+    // this->setFlags(QGraphicsItem::ItemIgnoresTransformations);
 }
 
 /***************************************************
@@ -35,6 +38,17 @@ ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int buffer) :
  * Members
  *
  ***************************************************/
+
+void ItemHandle::setScaleFactor(qreal factor)
+{
+    m_scaleFactor = factor;
+
+    m_Pen.setWidthF(1/m_scaleFactor);
+
+    m_width = 2 * m_buffer /m_scaleFactor;
+    m_height = 2 * m_buffer /m_scaleFactor;
+}
+
 
 void ItemHandle::setMouseState(int s)
 {
@@ -53,7 +67,7 @@ QRectF ItemHandle::rect() const
 
 QRectF ItemHandle::boundingRect() const
 {
-	return QRectF(rect().x() - 2, rect().y() - 2, rect().width() + 4, rect().height() + 4);
+    return QRectF(rect().x() - 2, rect().y() - 2, rect().width() + 4, rect().height() + 4);
 }
 
 QRectF ItemHandle::rectAdjusted() const
@@ -134,14 +148,18 @@ void ItemHandle::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QWi
  *
  *******************************/
 
-HandleFrame::HandleFrame(int buffer, qreal grid):
+HandleFrame::HandleFrame(int buffer, qreal grid, QObject *parent): QObject(parent),
     m_dragStart(0,0),
     m_cornerDragStart(0,0),
     m_buffer(buffer),
+    m_bufferBak(m_buffer),
 	m_gridSpace(grid),
 	m_resizeOnly(false),
-	m_shiftModifier(false),
-	m_rect(QRectF(0,0,10,10))
+    m_rect(QRectF(0,0,10,10)),
+    m_pen(QPen()),
+    m_shiftModifier(false),
+    m_scaleFactor(1.0),
+    m_isZoom(false)
 {
     m_corners[0] = new ItemHandle(this,ItemHandle::TopLeft, m_buffer);
     m_corners[1] = new ItemHandle(this,ItemHandle::Top, m_buffer);
@@ -153,10 +171,10 @@ HandleFrame::HandleFrame(int buffer, qreal grid):
     m_corners[7] = new ItemHandle(this,ItemHandle::Left, m_buffer);
 
     this->setPen(QPen(QColor(0, 128, 255)));
-    this->setBrush(QBrush(Qt::NoBrush));
     this->setVisible(false);
     this->setAcceptHoverEvents(true);
-	this->setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren);
+    this->setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren|
+                   QGraphicsItem::ItemIgnoresTransformations);
 }
 
 
@@ -173,7 +191,63 @@ QRectF HandleFrame::boundingRect() const
 
 QRectF HandleFrame::rectAdjusted() const
 {
-	return QRectF(rect().x() + 0.5, rect().y() + 0.5, rect().width() - 1, rect().height() - 1);
+    return QRectF(rect().x() + 0.5, rect().y() + 0.5, rect().width() - 1, rect().height() - 1);
+}
+
+QRectF HandleFrame::scaleRect() const
+{
+    return QRectF(rect().x(), rect().y(), rect().width() * m_scaleFactor, rect().height() * m_scaleFactor);
+}
+
+void HandleFrame::moveBy(qreal dx, qreal dy)
+{
+    QGraphicsItem::moveBy(dx,dy);
+
+    m_host->moveBy(dx, dy);
+
+    emit emitItemChange();
+}
+
+void HandleFrame::setPen(QPen pen)
+{
+    m_pen = pen;
+}
+
+QPen HandleFrame::pen() const
+{
+    return m_pen;
+}
+
+void HandleFrame::setScaleFactor(qreal factor)
+{
+    m_scaleFactor = factor;
+
+    setCornerPositions();
+
+//    if(!m_host) return;
+//    setRect(rect().x(), rect().y(), m_host->sceneBoundingRect().width() * m_scaleFactor, m_host->sceneBoundingRect().height() * m_scaleFactor);
+
+
+//    QPen qPen = this->pen();
+//    qPen.setWidthF(1/m_scaleFactor);
+//    setPen(qPen);
+
+//    m_buffer = m_bufferBak / m_scaleFactor;
+//    qDebug() << "HandleFrame: Buffer" << m_buffer << m_bufferBak << m_scaleFactor;
+
+//    m_corners[0]->setScaleFactor(m_scaleFactor);
+//    m_corners[1]->setScaleFactor(m_scaleFactor);
+//    m_corners[2]->setScaleFactor(m_scaleFactor);
+//    m_corners[3]->setScaleFactor(m_scaleFactor);
+//    m_corners[4]->setScaleFactor(m_scaleFactor);
+//    m_corners[5]->setScaleFactor(m_scaleFactor);
+//    m_corners[6]->setScaleFactor(m_scaleFactor);
+//    m_corners[7]->setScaleFactor(m_scaleFactor);
+}
+
+qreal HandleFrame::scaleFactor() const
+{
+    return m_scaleFactor;
 }
 
 int HandleFrame::buffer() const
@@ -197,7 +271,7 @@ bool HandleFrame::isResize()
 	return m_resizeOnly;
 }
 
-bool HandleFrame::setShiftModifier(bool modifier)
+void HandleFrame::setShiftModifier(bool modifier)
 {
 	m_shiftModifier = modifier;
 }
@@ -232,7 +306,7 @@ void HandleFrame::adjustSize(int x, int y)
 		m_height += y;
 	}
 
-	this->setRect(
+    this->setRect(
                 this->rect().x(),
                 this->rect().y(),
 				round(m_width),
@@ -246,16 +320,21 @@ void HandleFrame::mapToHost()
         QPointF mapScene = m_host->mapFromScene(this->scenePos());
         QPointF mapItem = m_host->mapToParent(mapScene);
 
-		m_host->setPos(mapItem);
+        m_host->setPos(mapItem);
+        emit emitItemChange();
+
+
 }
 
 
 void HandleFrame::setCornerPositions()
 {
-	qreal posX = rect().x() - buffer();
-	qreal posY = rect().y() - buffer();
-	qreal width = rect().width() + 2 * buffer();
-	qreal height = rect().height() + 2 * buffer();
+    qreal posX = scaleRect().x() - buffer();
+    qreal posY = scaleRect().y() - buffer();
+    qreal width = scaleRect().width() + 2 * buffer();
+    qreal height = scaleRect().height() + 2 * buffer();
+
+    qDebug() << scaleRect();
 
     m_corners[0]->setPos(posX, posY); // TopLeft
 	m_corners[1]->setPos(posX + width / 2 - buffer(), posY); // Top
@@ -491,7 +570,7 @@ void HandleFrame::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 		//this->setPos(origin);
 		this->setPos( ( static_cast<int>(origin.x()) / m_gridSpace) * m_gridSpace, (static_cast<int>(origin.y()) / m_gridSpace) * m_gridSpace );
 
-		mapToHost();
+        mapToHost();
     }
 
 }
@@ -504,8 +583,8 @@ void HandleFrame::hoverEnterEvent ( QGraphicsSceneHoverEvent * ){}
 void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 
-    painter->setPen(this->pen());	
-	painter->drawRect(rectAdjusted());
+    painter->setPen(this->pen());
+    painter->drawRect(scaleRect());
 
 }
 

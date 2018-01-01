@@ -4,7 +4,9 @@
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QKeyEvent>
-#include "whiteprint/item/handleframe.h"
+
+#include "handleframe.h"
+#include "whiteprint/item/artboard.h"
 
 class WAScene : public QGraphicsScene
 {
@@ -12,11 +14,15 @@ class WAScene : public QGraphicsScene
 public:
     WAScene(QObject *parent = 0);
 
+    // Properties
+    void setScaleFactor(qreal factor);
+    qreal scaleFactor() const;
 
 private:
     HandleFrame *m_handleFrame;
     int m_handleBuffer;
 	qreal m_grid;
+    qreal m_scaleFactor;
 
 protected:
 	void keyPressEvent(QKeyEvent *e);
@@ -24,6 +30,10 @@ protected:
 
 private slots:
     void updateHandleFrame();
+    void updateItemProperties();
+
+signals:
+    void emitActiveItem(ItemBase * item);
 
 
 };

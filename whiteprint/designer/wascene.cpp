@@ -5,59 +5,34 @@
 
 WAScene::WAScene(QObject *parent) : QGraphicsScene(parent)
 {
-   m_handleBuffer = 3;
-   m_handleFrame = new HandleFrame(m_handleBuffer);
-   m_handleFrame->setZValue(99999999);
-   this->addItem(m_handleFrame);
+    m_scaleFactor = 1.0;
+    m_handleBuffer = 3;
+    m_handleFrame = new HandleFrame(m_handleBuffer);
+    m_handleFrame->setZValue(99999999);
+    this->addItem(m_handleFrame);
 
-   m_handleFrame->installFilter();
+    m_handleFrame->installFilter();
 
-   connect(this, SIGNAL(selectionChanged()), this,SLOT(updateHandleFrame()));
+    connect(this, SIGNAL(selectionChanged()), this,SLOT(updateHandleFrame()));
+    connect(m_handleFrame, SIGNAL(emitItemChange()), this, SLOT(updateItemProperties()));
 }
 
-void WAScene::keyPressEvent(QKeyEvent *e)
+void WAScene::setScaleFactor(qreal factor)
 {
-	switch(e->key())
-	{
-	case Qt::Key_Left :
-		qDebug() << "left";
-
-		break;
-	case Qt::Key_Right :
-		qDebug() << "right";
-
-		break;
-	case Qt::Key_Up :
-		qDebug() << "up";
-
-		break;
-	case Qt::Key_Down :
-		qDebug() << "down";
-		break;
-
-	case Qt::Key_Shift :
-		qDebug() << "shift";
-		m_handleFrame->setShiftModifier(true);
-		break;
-	}
-
-	QGraphicsScene::keyPressEvent(e);
+    m_scaleFactor = factor;
+    m_handleFrame->setScaleFactor(m_scaleFactor);
 }
 
-void WAScene::keyReleaseEvent(QKeyEvent *e)
+qreal WAScene::scaleFactor() const
 {
-	switch(e->key())
-	{
-	case Qt::Key_Shift :
-		qDebug() << "shift released";
-		m_handleFrame->setShiftModifier(false);
-		break;
-	}
-
-	QGraphicsScene::keyReleaseEvent(e);
+    return m_scaleFactor;
 }
 
-
+/***************************************************
+ *
+ * Slots
+ *
+ ***************************************************/
 
 void WAScene::updateHandleFrame()
 {
@@ -67,49 +42,146 @@ void WAScene::updateHandleFrame()
     if(selectedItems().size() == 0){
         m_handleFrame->setVisible(false);
         m_handleFrame->setHost(new ItemBase());
+        emit emitActiveItem(0);
         return;
     }else if(selectedItems().size()==1){
-            ItemBase* m_itemBase = dynamic_cast<ItemBase*>(selecitems[0]);
-            ArtboardLabel* m_artboardLabel = dynamic_cast<ArtboardLabel*>(selecitems[0]);
-            if(m_itemBase){
+        ItemBase* m_itemBase = dynamic_cast<ItemBase*>(selecitems[0]);
+        ArtboardLabel* m_artboardLabel = dynamic_cast<ArtboardLabel*>(selecitems[0]);
+        if(m_itemBase){
 
-                QRectF frameRect = m_itemBase->rect();
+            qreal posX = m_itemBase->scenePos().x();
+            qreal posY = m_itemBase->scenePos().y();
 
-                qreal posX = m_itemBase->scenePos().x();
-                qreal posY = m_itemBase->scenePos().y();
+            m_handleFrame->setVisible(true);
+    //        m_handleFrame->setScaleFactor(1/m_scaleFactor);
+            m_handleFrame->setRect(m_itemBase->rect());
+            m_handleFrame->setPos(posX , posY);
+            m_handleFrame->setHost(m_itemBase);
+            m_handleFrame->setCornerPositions();
 
-                m_handleFrame->setVisible(true);
-               // m_handleFrame->setIsResize(false);
-				m_handleFrame->setPos(posX , posY);
-				m_handleFrame->setRect(frameRect);
-                m_handleFrame->setHost(m_itemBase);
-                m_handleFrame->setCornerPositions();
+            emit emitActiveItem(m_itemBase);
 
-            } else if(m_artboardLabel){
+        } else if(m_artboardLabel){
 
-                Artboard * artboard = dynamic_cast<Artboard*>(m_artboardLabel->parentItem());
-                if(!artboard) return;
+            Artboard * m_artboard = dynamic_cast<Artboard*>(m_artboardLabel->parentItem());
+            if(!m_artboard) return;
 
-                QRectF frameRect = artboard->rect();
+            qreal posX = m_artboard->scenePos().x();
+            qreal posY = m_artboard->scenePos().y();
 
-                qreal posX = artboard->scenePos().x();
-                qreal posY = artboard->scenePos().y();
+            m_handleFrame->setVisible(true);
+    //        m_handleFrame->setScaleFactor(1/m_scaleFactor);
+            m_handleFrame->setRect(m_artboard->rect());
+            m_handleFrame->setPos(posX , posY );
+            m_handleFrame->setHost(m_artboard);
+            m_handleFrame->setCornerPositions();
 
-                m_handleFrame->setVisible(true);
-              //  m_handleFrame->setIsResize(true);
-				m_handleFrame->setPos(posX , posY );
-				m_handleFrame->setRect(frameRect);
-                m_handleFrame->setHost(artboard);
-                m_handleFrame->setCornerPositions();
 
-            }else {
-                m_handleFrame->setVisible(false);
-                m_handleFrame->setHost(new ItemBase());
-                return;
-            }
+            emit emitActiveItem(m_artboard);
+
+        }else {
+            m_handleFrame->setVisible(false);
+            m_handleFrame->setHost(new ItemBase());
+            emit emitActiveItem(0);
+            return;
         }
-
-
+    }
 
 }
+
+void WAScene::updateItemProperties()
+{
+    QList<QGraphicsItem*> selecitems = this->selectedItems();
+
+    if(selectedItems().size()==1){
+        ItemBase* m_itemBase = dynamic_cast<ItemBase*>(selecitems[0]);
+        if(m_itemBase){
+            emit emitActiveItem(m_itemBase);
+        }
+
+    }
+}
+
+
+/***************************************************
+ *
+ * Events
+ *
+ ***************************************************/
+
+
+void WAScene::keyPressEvent(QKeyEvent *e)
+{
+    qreal stepperS = 1.0;
+    qreal stepperL = 4.0;
+
+    if (e->modifiers() & Qt::ShiftModifier) {
+        switch(e->key())
+        {
+        case Qt::Key_Left :
+            qDebug() << "left";
+            m_handleFrame->moveBy(-stepperL, 0);
+
+            break;
+        case Qt::Key_Right :
+            qDebug() << "right";
+            m_handleFrame->moveBy(stepperL, 0);
+
+            break;
+        case Qt::Key_Up :
+            qDebug() << "up";
+            m_handleFrame->moveBy(0, -stepperL);
+
+            break;
+        case Qt::Key_Down :
+            qDebug() << "down";
+            m_handleFrame->moveBy(0, stepperL);
+
+            break;
+        }
+    }
+
+    switch(e->key())
+    {
+    case Qt::Key_Left :
+        qDebug() << "left";
+        m_handleFrame->moveBy(-stepperS, 0);
+
+        break;
+    case Qt::Key_Right :
+        qDebug() << "right";
+        m_handleFrame->moveBy(stepperS, 0);
+
+        break;
+    case Qt::Key_Up :
+        qDebug() << "up";
+        m_handleFrame->moveBy(0, -stepperS);
+
+        break;
+    case Qt::Key_Down :
+        qDebug() << "down";
+        m_handleFrame->moveBy(0, stepperS);
+
+        break;
+    case Qt::Key_Shift :
+        m_handleFrame->setShiftModifier(true);
+        break;
+    }
+
+    //QGraphicsScene::keyPressEvent(e);
+}
+
+void WAScene::keyReleaseEvent(QKeyEvent *e)
+{
+    switch(e->key())
+    {
+    case Qt::Key_Shift :
+        m_handleFrame->setShiftModifier(false);
+        break;
+    }
+
+    QGraphicsScene::keyReleaseEvent(e);
+}
+
+
 
