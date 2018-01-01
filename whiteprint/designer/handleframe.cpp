@@ -9,8 +9,7 @@ ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int buffer) :
     mouseDownY(0),
     m_Pen(),
     m_corner(corner),
-    m_mouseButtonState(kMouseReleased),
-    m_scaleFactor(1.0)
+	m_mouseButtonState(kMouseReleased)
 {
     setParentItem(parent);
 
@@ -38,17 +37,6 @@ ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int buffer) :
  * Members
  *
  ***************************************************/
-
-void ItemHandle::setScaleFactor(qreal factor)
-{
-    m_scaleFactor = factor;
-
-    m_Pen.setWidthF(1/m_scaleFactor);
-
-    m_width = 2 * m_buffer /m_scaleFactor;
-    m_height = 2 * m_buffer /m_scaleFactor;
-}
-
 
 void ItemHandle::setMouseState(int s)
 {
@@ -184,6 +172,8 @@ HandleFrame::HandleFrame(int buffer, qreal grid, QObject *parent): QObject(paren
  *
  ***************************************************/
 
+
+
 QRectF HandleFrame::boundingRect() const
 {
 	return QRectF(rect().x() - 2*buffer(), rect().y() - 2*buffer(), rect().width() + buffer() * 4, rect().height() + buffer() * 4);
@@ -191,21 +181,16 @@ QRectF HandleFrame::boundingRect() const
 
 QRectF HandleFrame::rectAdjusted() const
 {
-    return QRectF(rect().x() + 0.5, rect().y() + 0.5, rect().width() - 1, rect().height() - 1);
-}
-
-QRectF HandleFrame::scaleRect() const
-{
-    return QRectF(rect().x(), rect().y(), rect().width() * m_scaleFactor, rect().height() * m_scaleFactor);
+	return QRectF(rect().x() + 0.5, rect().y() + 0.5, rect().width() - 1, rect().height() - 1);
 }
 
 void HandleFrame::moveBy(qreal dx, qreal dy)
 {
-    QGraphicsItem::moveBy(dx,dy);
+	QGraphicsItem::moveBy(dx,dy);
 
-    m_host->moveBy(dx, dy);
+	m_host->moveBy(dx, dy);
 
-    emit emitItemChange();
+	emit emitItemChange();
 }
 
 void HandleFrame::setPen(QPen pen)
@@ -222,27 +207,11 @@ void HandleFrame::setScaleFactor(qreal factor)
 {
     m_scaleFactor = factor;
 
+	if(!m_host) return;
+	setRect(rect().x(), rect().y(), m_host->rect().width() * m_scaleFactor, m_host->rect().height() * m_scaleFactor);
+
     setCornerPositions();
 
-//    if(!m_host) return;
-//    setRect(rect().x(), rect().y(), m_host->sceneBoundingRect().width() * m_scaleFactor, m_host->sceneBoundingRect().height() * m_scaleFactor);
-
-
-//    QPen qPen = this->pen();
-//    qPen.setWidthF(1/m_scaleFactor);
-//    setPen(qPen);
-
-//    m_buffer = m_bufferBak / m_scaleFactor;
-//    qDebug() << "HandleFrame: Buffer" << m_buffer << m_bufferBak << m_scaleFactor;
-
-//    m_corners[0]->setScaleFactor(m_scaleFactor);
-//    m_corners[1]->setScaleFactor(m_scaleFactor);
-//    m_corners[2]->setScaleFactor(m_scaleFactor);
-//    m_corners[3]->setScaleFactor(m_scaleFactor);
-//    m_corners[4]->setScaleFactor(m_scaleFactor);
-//    m_corners[5]->setScaleFactor(m_scaleFactor);
-//    m_corners[6]->setScaleFactor(m_scaleFactor);
-//    m_corners[7]->setScaleFactor(m_scaleFactor);
 }
 
 qreal HandleFrame::scaleFactor() const
@@ -329,12 +298,12 @@ void HandleFrame::mapToHost()
 
 void HandleFrame::setCornerPositions()
 {
-    qreal posX = scaleRect().x() - buffer();
-    qreal posY = scaleRect().y() - buffer();
-    qreal width = scaleRect().width() + 2 * buffer();
-    qreal height = scaleRect().height() + 2 * buffer();
+	qreal posX = rect().x() - buffer();
+	qreal posY = rect().y() - buffer();
+	qreal width = rect().width() + 2 * buffer();
+	qreal height = rect().height() + 2 * buffer();
 
-    qDebug() << scaleRect();
+	qDebug() << rect();
 
     m_corners[0]->setPos(posX, posY); // TopLeft
 	m_corners[1]->setPos(posX + width / 2 - buffer(), posY); // Top
@@ -347,7 +316,9 @@ void HandleFrame::setCornerPositions()
 
     if(!m_host) return;
 
-	m_host->setRect(rect());
+	QRectF host = QRectF(rect().x(), rect().y(), rect().width() / m_scaleFactor, rect().height() / m_scaleFactor);
+
+	m_host->setRect(host);
 
     mapToHost();
 
@@ -584,7 +555,7 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QW
 {
 
     painter->setPen(this->pen());
-    painter->drawRect(scaleRect());
+	painter->drawRect(rectAdjusted());
 
 }
 

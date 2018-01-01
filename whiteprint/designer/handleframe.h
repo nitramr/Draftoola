@@ -46,8 +46,6 @@ public:
 
     explicit ItemHandle(QGraphicsItem *parent = 0,  Handle corner = Handle::TopLeft, int buffer = 3);
 
-    void setScaleFactor(qreal factor);
-
     Handle getCorner(); ///< allows the owner to find out which coner this is
     void setMouseState(int); ///< allows the owner to record the current mouse state
     int  getMouseState(); ///< allows the owner to get the current mouse state
@@ -83,7 +81,6 @@ private:
     Handle  m_corner;
     int     m_mouseButtonState;
     int     m_buffer;
-    qreal   m_scaleFactor;
 
 };
 
@@ -98,7 +95,6 @@ public:
     // Properties
 	virtual QRectF boundingRect() const;
 	virtual QRectF rectAdjusted() const;
-    virtual QRectF scaleRect() const;
     virtual void moveBy(qreal dx, qreal dy);
 
     void setPen(QPen pen);

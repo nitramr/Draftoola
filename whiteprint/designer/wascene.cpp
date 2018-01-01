@@ -53,7 +53,6 @@ void WAScene::updateHandleFrame()
             qreal posY = m_itemBase->scenePos().y();
 
             m_handleFrame->setVisible(true);
-    //        m_handleFrame->setScaleFactor(1/m_scaleFactor);
             m_handleFrame->setRect(m_itemBase->rect());
             m_handleFrame->setPos(posX , posY);
             m_handleFrame->setHost(m_itemBase);
@@ -70,7 +69,6 @@ void WAScene::updateHandleFrame()
             qreal posY = m_artboard->scenePos().y();
 
             m_handleFrame->setVisible(true);
-    //        m_handleFrame->setScaleFactor(1/m_scaleFactor);
             m_handleFrame->setRect(m_artboard->rect());
             m_handleFrame->setPos(posX , posY );
             m_handleFrame->setHost(m_artboard);
@@ -119,22 +117,18 @@ void WAScene::keyPressEvent(QKeyEvent *e)
         switch(e->key())
         {
         case Qt::Key_Left :
-            qDebug() << "left";
             m_handleFrame->moveBy(-stepperL, 0);
 
             break;
         case Qt::Key_Right :
-            qDebug() << "right";
             m_handleFrame->moveBy(stepperL, 0);
 
             break;
         case Qt::Key_Up :
-            qDebug() << "up";
             m_handleFrame->moveBy(0, -stepperL);
 
             break;
         case Qt::Key_Down :
-            qDebug() << "down";
             m_handleFrame->moveBy(0, stepperL);
 
             break;
@@ -144,22 +138,18 @@ void WAScene::keyPressEvent(QKeyEvent *e)
     switch(e->key())
     {
     case Qt::Key_Left :
-        qDebug() << "left";
         m_handleFrame->moveBy(-stepperS, 0);
 
         break;
     case Qt::Key_Right :
-        qDebug() << "right";
         m_handleFrame->moveBy(stepperS, 0);
 
         break;
     case Qt::Key_Up :
-        qDebug() << "up";
         m_handleFrame->moveBy(0, -stepperS);
 
         break;
     case Qt::Key_Down :
-        qDebug() << "down";
         m_handleFrame->moveBy(0, stepperS);
 
         break;
