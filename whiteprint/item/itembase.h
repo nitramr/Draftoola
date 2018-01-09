@@ -5,6 +5,8 @@
 #include <QPen>
 #include <QBrush>
 #include <QRectF>
+#include <QStyleOptionGraphicsItem>
+#include <QPainter>
 
 #include "itemstruct.h"
 #include "stroke.h"
@@ -25,15 +27,25 @@ public:
     void setItemType(ItemType type);
     ItemType itemType() const;
     virtual void setRect(QRectF rect);
+	virtual void setRect(qreal x, qreal y, qreal width, qreal height);
     virtual QRectF rect() const;
-	virtual QRectF rectAdjusted() const;
+	virtual QRectF adjustedRect() const;
     virtual QRectF boundingRect() const;
+	qreal width() const;
+	qreal height() const;
+	QPointF anchorTopLeft() const;
+	QPointF anchorTop() const;
+	QPointF anchorTopRight() const;
+	QPointF anchorRight() const;
+	QPointF anchorBottomRight() const;
+	QPointF anchorBottom() const;
+	QPointF anchorBottomLeft() const;
+	QPointF anchorLeft() const;
+	QPointF anchorCenter() const;
 	void setStroke(Stroke stroke);
 	Stroke stroke() const;
 	void setFills(Fills fills);
 	Fills fills() const;
-    qreal width() const;
-    qreal height() const;
 
 	// Members
 	void addExportFactor(QString key, double value);

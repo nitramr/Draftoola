@@ -6,16 +6,26 @@
 #include <QGraphicsScene>
 #include <QWheelEvent>
 
+#include "wascene.h"
+#include "handleframe.h"
+
 class WAView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    WAView(QWidget * parent = 0);
-    WAView(QGraphicsScene * scene, QWidget * parent = 0);
+	WAView(WAScene *scene, QWidget * parent = 0);
+	HandleFrame *handleFrame() const;
 
 protected:
-    void wheelEvent(QWheelEvent *event);
+	void wheelEvent(QWheelEvent *e);
+	void keyPressEvent(QKeyEvent *e);
+	void keyReleaseEvent(QKeyEvent * e);
 
+private:
+	WAScene		*m_scene;
+	HandleFrame *m_handleFrame;
+	int m_handleBuffer;
+	qreal m_grid;
 
 };
 

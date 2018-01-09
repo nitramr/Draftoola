@@ -4,6 +4,8 @@
 
 #include "item/warect.h"
 #include "item/waoval.h"
+#include "item/watext.h"
+#include "designer/handleframe.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,8 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_properties = new ItemProperties();
     m_outliner = new Outliner();
 
-    m_canvas = new Canvas();
-    this->setCentralWidget(m_canvas);
+	m_canvas = new Canvas();
+	this->setCentralWidget(m_canvas);
 
     m_outlinerDock = new QDockWidget(tr("Outliner"));
     m_outlinerDock->setWidget(m_outliner);
@@ -27,20 +29,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    Artboard *artboard = new Artboard("Artboard1");
-    m_canvas->addItem(artboard);
-    m_outliner->addNode(artboard);
+	Artboard *artboard = new Artboard("Artboard1");
+	artboard->setPos(20,20);
+	m_canvas->addItem(artboard);
+	m_outliner->addNode(artboard);
 
 	WARect * rect = new WARect(60,100);
 	rect->setFills(Fills("rect", QColor(Qt::yellow)));
-    m_canvas->addItem(rect, 40,20);
-
+	m_canvas->addItem(rect, 10,10);
 
 	WAOval * oval = new WAOval(60,80);
 	oval->setFills(Fills("oval", QColor(Qt::red)));
-    m_canvas->addItem(oval, 40,180);
+	m_canvas->addItem(oval, 40,180);
 
-    connect(m_canvas->scene(), SIGNAL(emitActiveItem(ItemBase*)), this, SLOT(setActiveItem(ItemBase*)));
+	WAText * text = new WAText("Hello World");
+	m_canvas->addItem(text, 100, 10);
+
+	connect(m_canvas->view()->handleFrame(), SIGNAL(emitActiveItem(ItemBase*)), this, SLOT(setActiveItem(ItemBase*)));
 
 }
 

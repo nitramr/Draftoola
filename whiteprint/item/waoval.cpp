@@ -14,7 +14,12 @@ WAOval::WAOval(QRectF rect, QGraphicsItem *parent) : ItemBase(rect, parent){
  * Properties
  *
  ***************************************************/
-
+QPainterPath WAOval::shape() const
+{
+	QPainterPath path;
+	path.addEllipse(this->adjustedRect());
+	return path;
+}
 
 /***************************************************
  *
@@ -24,12 +29,14 @@ WAOval::WAOval(QRectF rect, QGraphicsItem *parent) : ItemBase(rect, parent){
 
 void WAOval::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option);
+	Q_UNUSED(option);
     Q_UNUSED(widget);
+
+//	painter->setClipRect( option->exposedRect );
 
 	painter->setBrush(this->fills());
 	painter->setPen(this->stroke());
-	painter->drawEllipse(this->rectAdjusted());
+	painter->drawEllipse(this->adjustedRect());
 
 
 

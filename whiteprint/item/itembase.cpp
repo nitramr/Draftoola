@@ -1,6 +1,4 @@
 #include "itembase.h"
-#include <QStyleOptionGraphicsItem>
-#include <QPainter>
 #include <QDebug>
 
 #include <QGraphicsDropShadowEffect>
@@ -55,7 +53,12 @@ ItemType ItemBase::itemType() const
 void ItemBase::setRect(QRectF rect)
 {
     m_rect = rect;
-    update();
+	update();
+}
+
+void ItemBase::setRect(qreal x, qreal y, qreal width, qreal height)
+{
+	setRect(QRectF(x,y,width, height));
 }
 
 QRectF ItemBase::rect() const
@@ -63,7 +66,7 @@ QRectF ItemBase::rect() const
 	return m_rect;
 }
 
-QRectF ItemBase::rectAdjusted() const
+QRectF ItemBase::adjustedRect() const
 {
 	QRectF rectAdj(rect().x() + 0.5,
 				  rect().y() + 0.5,
@@ -75,6 +78,61 @@ QRectF ItemBase::rectAdjusted() const
 QRectF ItemBase::boundingRect() const
 {
 	return m_rect;
+}
+
+qreal ItemBase::width() const
+{
+	return this->rect().width();
+}
+
+qreal ItemBase::height() const
+{
+	return this->rect().height();
+}
+
+QPointF ItemBase::anchorTopLeft() const
+{
+	return this->scenePos();
+}
+
+QPointF ItemBase::anchorTop() const
+{
+	return QPointF(this->scenePos().x() + width() / 2, this->scenePos().y());
+}
+
+QPointF ItemBase::anchorTopRight() const
+{
+	return QPointF(this->scenePos().x() + width(), this->scenePos().y());
+}
+
+QPointF ItemBase::anchorRight() const
+{
+	return QPointF(this->scenePos().x() + width(), this->scenePos().y() + height() / 2);
+}
+
+QPointF ItemBase::anchorBottomRight() const
+{
+	return QPointF(this->scenePos().x() + width(), this->scenePos().y() + height());
+}
+
+QPointF ItemBase::anchorBottom() const
+{
+	return QPointF(this->scenePos().x() + width() / 2, this->scenePos().y() + height());
+}
+
+QPointF ItemBase::anchorBottomLeft() const
+{
+	return QPointF(this->scenePos().x(), this->scenePos().y() + height());
+}
+
+QPointF ItemBase::anchorLeft() const
+{
+	return QPointF(this->scenePos().x(), this->scenePos().y() + height() / 2);
+}
+
+QPointF ItemBase::anchorCenter() const
+{
+	return QPointF(this->scenePos().x() + width() / 2, this->scenePos().y() + height() / 2);
 }
 
 void ItemBase::setStroke(Stroke stroke)
@@ -95,16 +153,6 @@ void ItemBase::setFills(Fills fills)
 Fills ItemBase::fills() const
 {
 	return m_fills;
-}
-
-qreal ItemBase::width() const
-{
-    return m_rect.width();
-}
-
-qreal ItemBase::height() const
-{
-    return m_rect.height();
 }
 
 /***************************************************
@@ -135,7 +183,7 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 	painter->setBrush(fills());
 	painter->setPen(stroke());
-	painter->drawRect(rectAdjusted());
+	painter->drawRect(adjustedRect());
 
 }
 

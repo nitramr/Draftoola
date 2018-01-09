@@ -22,6 +22,8 @@
 #include "whiteprint/item/itembase.h"
 
 
+class WAScene;
+
 class ItemHandle : public QGraphicsItem
 {
 
@@ -50,7 +52,7 @@ public:
     void setMouseState(int); ///< allows the owner to record the current mouse state
     int  getMouseState(); ///< allows the owner to get the current mouse state
 	virtual QRectF rect() const;
-	virtual QRectF rectAdjusted() const;
+	virtual void setRect(qreal width);
 
 
     qreal mouseDownX;
@@ -60,14 +62,7 @@ private:
 
 	virtual QRectF boundingRect() const;
 	virtual void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	virtual void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
-	virtual void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
 
-    // once the hover event handlers are implemented in this class,
-    // the mouse events must allow be implemented because of
-    // some linkage issue - apparrently there is some connection
-    // between the hover events and mouseMove/Press/Release
-    // events which triggers a vtable issue
     virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
     virtual void mouseMoveEvent(QGraphicsSceneDragDropEvent *event);
     virtual void mousePressEvent (QGraphicsSceneMouseEvent * event );
@@ -84,65 +79,88 @@ private:
 
 };
 
-class HandleFrame : public QObject, public QGraphicsRectItem
+
+/*****************************************************************************************/
+
+
+class HandleFrame : public QObject, public QGraphicsItem
 {
 
     Q_OBJECT
 
 public:
-    HandleFrame(int buffer = 3, qreal grid = 1, QObject * parent = 0);
+	HandleFrame(WAScene *scene, int buffer = 3, qreal grid = 1);
 
     // Properties
 	virtual QRectF boundingRect() const;
-	virtual QRectF rectAdjusted() const;
+	virtual QRectF adjustedRect() const;
+	QRectF selectionBoundingRect() const;
     virtual void moveBy(qreal dx, qreal dy);
 
+	void setRect(QRectF rect);
+	void setRect(qreal x, qreal y, qreal width, qreal height);
+	QRectF rect() const;
+	qreal width() const;
+	qreal height() const;
+	QPointF anchorTopLeft() const;
+	QPointF anchorTop() const;
+	QPointF anchorTopRight() const;
+	QPointF anchorRight() const;
+	QPointF anchorBottomRight() const;
+	QPointF anchorBottom() const;
+	QPointF anchorBottomLeft() const;
+	QPointF anchorLeft() const;
+	QPointF anchorCenter() const;
     void setPen(QPen pen);
     QPen pen() const;
     void setScaleFactor(qreal factor);
     qreal scaleFactor() const;
     int buffer() const;
     void setGridSpace(int space);
-    void setHost(ItemBase *host);
-    void setCornerPositions();
-    void installFilter();
-    void setIsResize(bool resizeOnly);
-    bool isResize();
-    void setShiftModifier(bool modifier);
+	void setShiftModifier(bool modifier);
+
+	// Members
+	void updateHandleFrame();
+	void setup();
+
+
 
 private:
 
+	WAScene *	m_scene;
     QPointF     m_dragStart;
     int         m_gridSpace;
     QPointF     m_cornerDragStart;
-    ItemBase *  m_host;
-    ItemHandle* m_corners[8];
+	QRectF		m_oldRect;
+	QPointF		m_oldPos;
+    ItemHandle* m_handles[8];
     int         m_buffer;
-    int         m_bufferBak;
-    bool        m_resizeOnly;
-	QRectF		m_rect;
 	bool		m_shiftModifier;
     QPen        m_pen;
     qreal       m_scaleFactor;
     bool        m_isZoom;
+	QRectF		m_rect;
+	qreal		m_ratio;
 
 	void adjustSize(int x, int y);
-	void mapToHost();
+	void updateItemsPosition();
+	void updateItemsSelection(int x, int y);
+	void sendActiveItems();
 
+	// Events
     virtual void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget); ///< must be re-implemented here to pain the box on the paint-event
-    virtual void hoverEnterEvent ( QGraphicsSceneHoverEvent * event ); ///< must be re-implemented to handle mouse hover enter events
-    virtual void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event ); ///< must be re-implemented to handle mouse hover leave events
 
     virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );///< allows the main object to be moved in the scene by capturing the mouse move events
     virtual void mousePressEvent (QGraphicsSceneMouseEvent * event );
     virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event );
 
-//    virtual void mouseMoveEvent(QGraphicsSceneDragDropEvent *event);
-//    virtual void mousePressEvent(QGraphicsSceneDragDropEvent *event);
     virtual bool sceneEventFilter ( QGraphicsItem * watched, QEvent * event ) ;
 
+public slots:
+	void slotFrameToSelection();
+
 signals:
-    void emitItemChange();
+	void emitActiveItem(ItemBase * item);
 
 };
 

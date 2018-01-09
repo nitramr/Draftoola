@@ -7,8 +7,10 @@
 #include "designer/itemproperties.h"
 #include "designer/outliner.h"
 #include "designer/canvas.h"
+//#include "designer/canvasframe.h"
 #include "item/itembase.h"
 #include "item/artboard.h"
+#include "designer/wascene.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,7 +29,8 @@ private:
 
     Outliner * m_outliner;
     ItemProperties * m_properties;
-    Canvas * m_canvas;
+	Canvas * m_canvas;
+	WAScene * m_scene;
 
     QDockWidget * m_outlinerDock;
     QDockWidget * m_propertiesDock;

@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsItem>
+#include <QGraphicsTextItem>
 #include <QGraphicsDropShadowEffect>
 #include <QMap>
 
@@ -18,10 +19,12 @@ class Canvas : public QWidget
 public:
     explicit Canvas(QRectF rect = QRectF(-2000, -2000, 4000,4000), QWidget *parent = 0);
 
-	QGraphicsScene * scene();
+//	QGraphicsScene * scene();
+	WAView * view() const;
 
 	//Members
     void addItem(ItemBase *item, qreal x = 0, qreal y = 0, ItemBase *parent = 0);
+	void addItem(QGraphicsTextItem* item, qreal x = 0, qreal y = 0, ItemBase *parent = 0);
 
 private:
     WAScene * m_scene;

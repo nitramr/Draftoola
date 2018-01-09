@@ -1,5 +1,6 @@
 #include "artboard.h"
 #include <QDebug>
+#include <QFont>
 #include "stroke.h"
 
 /*********************
@@ -8,12 +9,37 @@
  *
  *********************/
 
-ArtboardLabel::ArtboardLabel(QString name, QGraphicsItem *parent) : QGraphicsSimpleTextItem(name, parent)
+ArtboardLabel::ArtboardLabel(QString name, Artboard *parent) : QGraphicsTextItem(name)
 {
-    this->setFlags(QGraphicsItem::ItemIsSelectable |
+
+
+	this->setFlags(/*QGraphicsItem::ItemIsSelectable |*/
                    QGraphicsItem::ItemIsFocusable |
-                   QGraphicsItem::ItemIgnoresTransformations
-                   );
+				   QGraphicsItem::ItemIgnoresTransformations
+				   );
+
+	this->setTextInteractionFlags(Qt::NoTextInteraction);
+}
+
+//void ArtboardLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+//{
+//	QGraphicsTextItem::paint(painter, option, widget);
+//}
+
+void ArtboardLabel::focusOutEvent(QFocusEvent *event)
+{
+	Q_UNUSED(event);
+	setTextInteractionFlags(Qt::NoTextInteraction);
+}
+
+void ArtboardLabel::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+//	Q_UNUSED(event);
+
+	if (this->textInteractionFlags() == Qt::NoTextInteraction)
+			this->setTextInteractionFlags(Qt::TextEditorInteraction);
+	setFocus();
+	QGraphicsTextItem::mouseDoubleClickEvent(event);
 }
 
 
@@ -35,22 +61,29 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : ItemBase(
 
 	Stroke stroke("ArtboardNoneStroke", Qt::transparent, 0);
 
-    m_shadow = new QGraphicsDropShadowEffect();
-    m_shadow->setOffset(0,0);
-    m_shadow->setColor(QColor(0,0,0));
-    m_shadow->setBlurRadius(m_buffer);
+	/*
+	 * Slow down zoom effect
+	 */
+//	m_shadow = new QGraphicsDropShadowEffect();
+//	m_shadow->setOffset(0,0);
+//	m_shadow->setColor(QColor(0,0,0));
+//	m_shadow->setBlurRadius(m_buffer);
 
     m_artboard = new ItemBase(m_rect);
-    m_artboard->setGraphicsEffect(m_shadow);
+//	m_artboard->setGraphicsEffect(m_shadow);
     m_artboard->setFlag(QGraphicsItem::ItemIsSelectable, false);
     m_artboard->setFlag(QGraphicsItem::ItemIsFocusable, false);
 	m_artboard->setStroke(stroke);
     m_artboard->setParentItem(this);
 
-    m_label = new ArtboardLabel(name, this);
-    m_label->setPos(boundingRect().x(), boundingRect().y());
+	m_label = new ArtboardLabel(name, this);
+	m_label->setParentItem(this);
+	m_label->setPos(this->rect().x(), this->rect().y() - m_offset);
+
 
     this->setFlag(QGraphicsItem::ItemIsPanel, true);
+	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
+//	this->setFlag(QGraphicsItem::ItemIsMovable, true);
     this->setAcceptHoverEvents(true);
     this->setName(name);
 }
@@ -98,6 +131,14 @@ void Artboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+	painter->setPen(QPen(QColor(180,180,180)));
+	painter->drawRect(this->adjustedRect());
+
+
+
+
+//	painter->setClipRect( this->boundingRect());//option->exposedRect );
+
 //	const int gridSize = 25;
 
 //	qreal left = int(rect().left()) - (int(rect().left()) % gridSize);
@@ -117,5 +158,4 @@ void Artboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 
 }
-
 

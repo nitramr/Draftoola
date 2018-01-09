@@ -4,7 +4,9 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui widgets
+qtHaveModule(printsupport): QT += printsupport
+qtHaveModule(opengl): QT += opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,7 +29,9 @@ SOURCES += whiteprint/main.cpp\
     whiteprint/item/waoval.cpp \
     whiteprint/designer/outliner.cpp \
     whiteprint/designer/itemproperties.cpp \
-    whiteprint/designer/waview.cpp
+    whiteprint/designer/waview.cpp \
+    whiteprint/designer/canvasframe.cpp \
+    whiteprint/item/watext.cpp
 
 HEADERS  += whiteprint/mainwindow.h \
     whiteprint/designer/canvas.h \
@@ -43,7 +47,9 @@ HEADERS  += whiteprint/mainwindow.h \
     whiteprint/item/waoval.h \
     whiteprint/designer/outliner.h \
     whiteprint/designer/itemproperties.h \
-    whiteprint/designer/waview.h
+    whiteprint/designer/waview.h \
+    whiteprint/designer/canvasframe.h \
+    whiteprint/item/watext.h
 
 FORMS    += whiteprint/mainwindow.ui \
     whiteprint/designer/outliner.ui \

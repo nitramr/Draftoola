@@ -16,7 +16,9 @@ public:
 	WAOval(QGraphicsItem * parent = 0);
 
 	// Properties
+	QPainterPath shape() const override;
 
+	// Events
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 private:
