@@ -13,20 +13,23 @@
 WAView::WAView(WAScene * scene, QWidget * parent) : QGraphicsView(scene, parent)
 {
 #ifndef QT_NO_OPENGL
-	this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers | QGL::DirectRendering)));
+	//this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers | QGL::DirectRendering)));
 #endif
 
-	this->setRenderHint(QPainter::Antialiasing, true);
+//	this->setRenderHint(QPainter::Antialiasing, true);
 	this->setDragMode(QGraphicsView::RubberBandDrag);
 	this->setOptimizationFlags(QGraphicsView::DontSavePainterState);
 	this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 	this->setBackgroundBrush(QColor(240,240,240));
+	this->setRubberBandSelectionMode(Qt::ContainsItemShape);
+
 
 	m_scene = scene;
-
 	m_handleBuffer = 3;
-	m_handleFrame = new HandleFrame(m_scene, m_handleBuffer, 1);
+	m_grid = 1;
+
+	m_handleFrame = new HandleFrame(m_scene, m_handleBuffer, m_grid);
 	m_handleFrame->setZValue(99999999);
 	m_scene->addItem(m_handleFrame);
 	m_handleFrame->setup();
@@ -39,16 +42,16 @@ HandleFrame *WAView::handleFrame() const
 }
 
 
-void WAView::wheelEvent(QWheelEvent *e)
+void WAView::wheelEvent(QWheelEvent *event)
 	{
-		if (e->modifiers() & Qt::ControlModifier) {
+		if (event->modifiers() & Qt::ControlModifier) {
 
 			qreal scaleX = this->matrix().m11();
 
 			const ViewportAnchor anchor = transformationAnchor();
 			this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
-			int angle = e->delta();//event->angleDelta().y();
+			int angle = event->delta();//event->angleDelta().y();
 			qreal factor = 1;
 			if(angle == 0){
 				factor = 1.0;
@@ -67,19 +70,19 @@ void WAView::wheelEvent(QWheelEvent *e)
 			m_handleFrame->setScaleFactor(this->matrix().m11());
 
 		} else {
-			QGraphicsView::wheelEvent(e);
+			QGraphicsView::wheelEvent(event);
 		}
 	}
 
-void WAView::keyPressEvent(QKeyEvent *e)
+void WAView::keyPressEvent(QKeyEvent *event)
 {
 
 	qreal stepperS = 1.0;
 	qreal stepperL = 4.0;
 
 	// Single Key + Ctrl
-	if (e->modifiers() & Qt::CTRL) {
-		switch(e->key())
+	if (event->modifiers() & Qt::CTRL) {
+		switch(event->key())
 		{
 		case Qt::Key_0 :
 
@@ -90,8 +93,8 @@ void WAView::keyPressEvent(QKeyEvent *e)
 	}
 
 	// Single Key + Shift
-	if (e->modifiers() & Qt::ShiftModifier) {
-		switch(e->key())
+	if (event->modifiers() & Qt::ShiftModifier) {
+		switch(event->key())
 		{
 		case Qt::Key_Left :
 			m_handleFrame->moveBy(-stepperL, 0);
@@ -113,7 +116,7 @@ void WAView::keyPressEvent(QKeyEvent *e)
 	}
 
 	// Single Key
-	switch(e->key())
+	switch(event->key())
 	{
 	case Qt::Key_Left :
 		m_handleFrame->moveBy(-stepperS, 0);
@@ -145,9 +148,9 @@ void WAView::keyPressEvent(QKeyEvent *e)
 //	QGraphicsView::keyPressEvent(e);
 }
 
-void WAView::keyReleaseEvent(QKeyEvent *e)
+void WAView::keyReleaseEvent(QKeyEvent *event)
 {
-	switch(e->key())
+	switch(event->key())
 	{
 	case Qt::Key_Space :
 		this->setDragMode(QGraphicsView::RubberBandDrag);
@@ -159,6 +162,12 @@ void WAView::keyReleaseEvent(QKeyEvent *e)
 	}
 
 
-	QGraphicsView::keyReleaseEvent(e);
+	QGraphicsView::keyReleaseEvent(event);
+}
+
+void WAView::mouseMoveEvent(QMouseEvent *event)
+{
+	QGraphicsView::mouseMoveEvent(event);
+
 }
 

@@ -5,6 +5,9 @@
 
 #include "whiteprint/item/artboard.h"
 #include "whiteprint/item/itembase.h"
+#include "whiteprint/item/warect.h"
+#include "whiteprint/item/waoval.h"
+#include "whiteprint/item/watext.h"
 
 
 namespace Ui {
@@ -19,13 +22,15 @@ public:
     explicit ItemProperties(QWidget *parent = 0);
     ~ItemProperties();
 
-    void setActiveItem(ItemBase * item);
+	void setActiveItem(QGraphicsItem *item);
 
 private:
     Ui::ItemProperties *ui;
 
     Artboard * m_artboard;
-    ItemBase * m_item;
+	WARect * m_itemRect;
+	WAOval * m_itemOval;
+	WAText * m_itemText;
 
     void loadProperties();
     void resetItems();

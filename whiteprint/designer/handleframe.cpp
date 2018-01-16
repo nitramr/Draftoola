@@ -135,7 +135,8 @@ HandleFrame::HandleFrame(WAScene *scene, int buffer, qreal grid): QObject(), QGr
 	m_scaleFactor(1.0),
 	m_isZoom(false),
 	m_rect(QRectF(0,0,10,10)),
-	m_ratio(1.0)
+	m_ratio(1.0),
+	m_isTextOnly(false)
 {
 
 	m_handles[0] = new ItemHandle(this,ItemHandle::TopLeft, m_buffer);
@@ -175,25 +176,64 @@ QRectF HandleFrame::adjustedRect() const
 	return QRectF(rect().x() + 0.5, rect().y() + 0.5, rect().width() - 1, rect().height() - 1);
 }
 
-QRectF HandleFrame::selectionBoundingRect() const
+QRectF HandleFrame::selectionBoundingRect(qreal &angle)
 {
 	QRectF selectionBoundingRect;
 	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
 	foreach(QGraphicsItem *current, selectedItems) {
-		selectionBoundingRect = selectionBoundingRect.united(current->sceneBoundingRect());
+
+		WARect * warect = dynamic_cast<WARect*>(current);
+		WAOval * waoval = dynamic_cast<WAOval*>(current);
+		WAText * watext = dynamic_cast<WAText*>(current);
+		WAGroup * wagroup = dynamic_cast<WAGroup*>(current);
+		Artboard * artboard = dynamic_cast<Artboard*>(current);
+
+		if(artboard){
+			selectionBoundingRect = QRectF(artboard->scenePos().x(), artboard->scenePos().y(), artboard->rect().width(), artboard->rect().height());
+			angle = artboard->rotation();
+			m_isTextOnly = false;
+		}
+		if(watext){
+			selectionBoundingRect = selectionBoundingRect.united(QRectF(watext->scenePos().x(), watext->scenePos().y(), watext->rect().width(), watext->rect().height()));
+			angle = watext->rotation();
+			m_isTextOnly = true;
+		}
+		if(warect){
+			selectionBoundingRect = selectionBoundingRect.united(QRectF(warect->scenePos().x(), warect->scenePos().y(), warect->rect().width(), warect->rect().height()));
+			angle = warect->rotation();
+			m_isTextOnly = false;
+		}
+		if(waoval){
+			selectionBoundingRect = selectionBoundingRect.united(QRectF(waoval->scenePos().x(), waoval->scenePos().y(), waoval->rect().width(), waoval->rect().height()));
+			angle = waoval->rotation();
+			m_isTextOnly = false;
+		}
+		if(wagroup){
+			selectionBoundingRect = selectionBoundingRect.united(QRectF(wagroup->scenePos().x(), wagroup->scenePos().y(), wagroup->rect().width(), wagroup->rect().height()));
+			angle = wagroup->rotation();
+			m_isTextOnly = false;
+			qDebug() << wagroup->scenePos() << "BoundingBox" << wagroup->boundingRect();
+		}
+
 	}
+
+	if(selectedItems.count() != 1) angle = 0;
 
 	return selectionBoundingRect;
 }
 
 void HandleFrame::moveBy(qreal dx, qreal dy)
 {
+
+	dx = (static_cast<int>(dx) / m_gridSpace) * m_gridSpace;
+	dy = (static_cast<int>(dy) / m_gridSpace) * m_gridSpace;
+
 	QGraphicsItem::moveBy(dx,dy);
 
 	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
 	foreach(QGraphicsItem *current, selectedItems) {
 
-		ItemBase * item = dynamic_cast<ItemBase*>(current);
+		QGraphicsItem * item = current;//dynamic_cast<ItemBase*>(current);
 
 		if(!item) continue;
 
@@ -352,126 +392,79 @@ void HandleFrame::adjustSize(int x, int y)
 					  this->rect().y(),
 					  m_width,
 					  m_height
-					  );
+				  );
 }
 
-
-void HandleFrame::updateItemsPosition()
+QPointF HandleFrame::updateItemsPosition(QPointF pos)
 {
-	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
-	foreach(QGraphicsItem *current, selectedItems) {
 
-		ItemBase * item = dynamic_cast<ItemBase*>(current);
+	QPointF posHandle = m_oldPos;
+	QPointF posItem = pos;
+	qreal diffAX = posItem.x() - posHandle.x();
+	qreal diffAY = posItem.y() - posHandle.y();
+	qreal diffZX = m_oldRect.width() - diffAX;
+	qreal diffZY = m_oldRect.height() - diffAY;
 
-		if(!item) continue;
+	qreal diffRatioX = qMax(diffAX / diffZX, diffZX / diffAX);
+	qreal diffRatioY = qMax(diffAY / diffZY, diffZY / diffAY);
 
-//		QPointF mapScene = item->mapFromScene(this->scenePos());
-//		qDebug() << "Position: MapScene" << mapScene << "this.scene:" << this->scenePos() << "item.scene:" << item->scenePos();
+	qreal diffAXnew = posItem.x() - this->pos().x();
+	qreal diffAYnew = posItem.y() - this->pos().y();
 
-//		QPointF mapItem = item->mapToParent(mapScene);
-//		qDebug() << "Position: MapItem" << mapItem;
+	qreal ratioX = this->pos().x() + (diffAXnew / diffRatioX);
+	qreal ratioY = this->pos().y() + (diffAYnew / diffRatioY);
 
-//		QPointF diff = selectionBoundingRect().topLeft() - item->scenePos();
+	qDebug() << "*************************************";
+	qDebug() << "posHandle" << posHandle;
+	qDebug() << "posItem" << posItem;
+	qDebug() << "diffAX" << diffAX<< "diffAY" << diffAY;
+	qDebug() << "diffZX" << diffZX<< "diffZY" << diffZY;
+	qDebug() << "diffRatioX" << diffRatioX<< "diffRatioY" << diffRatioY;
+	qDebug() << "ratioX" << ratioX << "ratioY" << ratioY;
 
+	return QPointF(ratioX, ratioY);
 
+}
 
-//		QPointF mapBoundingRect = item->mapFromScene(this->scenePos());//item->mapFromScene(selectionBoundingRect().topLeft());
+QRectF HandleFrame::updateItemSize(QRectF frame)
+{
+	qreal ratioWidth = m_oldRect.width() / frame.width();
+	qreal ratioHeight = m_oldRect.height() / frame.height();
 
-//		QPointF diff = QPointF(mapBoundingRect.x() * -1, mapBoundingRect.y() * -1);
-//		QPointF mapItem = item->mapToParent(mapBoundingRect + diff);
-//		qDebug() << "this.pos" << this->pos()<< "diff" << diff << "mapBoundingRect" << mapBoundingRect << "mapItem" << mapItem;
-
-
-//		item->setPos(mapItem);
-
-//		QPointF mapBoundingRect = item->mapFromScene(this->scenePos());
-////		QPointF handleScreen = this->scenePos();
-
-//		qDebug() << mapBoundingRect;
-
-//		QPointF diff = QPointF(mapBoundingRect.x() * -1, mapBoundingRect.y() * -1);
-//		QPointF distance = QPointF(diff.x() * -1, diff.y() * -1);
-//		//qDebug() << "distance" << distance << "diff" << diff << "handleFrame" << this->scenePos() << "Item" << item->scenePos();
-//		//item->moveBy(distance.x(),distance.y());
-
-
-//		QPointF posHandle = this->scenePos();
-//		QPointF posItem = item->scenePos();
-//		QPointF diff = posHandle-posItem;
-
-
-		//item->setPos(posHandle + diff);
-
-		//qDebug() << "posHandle" << posHandle << "posItem" << posItem << "diff" << diff << "itemFinal" << posHandle + diff;
-
-	}
-
-
+	return QRectF(frame.x(),frame.y(), this->rect().width() / ratioWidth, this->rect().height() / ratioHeight);
 }
 
 void HandleFrame::updateItemsSelection(int x, int y)
 {
+
 	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
 	foreach(QGraphicsItem *current, selectedItems) {
 
-		ItemBase * item = dynamic_cast<ItemBase*>(current);
+		Artboard * itemArtboard = dynamic_cast<Artboard*>(current);
+		if(itemArtboard){
+			itemArtboard->setRect(updateItemSize(itemArtboard->rect()));
+			itemArtboard->setPos(updateItemsPosition(itemArtboard->pos()));
+		}
 
-		if(!item) continue;
+		WAText * itemText = dynamic_cast<WAText*>(current);
+		if(itemText){
+			itemText->setRect(updateItemSize(itemText->rect()));
+			itemText->setPos(updateItemsPosition(itemText->pos()));
+		}
 
-		// Size
-		qreal ratioWidth = m_oldRect.width() / item->rect().width();
-		qreal ratioHeight = m_oldRect.height() / item->rect().height();
-		item->setRect(item->rect().x(),item->rect().y(), this->rect().width() / ratioWidth, this->rect().height() / ratioHeight);
+		WARect * itemRect = dynamic_cast<WARect*>(current);
+		if(itemRect){
+			itemRect->setRect(updateItemSize(itemRect->rect()));
+			itemRect->setPos(updateItemsPosition(itemRect->pos()));
+			//itemRect->setRect(itemRect->rect().adjusted(x*-1,y*-1,0,0));
+		}
 
-		// Position
-//		QPointF posHandle = m_oldPos;
-//		QPointF posItem = item->pos();
-//		QPointF diff = this->pos() - posItem;
-//		qreal ratioX = (m_oldRect.x() / item->rect().x()) * -1;
-//		//item->setPos(posItem.x() / ratioX, item->y());
+		WAOval * itemOval = dynamic_cast<WAOval*>(current);
+		if(itemOval){
+			itemOval->setRect(updateItemSize(itemOval->rect()));
+			itemOval->setPos(updateItemsPosition(itemOval->pos()));
+		}
 
-
-		QPointF posHandle = m_oldPos;
-		QPointF posItem = item->pos();
-		qreal diffAX = posItem.x() - posHandle.x();
-		qreal diffAY = posItem.y() - posHandle.y();
-		qreal diffZX = m_oldRect.width() - diffAX;
-		qreal diffZY = m_oldRect.height() - diffAY;
-
-		qreal diffRatioX = qMax(diffAX / diffZX, diffZX / diffAX);
-		qreal diffRatioY = qMax(diffAY / diffZY, diffZY / diffAY);
-
-		qreal diffAXnew = posItem.x() - this->pos().x();
-		qreal diffAYnew = posItem.y() - this->pos().y();
-
-		qreal ratioX = this->pos().x() + (diffAXnew / diffRatioX);
-		qreal ratioY = this->pos().y() + (diffAYnew / diffRatioY);
-
-		item->setPos(ratioX, ratioY);
-
-		qDebug() << "*************************************";
-		qDebug() << "posHandle" << posHandle;
-		qDebug() << "posItem" << posItem;
-		qDebug() << "diffAX" << diffAX<< "diffAY" << diffAY;
-		qDebug() << "diffZX" << diffZX<< "diffZY" << diffZY;
-		qDebug() << "diffRatioX" << diffRatioX<< "diffRatioY" << diffRatioY;
-		qDebug() << "ratioX" << ratioX << "ratioY" << ratioY;
-
-		//item->moveBy(ratioX, ratioY);
-		//item->moveBy(x / m_ratio, y / m_ratio);
-
-//		qreal ratioX = m_oldRect.width() / item->rect().width();
-//		qreal ratioY = m_oldRect.height() / item->rect().height();
-
-		QPointF mapScene = item->mapFromScene(this->scenePos());
-		//		qDebug() << "Position: MapScene" << mapScene << "this.scene:" << this->scenePos() << "item.scene:" << item->scenePos();
-
-		QPointF mapItem = item->mapToParent(mapScene);
-		//		qDebug() << "Position: MapItem" << mapItem;
-
-	//	item->setPos(mapItem);
-
-		//qDebug() << "diff" << m_oldPos.x() - item->scenePos().x() << "ratioX" << ratioX << "newPoint" << posItem.x() -10 + posItem.x() / ratioX;
 
 	}
 
@@ -481,7 +474,7 @@ void HandleFrame::updateItemsSelection(int x, int y)
 void HandleFrame::sendActiveItems()
 {
 	if(m_scene->selectedItems().size() == 1){
-		ItemBase* m_itemBase = dynamic_cast<ItemBase*>(m_scene->selectedItems()[0]);
+		QGraphicsItem* m_itemBase = dynamic_cast<QGraphicsItem*>(m_scene->selectedItems()[0]);
 		if(m_itemBase){
 			emit emitActiveItem(m_itemBase);
 		}else emit emitActiveItem(0);
@@ -508,21 +501,43 @@ void HandleFrame::updateHandleFrame()
 
 	qreal tollerance = m_buffer * 6 / m_scaleFactor;
 
-	// hide middle handles if rect is to small
-	if(this->width() < tollerance){
-		m_handles[1]->setVisible(false);
-		m_handles[5]->setVisible(false);
-	}else if(this->width() > tollerance){
-		m_handles[1]->setVisible(true);
-		m_handles[5]->setVisible(true);
-	}
+	// is Textfield
+	if(m_isTextOnly){
+		m_handles[0]->setVisible(false); // TopLeft
+		m_handles[1]->setVisible(false); // Top
+		m_handles[2]->setVisible(false); // TopRight
+		m_handles[3]->setVisible(true);  // Right
+		m_handles[4]->setVisible(false); // BottomRight
+		m_handles[5]->setVisible(false); // Bottom
+		m_handles[6]->setVisible(false); // BottomLeft
+		m_handles[7]->setVisible(true);  // Left
+	}else{
+		m_handles[0]->setVisible(true); // TopLeft
+		m_handles[1]->setVisible(true); // Top
+		m_handles[2]->setVisible(true); // TopRight
+		m_handles[3]->setVisible(true);  // Right
+		m_handles[4]->setVisible(true); // BottomRight
+		m_handles[5]->setVisible(true); // Bottom
+		m_handles[6]->setVisible(true); // BottomLeft
+		m_handles[7]->setVisible(true);  // Left
 
-	if(this->height() < tollerance){
-		m_handles[3]->setVisible(false);
-		m_handles[7]->setVisible(false);
-	}else if(this->height() > tollerance){
-		m_handles[3]->setVisible(true);
-		m_handles[7]->setVisible(true);
+		// hide middle handles if rect is to small
+		if(this->width() < tollerance){
+			m_handles[1]->setVisible(false);
+			m_handles[5]->setVisible(false);
+		}else if(this->width() > tollerance){
+			m_handles[1]->setVisible(true);
+			m_handles[5]->setVisible(true);
+		}
+
+		if(this->height() < tollerance){
+			m_handles[3]->setVisible(false);
+			m_handles[7]->setVisible(false);
+		}else if(this->height() > tollerance){
+			m_handles[3]->setVisible(true);
+			m_handles[7]->setVisible(true);
+		}
+
 	}
 }
 
@@ -546,15 +561,20 @@ void HandleFrame::slotFrameToSelection()
 
 	if(m_scene->selectedItems().size() == 0){
 		this->setVisible(false);
+		this->setRotation(0);
 		emit emitActiveItem(0);
 		return;
+
+	//Multiple Selection
 	}else if(m_scene->selectedItems().size() >0){
 
+		qreal angle;
+		QRectF selectionBox = selectionBoundingRect(angle);
 
-		this->setRect(QRectF(0,0, selectionBoundingRect().width(), selectionBoundingRect().height()));
-		this->setPos(selectionBoundingRect().topLeft());
+		this->setRect(QRectF(0,0, selectionBox.width(), selectionBox.height()));
+		this->setPos(selectionBox.topLeft());
 		this->updateHandleFrame();
-
+		this->setRotation(angle);
 		this->setVisible(true);
 
 		sendActiveItems();
@@ -727,8 +747,8 @@ bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
 
 		adjustSize(  deltaW ,   deltaH);
 
-		int deltaWidth = deltaW * (-1);
-		int deltaHeight = deltaH * (-1);
+		qreal deltaWidth = deltaW * (-1);
+		qreal deltaHeight = deltaH * (-1);
 
 		qreal newX;
 		qreal newY;
@@ -800,6 +820,7 @@ bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
 		updateItemsSelection(deltaW, deltaH);
 
 		this->update();
+
 	}
 
 	return true;// true => do not send event to watched - we are finished with this event
@@ -852,6 +873,9 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *opti
 	}
 
 	painter->setRenderHint(QPainter::Antialiasing, true);
+
+	painter->setBrush(Qt::NoBrush);
+	painter->setPen(Qt::NoPen);
 
 }
 

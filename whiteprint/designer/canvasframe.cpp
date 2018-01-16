@@ -228,7 +228,7 @@ QGraphicsScene *View::scene() const
 	return m_scene;
 }
 
-void View::addItem(ItemBase *item, qreal x, qreal y, ItemBase *parent)
+void View::addItem(QGraphicsItem *item, qreal x, qreal y, QGraphicsItem *parent)
 {
 
 	Artboard * m_artboard = dynamic_cast<Artboard*>(item);

@@ -3,6 +3,7 @@
 
 #include <QGraphicsItem>
 #include <QGraphicsTextItem>
+#include <QStyleOptionGraphicsItem>
 //#include <QGraphicsDropShadowEffect>
 #include <QPen>
 #include <QPainter>
@@ -23,7 +24,7 @@ public:
 };
 
 
-class Artboard : public ItemBase
+class Artboard : public QGraphicsRectItem, public ItemBase
 {
 public:
     Artboard(QString name, QGraphicsItem *parent = 0);
@@ -31,9 +32,9 @@ public:
     Artboard(QString name, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
 
     // Properties
-    QGraphicsItem *canvas() const;
-    void setRect(QRectF rect) override;
-    QRectF rect() const override;
+	QGraphicsRectItem *canvas() const;
+	void setRect(QRectF rect);
+	QRectF rect() const ;
     QRectF boundingRect() const override;
 
 private:
@@ -43,7 +44,7 @@ private:
     QRectF m_rect;
     QRectF m_boundingRect;
     ArtboardLabel * m_label;
-    ItemBase * m_artboard;
+	QGraphicsRectItem * m_artboard;
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
 

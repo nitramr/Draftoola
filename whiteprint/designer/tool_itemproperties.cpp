@@ -1,4 +1,4 @@
-#include "itemproperties.h"
+#include "tool_itemproperties.h"
 #include "ui_itemproperties.h"
 
 #include "whiteprint/item/waoval.h"
@@ -26,15 +26,17 @@ ItemProperties::~ItemProperties()
  *
  ***************************************************/
 
-void ItemProperties::setActiveItem(ItemBase *item)
+void ItemProperties::setActiveItem(QGraphicsItem *item)
 {
 
     resetItems();
 
     m_artboard = dynamic_cast<Artboard*>(item);
-    m_item = item;
+	m_itemRect = dynamic_cast<WARect*>(item);
+	m_itemOval = dynamic_cast<WAOval*>(item);
+	m_itemText = dynamic_cast<WAText*>(item);
 
-    loadProperties();
+	loadProperties();
 }
 
 
@@ -54,15 +56,31 @@ void ItemProperties::loadProperties()
         ui->spinboxHeight->setValue(m_artboard->rect().height());
 
         this->setEnabled(true);
-    }else if(m_item){
+	}else if(m_itemRect){
 
-        ui->spinboxXPos->setValue(m_item->pos().x());
-        ui->spinboxYPos->setValue(m_item->pos().y());
-        ui->spinboxWidth->setValue(m_item->rect().width());
-        ui->spinboxHeight->setValue(m_item->rect().height());
+		ui->spinboxXPos->setValue(m_itemRect->pos().x());
+		ui->spinboxYPos->setValue(m_itemRect->pos().y());
+		ui->spinboxWidth->setValue(m_itemRect->rect().width());
+		ui->spinboxHeight->setValue(m_itemRect->rect().height());
 
         this->setEnabled(true);
-    }else resetItems();
+	}else if(m_itemOval){
+
+		ui->spinboxXPos->setValue(m_itemOval->pos().x());
+		ui->spinboxYPos->setValue(m_itemOval->pos().y());
+		ui->spinboxWidth->setValue(m_itemOval->rect().width());
+		ui->spinboxHeight->setValue(m_itemOval->rect().height());
+
+		this->setEnabled(true);
+	}else if(m_itemText){
+
+		ui->spinboxXPos->setValue(m_itemText->pos().x());
+		ui->spinboxYPos->setValue(m_itemText->pos().y());
+		ui->spinboxWidth->setValue(m_itemText->rect().width());
+		ui->spinboxHeight->setValue(m_itemText->rect().height());
+
+		this->setEnabled(true);
+	}else resetItems();
 
 }
 
@@ -72,7 +90,8 @@ void ItemProperties::resetItems()
 
     // items
     m_artboard = 0;
-    m_item = 0;
+	m_itemRect = 0;
+	m_itemOval = 0;
 
     // Properties
     ui->spinboxYPos->setValue(0);

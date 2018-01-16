@@ -1,4 +1,4 @@
-#include "outliner.h"
+#include "tool_outliner.h"
 #include "ui_outliner.h"
 
 #include <QDebug>

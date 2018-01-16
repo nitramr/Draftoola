@@ -27,11 +27,12 @@ SOURCES += whiteprint/main.cpp\
     whiteprint/item/fills.cpp \
     whiteprint/item/gradient.cpp \
     whiteprint/item/waoval.cpp \
-    whiteprint/designer/outliner.cpp \
-    whiteprint/designer/itemproperties.cpp \
     whiteprint/designer/waview.cpp \
     whiteprint/designer/canvasframe.cpp \
-    whiteprint/item/watext.cpp
+    whiteprint/item/watext.cpp \
+    whiteprint/designer/tool_itemproperties.cpp \
+    whiteprint/designer/tool_outliner.cpp \
+    whiteprint/item/wagroup.cpp
 
 HEADERS  += whiteprint/mainwindow.h \
     whiteprint/designer/canvas.h \
@@ -45,11 +46,12 @@ HEADERS  += whiteprint/mainwindow.h \
     whiteprint/item/fills.h \
     whiteprint/item/gradient.h \
     whiteprint/item/waoval.h \
-    whiteprint/designer/outliner.h \
-    whiteprint/designer/itemproperties.h \
     whiteprint/designer/waview.h \
     whiteprint/designer/canvasframe.h \
-    whiteprint/item/watext.h
+    whiteprint/item/watext.h \
+    whiteprint/designer/tool_outliner.h \
+    whiteprint/designer/tool_itemproperties.h \
+    whiteprint/item/wagroup.h
 
 FORMS    += whiteprint/mainwindow.ui \
     whiteprint/designer/outliner.ui \

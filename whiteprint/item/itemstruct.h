@@ -18,4 +18,10 @@ enum class ItemType {
 	Instance = 7
 };
 
+enum class StrokePosition {
+	Center = 0,
+	Inner = 1,
+	Outer = 2
+};
+
 #endif // ITEMSTRUCT_H

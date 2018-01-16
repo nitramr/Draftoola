@@ -18,8 +18,14 @@
 #include <QPen>
 #include <QPointF>
 #include <QGraphicsDropShadowEffect>
+#include <QStyleOptionGraphicsItem>
 
 #include "whiteprint/item/itembase.h"
+#include "whiteprint/item/warect.h"
+#include "whiteprint/item/waoval.h"
+#include "whiteprint/item/watext.h"
+#include "whiteprint/item/wagroup.h"
+#include "whiteprint/item/artboard.h"
 
 
 class WAScene;
@@ -94,7 +100,7 @@ public:
     // Properties
 	virtual QRectF boundingRect() const;
 	virtual QRectF adjustedRect() const;
-	QRectF selectionBoundingRect() const;
+	QRectF selectionBoundingRect(qreal &angle);
     virtual void moveBy(qreal dx, qreal dy);
 
 	void setRect(QRectF rect);
@@ -141,10 +147,13 @@ private:
     bool        m_isZoom;
 	QRectF		m_rect;
 	qreal		m_ratio;
+	bool		m_isTextOnly;
 
 	void adjustSize(int x, int y);
-	void updateItemsPosition();
+	QPointF updateItemsPosition(QPointF pos);
+	QRectF updateItemSize(QRectF frame);
 	void updateItemsSelection(int x, int y);
+
 	void sendActiveItems();
 
 	// Events
@@ -160,7 +169,7 @@ public slots:
 	void slotFrameToSelection();
 
 signals:
-	void emitActiveItem(ItemBase * item);
+	void emitActiveItem(QGraphicsItem * item);
 
 };
 

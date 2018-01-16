@@ -4,7 +4,6 @@
 
 #include "whiteprint/item/artboard.h"
 #include "whiteprint/item/warect.h"
-
 #include "whiteprint/item/watext.h"
 
 Canvas::Canvas(QRectF rect, QWidget *parent) : QWidget(parent)
@@ -44,7 +43,7 @@ WAView *Canvas::view() const
 }
 
 
-void Canvas::addItem(ItemBase *item, qreal x, qreal y, ItemBase *parent)
+void Canvas::addItem(QGraphicsItem *item, qreal x, qreal y, QGraphicsItem *parent)
 {
 
 	Artboard * m_artboard = dynamic_cast<Artboard*>(item);
@@ -87,7 +86,7 @@ void Canvas::addItem(ItemBase *item, qreal x, qreal y, ItemBase *parent)
 
 }
 
-void Canvas::addItem(QGraphicsTextItem *item, qreal x, qreal y, ItemBase *parent)
+void Canvas::addItem(QGraphicsTextItem *item, qreal x, qreal y, QGraphicsItem *parent)
 {
 	qDebug() << "Canvas: Item is no Artboard";
 

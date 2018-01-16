@@ -2,12 +2,13 @@
 #define WAOVAL_H
 
 #include <QGraphicsItem>
+#include <QGraphicsEllipseItem>
 #include <QDebug>
 
 
-#include "whiteprint/item/itembase.h"
+#include "itembase.h"
 
-class WAOval : public ItemBase
+class WAOval : public QGraphicsEllipseItem, public ItemBase
 {
 public:
 	WAOval(qreal x, qreal y, qreal width, qreal height, QGraphicsItem * parent = 0);
@@ -17,6 +18,8 @@ public:
 
 	// Properties
 	QPainterPath shape() const override;
+	virtual QRectF strokeRect() const;
+	virtual QRectF adjustedRect() const;
 
 	// Events
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);

@@ -17,9 +17,10 @@ public:
 	HandleFrame *handleFrame() const;
 
 protected:
-	void wheelEvent(QWheelEvent *e);
-	void keyPressEvent(QKeyEvent *e);
-	void keyReleaseEvent(QKeyEvent * e);
+	void wheelEvent(QWheelEvent *event);
+	void keyPressEvent(QKeyEvent *event);
+	void keyReleaseEvent(QKeyEvent * event);
+	void mouseMoveEvent(QMouseEvent *event);
 
 private:
 	WAScene		*m_scene;

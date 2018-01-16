@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QDockWidget>
 
-#include "designer/itemproperties.h"
-#include "designer/outliner.h"
+#include "designer/tool_itemproperties.h"
+#include "designer/tool_outliner.h"
 #include "designer/canvas.h"
 //#include "designer/canvasframe.h"
 #include "item/itembase.h"
@@ -37,7 +37,7 @@ private:
 
 
 public slots:
-    void setActiveItem(ItemBase *item);
+	void setActiveItem(QGraphicsItem *item);
 
 };
 

@@ -88,7 +88,7 @@ public:
 
 	QGraphicsView *view() const;
 	QGraphicsScene * scene() const;
-	void addItem(ItemBase *item, qreal x = 0, qreal y = 0, ItemBase *parent = 0);
+	void addItem(QGraphicsItem *item, qreal x = 0, qreal y = 0, QGraphicsItem *parent = 0);
 
 
 public slots:
