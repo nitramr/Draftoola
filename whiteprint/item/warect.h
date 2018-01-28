@@ -18,10 +18,11 @@ public:
 
 	// Properties
 	void setRadius(qreal radius);
+	void setRadius(qreal topleft, qreal topright, qreal bottomright, qreal bottomleft);
 	qreal radius() const;
 	QPainterPath shape() const override;
-	virtual QRectF strokeRect() const;
-	virtual QRectF adjustedRect() const;
+	virtual QPainterPath shapeStroke(Stroke stroke) const;
+	virtual QRectF boundingRect() const;
 	QPointF anchorTopLeft() const;
 	QPointF anchorTop() const;
 	QPointF anchorTopRight() const;
@@ -36,7 +37,10 @@ public:
 
 private:
 
-	qreal m_radius;
+	qreal m_radiusTL;
+	qreal m_radiusTR;
+	qreal m_radiusBR;
+	qreal m_radiusBL;
 
 };
 

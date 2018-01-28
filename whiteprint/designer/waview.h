@@ -21,12 +21,17 @@ protected:
 	void keyPressEvent(QKeyEvent *event);
 	void keyReleaseEvent(QKeyEvent * event);
 	void mouseMoveEvent(QMouseEvent *event);
+	void mousePressEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
 
 private:
 	WAScene		*m_scene;
 	HandleFrame *m_handleFrame;
 	int m_handleBuffer;
 	qreal m_grid;
+
+	int counter;
+	WAGroup * group;
 
 };
 

@@ -63,10 +63,10 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : QGraphics
 	/*
 	 * Slow down zoom effect
 	 */
-//	m_shadow = new QGraphicsDropShadowEffect();
-//	m_shadow->setOffset(0,0);
-//	m_shadow->setColor(QColor(0,0,0));
-//	m_shadow->setBlurRadius(m_buffer);
+	m_shadow = new QGraphicsDropShadowEffect();
+	m_shadow->setOffset(0,0);
+	m_shadow->setColor(QColor(0,0,0));
+	m_shadow->setBlurRadius(m_buffer);
 
 	m_artboard = new QGraphicsRectItem(m_rect);
 //	m_artboard->setGraphicsEffect(m_shadow);
@@ -87,13 +87,13 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : QGraphics
 //	this->setFlag(QGraphicsItem::ItemIsMovable, true);
 
 	this->setFlags(/*QGraphicsItem::ItemIsSelectable |*/
-				   QGraphicsItem::ItemIsPanel |
+				   //QGraphicsItem::ItemIsPanel |
 				   QGraphicsItem::ItemSendsScenePositionChanges |
 				   QGraphicsItem::ItemSendsGeometryChanges
 				);
     this->setAcceptHoverEvents(true);
     this->setName(name);
-	this->setStroke(stroke);
+	this->addStroke(stroke);
 }
 
 /***************************************************

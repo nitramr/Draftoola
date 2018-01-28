@@ -30,9 +30,11 @@ SOURCES += whiteprint/main.cpp\
     whiteprint/designer/waview.cpp \
     whiteprint/designer/canvasframe.cpp \
     whiteprint/item/watext.cpp \
-    whiteprint/designer/tool_itemproperties.cpp \
-    whiteprint/designer/tool_outliner.cpp \
-    whiteprint/item/wagroup.cpp
+    whiteprint/workspace/tool_itemproperties.cpp \
+    whiteprint/workspace/tool_outliner.cpp \
+    whiteprint/item/wagroup.cpp \
+    whiteprint/item/itemeffects.cpp \
+    whiteprint/item/shadow.cpp
 
 HEADERS  += whiteprint/mainwindow.h \
     whiteprint/designer/canvas.h \
@@ -49,10 +51,12 @@ HEADERS  += whiteprint/mainwindow.h \
     whiteprint/designer/waview.h \
     whiteprint/designer/canvasframe.h \
     whiteprint/item/watext.h \
-    whiteprint/designer/tool_outliner.h \
-    whiteprint/designer/tool_itemproperties.h \
-    whiteprint/item/wagroup.h
+    whiteprint/workspace/tool_outliner.h \
+    whiteprint/workspace/tool_itemproperties.h \
+    whiteprint/item/wagroup.h \
+    whiteprint/item/itemeffects.h \
+    whiteprint/item/shadow.h
 
 FORMS    += whiteprint/mainwindow.ui \
-    whiteprint/designer/outliner.ui \
-    whiteprint/designer/itemproperties.ui
+    whiteprint/workspace/tool_itemproperties.ui \
+    whiteprint/workspace/tool_outliner.ui

@@ -7,17 +7,17 @@
 #include <QDebug>
 
 ItemProperties::ItemProperties(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::ItemProperties)
+	QWidget(parent),
+	ui(new Ui::ItemProperties)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    resetItems();
+	resetItems();
 }
 
 ItemProperties::~ItemProperties()
 {
-    delete ui;
+	delete ui;
 }
 
 /***************************************************
@@ -29,9 +29,9 @@ ItemProperties::~ItemProperties()
 void ItemProperties::setActiveItem(QGraphicsItem *item)
 {
 
-    resetItems();
+	resetItems();
 
-    m_artboard = dynamic_cast<Artboard*>(item);
+	m_artboard = dynamic_cast<Artboard*>(item);
 	m_itemRect = dynamic_cast<WARect*>(item);
 	m_itemOval = dynamic_cast<WAOval*>(item);
 	m_itemText = dynamic_cast<WAText*>(item);
@@ -48,14 +48,14 @@ void ItemProperties::setActiveItem(QGraphicsItem *item)
 
 void ItemProperties::loadProperties()
 {
-    if(m_artboard){
+	if(m_artboard){
 
-        ui->spinboxXPos->setValue(m_artboard->pos().x());
-        ui->spinboxYPos->setValue(m_artboard->pos().y());
-        ui->spinboxWidth->setValue(m_artboard->rect().width());
-        ui->spinboxHeight->setValue(m_artboard->rect().height());
+		ui->spinboxXPos->setValue(m_artboard->pos().x());
+		ui->spinboxYPos->setValue(m_artboard->pos().y());
+		ui->spinboxWidth->setValue(m_artboard->rect().width());
+		ui->spinboxHeight->setValue(m_artboard->rect().height());
 
-        this->setEnabled(true);
+		this->setEnabled(true);
 	}else if(m_itemRect){
 
 		ui->spinboxXPos->setValue(m_itemRect->pos().x());
@@ -63,7 +63,7 @@ void ItemProperties::loadProperties()
 		ui->spinboxWidth->setValue(m_itemRect->rect().width());
 		ui->spinboxHeight->setValue(m_itemRect->rect().height());
 
-        this->setEnabled(true);
+		this->setEnabled(true);
 	}else if(m_itemOval){
 
 		ui->spinboxXPos->setValue(m_itemOval->pos().x());
@@ -86,17 +86,18 @@ void ItemProperties::loadProperties()
 
 void ItemProperties::resetItems()
 {
-    this->setEnabled(false);
+	this->setEnabled(false);
 
-    // items
-    m_artboard = 0;
+	// items
+	m_artboard = 0;
 	m_itemRect = 0;
 	m_itemOval = 0;
+	m_itemText = 0;
 
-    // Properties
-    ui->spinboxYPos->setValue(0);
-    ui->spinboxXPos->setValue(0);
-    ui->spinboxWidth->setValue(0);
-    ui->spinboxHeight->setValue(0);
+	// Properties
+	ui->spinboxYPos->setValue(0);
+	ui->spinboxXPos->setValue(0);
+	ui->spinboxWidth->setValue(0);
+	ui->spinboxHeight->setValue(0);
 
 }

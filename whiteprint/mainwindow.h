@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QDockWidget>
 
-#include "designer/tool_itemproperties.h"
-#include "designer/tool_outliner.h"
+#include "workspace/tool_itemproperties.h"
+#include "workspace/tool_outliner.h"
 #include "designer/canvas.h"
 //#include "designer/canvasframe.h"
 #include "item/itembase.h"

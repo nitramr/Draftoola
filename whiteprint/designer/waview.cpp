@@ -1,5 +1,6 @@
 #include "waview.h"
 #include <QDebug>
+#include <QTransform>
 
 #ifndef QT_NO_OPENGL
 #include <QtOpenGL>
@@ -17,12 +18,13 @@ WAView::WAView(WAScene * scene, QWidget * parent) : QGraphicsView(scene, parent)
 #endif
 
 //	this->setRenderHint(QPainter::Antialiasing, true);
+//	this->setRenderHints( QPainter::SmoothPixmapTransform );
 	this->setDragMode(QGraphicsView::RubberBandDrag);
 	this->setOptimizationFlags(QGraphicsView::DontSavePainterState);
 	this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 	this->setBackgroundBrush(QColor(240,240,240));
-	this->setRubberBandSelectionMode(Qt::ContainsItemShape);
+//	this->setRubberBandSelectionMode(Qt::ContainsItemShape);
 
 
 	m_scene = scene;
@@ -30,9 +32,11 @@ WAView::WAView(WAScene * scene, QWidget * parent) : QGraphicsView(scene, parent)
 	m_grid = 1;
 
 	m_handleFrame = new HandleFrame(m_scene, m_handleBuffer, m_grid);
-	m_handleFrame->setZValue(99999999);
 	m_scene->addItem(m_handleFrame);
 	m_handleFrame->setup();
+
+	counter = 0;
+	group = new WAGroup();
 
 }
 
@@ -142,6 +146,7 @@ void WAView::keyPressEvent(QKeyEvent *event)
 		this->setDragMode(QGraphicsView::ScrollHandDrag);
 
 		break;
+
 	}
 
 
@@ -159,6 +164,101 @@ void WAView::keyReleaseEvent(QKeyEvent *event)
 	case Qt::Key_Shift :
 		m_handleFrame->setShiftModifier(false);
 		break;
+
+	case Qt::Key_V:{
+
+		m_scene->clearSelection();
+		qreal exFactor = 4;
+		QRectF targetRect = QRectF(0,0,375*exFactor,667*exFactor);
+		QImage image(QSize(targetRect.width(), targetRect.height()), QImage::Format_ARGB32_Premultiplied);
+		image.fill(Qt::transparent);
+
+		QPainter painter(&image);
+		//painter.setRenderHint(QPainter::HighQualityAntialiasing);
+		m_scene->render(&painter, targetRect, QRectF(0,0,375,667));
+		image.save("file_name.png");
+
+
+//		QList<QGraphicsItem *> selectedItems = m_scene->items();
+//		foreach(QGraphicsItem *current, selectedItems) {
+
+//			QGraphicsItemGroup * itemArtboard = dynamic_cast<QGraphicsItemGroup*>(current);
+
+//			qDebug() << "ItemGroup" << itemArtboard;
+//		}
+
+//		if(counter == 0){
+//			WARect * rectG = new WARect(50,50);
+//			rectG->setFills(Fills("rect", QColor(Qt::blue)));
+//			rectG->setPos(0,0);
+//			rectG->setRotation(30);
+//			m_scene->addItem(rectG);
+
+//			Stroke stroke("TestEllipseStroke", QBrush(QColor(128,208,23)),1);
+
+//			WAOval * ovalG = new WAOval(50,50);
+//			ovalG->setFills(Fills("oval", QColor(Qt::green)));
+//			ovalG->setStroke(stroke);
+//			ovalG->setStrokePosition(StrokePosition::Inner);
+//			rectG->setPos(70,10);
+//			m_scene->addItem(ovalG);
+
+
+//			group->addToGroup(rectG);
+//			group->addToGroup(ovalG);
+//			group->setPos(10,10);
+//			m_scene->addItem(group);
+
+//			qDebug() << "Count1";
+//		}
+//		if(counter == 1){
+//			group->setRotation(45);
+
+//			qDebug() << "Count2";
+//		}
+//		if(counter == 2){
+//			m_scene->destroyItemGroup(group);
+//			qDebug() << "Count3";
+//		}
+
+//		if(counter == 3){
+//			WARect * rectG = new WARect(50,50);
+//			rectG->setFills(Fills("rect", QColor(Qt::blue)));
+//			rectG->setPos(0,0);
+//			rectG->setRotation(30);
+//			m_scene->addItem(rectG);
+
+//			Stroke stroke("TestEllipseStroke", QBrush(QColor(128,208,23)),1);
+
+//			WAOval * ovalG = new WAOval(50,50);
+//			ovalG->setFills(Fills("oval", QColor(Qt::green)));
+//			ovalG->setStroke(stroke);
+//			ovalG->setStrokePosition(StrokePosition::Inner);
+//			rectG->setPos(70,10);
+//			m_scene->addItem(ovalG);
+
+//			group = new WAGroup();
+//			group->addToGroup(rectG);
+//			group->addToGroup(ovalG);
+//			group->setPos(50,50);
+//			m_scene->addItem(group);
+
+//			qDebug() << "Count4";
+//		}
+
+//		if(counter == 4){
+
+//			QTransform transform = group->transform();
+//			transform.scale(2, 1);
+
+//			group->setTransform(transform);
+//			qDebug() << "Count5";
+
+//		}
+
+//		counter++;
+		break;
+	}
 	}
 
 
@@ -168,6 +268,22 @@ void WAView::keyReleaseEvent(QKeyEvent *event)
 void WAView::mouseMoveEvent(QMouseEvent *event)
 {
 	QGraphicsView::mouseMoveEvent(event);
+
+}
+
+void WAView::mousePressEvent(QMouseEvent *event)
+{
+	QGraphicsView::mousePressEvent(event);
+
+//	if(!m_handleFrame->isHovered()){
+//		m_handleFrame->unGroup();
+//	}
+}
+
+void WAView::mouseReleaseEvent(QMouseEvent *event)
+{
+	QGraphicsView::mouseReleaseEvent(event);
+	//m_handleFrame->group();
 
 }
 

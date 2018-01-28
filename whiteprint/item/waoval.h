@@ -18,8 +18,8 @@ public:
 
 	// Properties
 	QPainterPath shape() const override;
-	virtual QRectF strokeRect() const;
-	virtual QRectF adjustedRect() const;
+	virtual QPainterPath shapeStroke(Stroke stroke) const;
+//	virtual QRectF adjustedRect(StrokePosition strokePosition) const;
 
 	// Events
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);

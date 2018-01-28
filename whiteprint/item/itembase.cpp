@@ -1,14 +1,33 @@
 #include "itembase.h"
 #include <QDebug>
+#include <QGraphicsScene>
+#include <QGraphicsDropShadowEffect>
+#include <QPainter>
+#include <QLabel>
 
+QT_BEGIN_NAMESPACE
+extern Q_WIDGETS_EXPORT void qt_blurImage( QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
+QT_END_NAMESPACE
 
-ItemBase::ItemBase() :
-  m_fills(Fills("initFills", QColor(255,255,255,255))),
-  m_stroke(Stroke("initStroke", QBrush(QColor(0,0,0,255)),1.0))
+const qreal radiusScale = qreal(2.5);
+
+ItemBase::ItemBase()
 {
+
+	Fills fills("initFills", QColor(255,255,255,255));
+	Stroke stroke("initStroke", QBrush(QColor(0,0,0,255)),1.0);
+
     m_itemType = ItemType::Rect;
     m_name = "";
 	m_strokePosition = StrokePosition::Inner;
+	m_fillsList = QList<Fills>();
+//	m_fillsList.append(fills);
+	m_strokeList = QList<Stroke>();
+//	m_strokeList.append(stroke);
+	m_shadowList = QList<Shadow>();
+
+	m_effects = new ItemEffects();
+	m_effects->setShadowList(m_shadowList);
 }
 
 /***************************************************
@@ -37,35 +56,66 @@ ItemType ItemBase::itemType() const
     return m_itemType;
 }
 
-void ItemBase::setStroke(Stroke stroke)
+void ItemBase::addStroke(Stroke stroke)
 {
-	m_stroke = stroke;
+	m_strokeList.append(stroke);
 }
 
-Stroke ItemBase::stroke() const
+Stroke ItemBase::stroke(int id) const
 {
-	return m_stroke;
+	id = qMin(m_strokeList.size()-1, qMax(0, id));
+	return m_strokeList.at(id);
 }
 
-void ItemBase::setStrokePosition(StrokePosition strokePosition)
+QList<Stroke> ItemBase::strokeList() const
 {
-	m_strokePosition = strokePosition;
+	return m_strokeList;
 }
 
-StrokePosition ItemBase::strokePosition() const
+void ItemBase::addFills(Fills fills)
 {
-	return m_strokePosition;
+	m_fillsList.append(fills);
+	m_effects->setFillsList(m_fillsList);
 }
 
-void ItemBase::setFills(Fills fills)
+Fills ItemBase::fills(int id) const
 {
-	m_fills = fills;
+	id = qMin(m_fillsList.size()-1, qMax(0, id));
+	return m_fillsList.at(id);
 }
 
-Fills ItemBase::fills() const
+QList<Fills> ItemBase::fillsList() const
 {
-	return m_fills;
+	return m_fillsList;
 }
+
+void ItemBase::addShadow(Shadow shadow)
+{
+	m_shadowList.append(shadow);
+	m_effects->setShadowList(m_shadowList);
+}
+
+Shadow ItemBase::shadow(int id) const
+{
+	id = qMin(m_shadowList.size()-1, qMax(0, id));
+	return m_shadowList.at(id);
+}
+
+QList<Shadow> ItemBase::shadowList() const
+{
+	return m_shadowList;
+}
+
+void ItemBase::setShape(QPainterPath shape)
+{
+	m_effects->setShape(shape);
+}
+
+ItemEffects *ItemBase::itemEffects() const
+{
+	return m_effects;
+}
+
 
 /***************************************************
  *

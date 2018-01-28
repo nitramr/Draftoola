@@ -11,6 +11,10 @@ class WAScene : public QGraphicsScene
 public:
     WAScene(QObject *parent = 0);
 
+	void render(QPainter *painter,
+					const QRectF &target = QRectF(), const QRectF &source = QRectF(),
+						Qt::AspectRatioMode aspectRatioMode = Qt::KeepAspectRatio);
+
 private:
 
 

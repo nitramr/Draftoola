@@ -107,12 +107,12 @@ void ItemHandle::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 void ItemHandle::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 
-	painter->setRenderHint(QPainter::Antialiasing, false);
+	painter->save();
+	painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 	painter->setPen(m_Pen);
 	painter->setBrush(QBrush(Qt::white));
 	painter->drawRect(this->rect());
-
-	painter->setRenderHint(QPainter::Antialiasing, true);
+	painter->restore();
 
 }
 
@@ -133,7 +133,6 @@ HandleFrame::HandleFrame(WAScene *scene, int buffer, qreal grid): QObject(), QGr
 	m_shiftModifier(false),
 	m_pen(QPen()),
 	m_scaleFactor(1.0),
-	m_isZoom(false),
 	m_rect(QRectF(0,0,10,10)),
 	m_ratio(1.0),
 	m_isTextOnly(false)
@@ -148,10 +147,13 @@ HandleFrame::HandleFrame(WAScene *scene, int buffer, qreal grid): QObject(), QGr
 	m_handles[6] = new ItemHandle(this,ItemHandle::BottomLeft, m_buffer);
 	m_handles[7] = new ItemHandle(this,ItemHandle::Left, m_buffer);
 
+	m_isHovered = false;
+
 	this->setPen(QPen(QColor(0, 128, 255)));
 	this->setVisible(false);
 	this->setAcceptHoverEvents(true);
 	this->setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren);
+	this->setZValue(99999999);
 
 	connect(m_scene, SIGNAL(selectionChanged()), this,SLOT(slotFrameToSelection()));
 
@@ -178,7 +180,13 @@ QRectF HandleFrame::adjustedRect() const
 
 QRectF HandleFrame::selectionBoundingRect(qreal &angle)
 {
+
+	qDebug() << "Enter";
+
+	//	deselect();
+
 	QRectF selectionBoundingRect;
+
 	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
 	foreach(QGraphicsItem *current, selectedItems) {
 
@@ -190,30 +198,26 @@ QRectF HandleFrame::selectionBoundingRect(qreal &angle)
 
 		if(artboard){
 			selectionBoundingRect = QRectF(artboard->scenePos().x(), artboard->scenePos().y(), artboard->rect().width(), artboard->rect().height());
-			angle = artboard->rotation();
 			m_isTextOnly = false;
 		}
 		if(watext){
 			selectionBoundingRect = selectionBoundingRect.united(QRectF(watext->scenePos().x(), watext->scenePos().y(), watext->rect().width(), watext->rect().height()));
-			angle = watext->rotation();
 			m_isTextOnly = true;
 		}
 		if(warect){
 			selectionBoundingRect = selectionBoundingRect.united(QRectF(warect->scenePos().x(), warect->scenePos().y(), warect->rect().width(), warect->rect().height()));
-			angle = warect->rotation();
 			m_isTextOnly = false;
 		}
 		if(waoval){
 			selectionBoundingRect = selectionBoundingRect.united(QRectF(waoval->scenePos().x(), waoval->scenePos().y(), waoval->rect().width(), waoval->rect().height()));
-			angle = waoval->rotation();
 			m_isTextOnly = false;
 		}
 		if(wagroup){
 			selectionBoundingRect = selectionBoundingRect.united(QRectF(wagroup->scenePos().x(), wagroup->scenePos().y(), wagroup->rect().width(), wagroup->rect().height()));
-			angle = wagroup->rotation();
 			m_isTextOnly = false;
-			qDebug() << wagroup->scenePos() << "BoundingBox" << wagroup->boundingRect();
 		}
+
+		angle = current->rotation();
 
 	}
 
@@ -225,21 +229,25 @@ QRectF HandleFrame::selectionBoundingRect(qreal &angle)
 void HandleFrame::moveBy(qreal dx, qreal dy)
 {
 
+//	if(!m_selectionGroup) return;
+
 	dx = (static_cast<int>(dx) / m_gridSpace) * m_gridSpace;
 	dy = (static_cast<int>(dy) / m_gridSpace) * m_gridSpace;
 
 	QGraphicsItem::moveBy(dx,dy);
 
-	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
-	foreach(QGraphicsItem *current, selectedItems) {
+		QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
+		foreach(QGraphicsItem *current, selectedItems) {
 
-		QGraphicsItem * item = current;//dynamic_cast<ItemBase*>(current);
+			QGraphicsItem * item = current;//dynamic_cast<ItemBase*>(current);
 
-		if(!item) continue;
+			if(!item) continue;
 
-		item->moveBy(dx,dy);
+			item->moveBy(dx,dy);
 
-	}
+		}
+
+//	m_selectionGroup->moveBy(dx,dy);
 
 	sendActiveItems();
 
@@ -357,6 +365,11 @@ void HandleFrame::setShiftModifier(bool modifier)
 	m_shiftModifier = modifier;
 }
 
+bool HandleFrame::isHovered()
+{
+	return m_isHovered;
+}
+
 /***************************************************
  *
  * Members
@@ -389,9 +402,9 @@ void HandleFrame::adjustSize(int x, int y)
 	}
 
 	this->setRect(this->rect().x(),
-					  this->rect().y(),
-					  m_width,
-					  m_height
+				  this->rect().y(),
+				  m_width,
+				  m_height
 				  );
 }
 
@@ -432,10 +445,13 @@ QRectF HandleFrame::updateItemSize(QRectF frame)
 	qreal ratioHeight = m_oldRect.height() / frame.height();
 
 	return QRectF(frame.x(),frame.y(), this->rect().width() / ratioWidth, this->rect().height() / ratioHeight);
+//	newRect.translate(rect().topLeft() - newRect.topLeft());
+//	return newRect;
 }
 
 void HandleFrame::updateItemsSelection(int x, int y)
 {
+
 
 	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
 	foreach(QGraphicsItem *current, selectedItems) {
@@ -470,6 +486,14 @@ void HandleFrame::updateItemsSelection(int x, int y)
 
 	sendActiveItems();
 }
+
+void HandleFrame::reset()
+{
+	this->setVisible(false);
+	this->setRotation(0);
+	emit emitActiveItem(0);
+}
+
 
 void HandleFrame::sendActiveItems()
 {
@@ -555,18 +579,50 @@ void HandleFrame::setup()
 
 }
 
+void HandleFrame::group()
+{
+	qDebug() << "HandleFrame::Group";
+
+	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
+
+	if(selectedItems.size() >0){
+		m_selectionGroup = m_scene->createItemGroup(selectedItems);//new QGraphicsItemGroup();
+		qDebug() << "Group" << m_selectionGroup;
+		this->setVisible(true);
+	}
+}
+
+void HandleFrame::unGroup()
+{
+	qDebug() << "HandleFrame::unGroup";
+	if(m_selectionGroup){
+		qDebug() << "SelectionGroup is valid";
+		if(m_scene->items().contains(m_selectionGroup)){
+			m_scene->destroyItemGroup(m_selectionGroup);
+			reset();
+			qDebug() << "UnGroup";
+		}
+
+
+	}
+
+
+}
+
 
 void HandleFrame::slotFrameToSelection()
 {
 
 	if(m_scene->selectedItems().size() == 0){
-		this->setVisible(false);
-		this->setRotation(0);
-		emit emitActiveItem(0);
+
+		reset();
+
 		return;
 
-	//Multiple Selection
+		//Multiple Selection
 	}else if(m_scene->selectedItems().size() >0){
+
+		qDebug() << "Selected Items" << m_scene->selectedItems().size();
 
 		qreal angle;
 		QRectF selectionBox = selectionBoundingRect(angle);
@@ -832,6 +888,20 @@ void HandleFrame::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 	event->setAccepted(true);
 }
 
+void HandleFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+	Q_UNUSED(event);
+	m_isHovered = true;
+	qDebug() << "HandleFrame::HoverEnter";
+}
+
+void HandleFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+	Q_UNUSED(event);
+	m_isHovered = false;
+	qDebug() << "HandleFrame::HoverLeave";
+}
+
 
 void HandleFrame::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
@@ -846,11 +916,6 @@ void HandleFrame::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 
 	QPointF newPos = event->pos() ;
 	QPointF m_loc = (newPos - m_dragStart);
-//	QPointF origin(this->pos() + m_loc);
-//	this->moveBy( ( static_cast<int>(origin.x()) / m_gridSpace) * m_gridSpace, (static_cast<int>(origin.y()) / m_gridSpace) * m_gridSpace);
-
-//	setItemsPosition();
-
 	this->moveBy(m_loc.x(), m_loc.y());
 
 }
@@ -859,10 +924,14 @@ void HandleFrame::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
 
+	painter->save();
+	painter->setBrush(Qt::NoBrush);
+	painter->setPen(Qt::NoPen);
+
 	QPen pen = this->pen();
 	pen.setCosmetic(true);
 
-	painter->setRenderHint(QPainter::Antialiasing, false);
+	painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 	painter->setPen(pen);
 
 	const qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
@@ -872,10 +941,7 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *opti
 		painter->drawRect(adjustedRect());
 	}
 
-	painter->setRenderHint(QPainter::Antialiasing, true);
-
-	painter->setBrush(Qt::NoBrush);
-	painter->setPen(Qt::NoPen);
+	painter->restore();
 
 }
 

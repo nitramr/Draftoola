@@ -26,45 +26,49 @@ WAOval::WAOval(QRectF rect, QGraphicsItem *parent) : QGraphicsEllipseItem(rect, 
 QPainterPath WAOval::shape() const
 {
 	QPainterPath path;
-	path.addEllipse(adjustedRect());
+	path.addEllipse(rect());
 	return path;
 }
 
-QRectF WAOval::strokeRect() const
+QPainterPath WAOval::shapeStroke(Stroke stroke) const
 {
-	qreal sw = stroke().widthF();
+	QPainterPath path;
+	qreal sw = stroke.widthF();
+	QRectF rect = this->rect();
 
-	switch(strokePosition()){
+	switch(stroke.strokePosition()){
 	case StrokePosition::Inner:
-		return this->rect().adjusted(sw/2, sw/2, -sw/2, -sw/2);
+		rect.adjusted(sw/2, sw/2, -sw/2, -sw/2);
 		break;
 	case StrokePosition::Outer:
-		return this->rect().adjusted(-sw/2, -sw/2, sw/2, sw/2);
+		rect.adjusted(-sw/2, -sw/2, sw/2, sw/2);
 		break;
 	case StrokePosition::Center:
 	default:
-		return this->rect();
 		break;
 	}
+
+	path.addEllipse(rect);
+	return path;
 }
 
-QRectF WAOval::adjustedRect() const
-{
-	qreal sw = stroke().widthF();
+//QRectF WAOval::adjustedRect(StrokePosition strokePosition) const
+//{
+//	qreal sw = stroke().widthF();
 
-	switch(strokePosition()){
-	case StrokePosition::Inner:
-		return this->rect();
-		break;
-	case StrokePosition::Outer:
-		return this->rect().adjusted(-sw, -sw, sw, sw);
-		break;
-	case StrokePosition::Center:
-	default:
-		return this->rect().adjusted(-sw/2, -sw/2, sw/2, sw/2);
-		break;
-	}
-}
+//	switch(strokePosition()){
+//	case StrokePosition::Inner:
+//		return this->rect();
+//		break;
+//	case StrokePosition::Outer:
+//		return this->rect().adjusted(-sw, -sw, sw, sw);
+//		break;
+//	case StrokePosition::Center:
+//	default:
+//		return this->rect().adjusted(-sw/2, -sw/2, sw/2, sw/2);
+//		break;
+//	}
+//}
 
 /***************************************************
  *
@@ -78,15 +82,25 @@ void WAOval::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     Q_UNUSED(widget);
 
 //	painter->setClipRect( option->exposedRect );
-	painter->setRenderHint(QPainter::Antialiasing, true);
-	painter->setBrush(this->fills());
-	painter->drawEllipse(this->rect());
-	painter->setBrush(Qt::NoBrush);
-	painter->setPen(this->stroke());
-	painter->drawEllipse(this->strokeRect());
-
-	painter->setRenderHint(QPainter::Antialiasing, false);
+	painter->save();
 	painter->setBrush(Qt::NoBrush);
 	painter->setPen(Qt::NoPen);
+	painter->setRenderHint(QPainter::Antialiasing, true);
+
+	// Draw Fills
+	foreach(Fills fills,this->fillsList()) {
+		painter->setBrush(fills);
+		painter->drawPath(shape());
+	}
+
+	painter->setBrush(Qt::NoBrush);
+
+	// Draw Strokes
+	foreach(Stroke stroke, strokeList()) {
+		painter->setPen(stroke);
+		painter->drawPath(shapeStroke(stroke));
+	}
+
+	painter->restore();
 
 }

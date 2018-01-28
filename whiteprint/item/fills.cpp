@@ -1,4 +1,6 @@
 #include "fills.h"
+#include <QPainter>
+#include <QPainterPath>
 
 Fills::Fills(const QString name) : QBrush(), m_name(name){}
 Fills::Fills(const QString name, Qt::BrushStyle brushStyle) : QBrush(brushStyle), m_name(name){}

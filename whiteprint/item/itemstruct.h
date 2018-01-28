@@ -8,14 +8,16 @@ enum class GradientType {
 };
 
 enum class ItemType {
-	Rect = 0,
-	Oval = 1,
-	Triangle = 2,
-	Star = 3,
-	Polygon = 4,
-	Line = 5,
-	Text = 6,
-	Instance = 7
+	Artboard = 0,
+	Rect = 1,
+	Oval = 2,
+	Triangle = 3,
+	Star = 4,
+	Polygon = 5,
+	Line = 6,
+	Text = 7,
+	Instance = 8
+
 };
 
 enum class StrokePosition {

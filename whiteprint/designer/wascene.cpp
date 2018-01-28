@@ -29,6 +29,80 @@ WAScene::WAScene(QObject *parent) : QGraphicsScene(parent)
 //    }
 //}
 
+void WAScene::render(QPainter *painter, const QRectF &target, const QRectF &source,
+								Qt::AspectRatioMode aspectRatioMode)
+	{
+
+	QGraphicsScene::render(painter,target,source,aspectRatioMode);
+
+//		// ### Switch to using the recursive rendering algorithm instead.
+
+//		// Default source rect = scene rect
+//		QRectF sourceRect = source;
+//		if (sourceRect.isNull())
+//			sourceRect = sceneRect();
+
+//		// Default target rect = device rect
+//		QRectF targetRect = target;
+//		if (targetRect.isNull()) {
+//			if (painter->device()->devType() == QInternal::Picture)
+//				targetRect = sourceRect;
+//			else
+//				targetRect.setRect(0, 0, painter->device()->width(), painter->device()->height());
+//		}
+
+//		// Find the ideal x / y scaling ratio to fit \a source into \a target.
+//		qreal xratio = targetRect.width() / sourceRect.width();
+//		qreal yratio = targetRect.height() / sourceRect.height();
+
+//		// Scale according to the aspect ratio mode.
+//		switch (aspectRatioMode) {
+//		case Qt::KeepAspectRatio:
+//			xratio = yratio = qMin(xratio, yratio);
+//			break;
+//		case Qt::KeepAspectRatioByExpanding:
+//			xratio = yratio = qMax(xratio, yratio);
+//			break;
+//		case Qt::IgnoreAspectRatio:
+//			break;
+//		}
+
+//		// Find all items to draw, and reverse the list (we want to draw
+//		// in reverse order).
+//		QList<QGraphicsItem *> itemList = items(sourceRect, Qt::IntersectsItemBoundingRect);
+//		QGraphicsItem **itemArray = new QGraphicsItem *[itemList.size()];
+//		int numItems = itemList.size();
+//		for (int i = 0; i < numItems; ++i)
+//			itemArray[numItems - i - 1] = itemList.at(i);
+//		itemList.clear();
+
+//		painter->save();
+
+//		// Transform the painter.
+//		painter->setClipRect(targetRect, Qt::IntersectClip);
+//		QTransform painterTransform;
+//		painterTransform *= QTransform()
+//							.translate(targetRect.left(), targetRect.top())
+//							.scale(xratio, yratio)
+//							.translate(-sourceRect.left(), -sourceRect.top());
+//		painter->setWorldTransform(painterTransform, true);
+
+//		// Generate the style options
+//		QStyleOptionGraphicsItem *styleOptionArray = new QStyleOptionGraphicsItem[numItems];
+////		for (int i = 0; i < numItems; ++i)
+////			itemArray[i]->d_ptr->initStyleOption(&styleOptionArray[i], painterTransform, targetRect.toRect());
+
+//		// Render the scene.
+////		drawBackground(painter, sourceRect);
+//		drawItems(painter, numItems, itemArray, styleOptionArray);
+////		drawForeground(painter, sourceRect);
+
+//		delete [] itemArray;
+//		delete [] styleOptionArray;
+
+//		painter->restore();
+	}
+
 
 /***************************************************
  *

@@ -4,7 +4,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsTextItem>
 #include <QStyleOptionGraphicsItem>
-//#include <QGraphicsDropShadowEffect>
+#include <QGraphicsDropShadowEffect>
 #include <QPen>
 #include <QPainter>
 #include <QRectF>
@@ -38,7 +38,7 @@ public:
     QRectF boundingRect() const override;
 
 private:
-//	QGraphicsDropShadowEffect * m_shadow;
+	QGraphicsDropShadowEffect * m_shadow;
     int m_offset;
     int m_buffer;
     QRectF m_rect;

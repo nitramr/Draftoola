@@ -6,6 +6,8 @@
 #include "item/waoval.h"
 #include "item/watext.h"
 #include "item/wagroup.h"
+#include "item/stroke.h"
+#include "item/shadow.h"
 #include "designer/handleframe.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -35,29 +37,42 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_canvas->addItem(artboard);
 	m_outliner->addNode(artboard);
 
-	WARect * rect = new WARect(60,100);
-	rect->setFills(Fills("rect", QColor(Qt::yellow)));
-	rect->setRadius(20);
-	rect->setRotation(45);
-	m_canvas->addItem(rect, 10,10);
+
+	Stroke strokeR("TestEllipseStroke", QBrush(QColor(128,208,23, 128)),3, StrokePosition::Outer);
+	Stroke stroke("TestEllipseStroke", QBrush(QColor(255,128,0, 128)),2, StrokePosition::Outer);
+	Shadow shadow = Shadow();
+	Shadow shadow2 = Shadow(QColor(255,0,0),6, QPointF(3,0));
+
 
 	WAOval * oval = new WAOval(60,80);
-	oval->setFills(Fills("oval", QColor(Qt::red)));
-	m_canvas->addItem(oval, 20,120);
+	oval->addFills(Fills("oval", QColor(Qt::red)));
+	oval->setRotation(45);
+	oval->addStroke(stroke);
+	m_canvas->addItem(oval, 50,120);
+
+	WARect * rect = new WARect(60,100);
+	rect->addFills(Fills("rect", QColor(Qt::yellow)));
+	rect->setRadius(5,10,15,20);
+	rect->setRotation(0);
+//	rect->addStroke(strokeR);
+	rect->addStroke(stroke);
+	rect->addShadow(shadow);
+	m_canvas->addItem(rect, 10,10);
+
+
 
 	WAText * text = new WAText("Hello World");
 	m_canvas->addItem(text, 100, 10);
 
+
 	WARect * rectG = new WARect(50,50);
-	rectG->setFills(Fills("rect", QColor(Qt::blue)));
+	rectG->addFills(Fills("rect", QColor(Qt::blue)));
 	m_canvas->addItem(rectG, 60,0);
 
-	Stroke stroke("TestEllipseStroke", QBrush(QColor(128,208,23)),1);
-
+	stroke.setStrokePosition(StrokePosition::Outer);
 	WAOval * ovalG = new WAOval(50,50);
-	ovalG->setFills(Fills("oval", QColor(Qt::green)));
-	ovalG->setStroke(stroke);
-	ovalG->setStrokePosition(StrokePosition::Inner);
+	ovalG->addFills(Fills("oval", QColor(Qt::green)));
+	ovalG->addStroke(stroke);
 	m_canvas->addItem(ovalG, 0,0);
 
 	WAGroup * group = new WAGroup();
