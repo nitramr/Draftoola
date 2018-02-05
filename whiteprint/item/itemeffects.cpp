@@ -142,6 +142,7 @@ void ItemEffects::drawShadow(Shadow shadow, QPainter *p, const QPointF &pos, con
 	}else p->setRenderHint(QPainter::Antialiasing, false);
 
 	p->setWorldTransform(QTransform());
+
 	p->drawImage(pos, blurred);
 	p->restore();
 }
@@ -178,7 +179,7 @@ void ItemEffects::drawBlur(QPainter *p, const QPointF &pos, const QPixmap &px) c
 void ItemEffects::drawFills(Fills fills, QPainter *p) const
 {
 	p->save();
-	p->setBrush(fills);
+	p->setBrush(QBrush(fills.color()));
 	p->drawPath(m_shape);
 	p->restore();
 }

@@ -1,6 +1,11 @@
 #include "waview.h"
 #include <QDebug>
 #include <QTransform>
+#include <QSvgGenerator>
+#include <QGraphicsItemAnimation>
+#include <QTimeLine>
+
+#include "whiteprint/item/itemstruct.h"
 
 #ifndef QT_NO_OPENGL
 #include <QtOpenGL>
@@ -36,7 +41,7 @@ WAView::WAView(WAScene * scene, QWidget * parent) : QGraphicsView(scene, parent)
 	m_handleFrame->setup();
 
 	counter = 0;
-	group = new WAGroup();
+//	group = new WAGroup();
 
 }
 
@@ -93,7 +98,14 @@ void WAView::keyPressEvent(QKeyEvent *event)
 			this->resetMatrix();
 
 			break;
+		case Qt::Key_1 :
+
+			this->scale(2, 2);
+			qDebug() << this->matrix().m11() * 100 << "%";
+
+			break;
 		}
+
 	}
 
 	// Single Key + Shift
@@ -165,18 +177,69 @@ void WAView::keyReleaseEvent(QKeyEvent *event)
 		m_handleFrame->setShiftModifier(false);
 		break;
 
+	case Qt::Key_A:{
+
+		ItemBase *item = m_scene->itemByName("Rect1");
+
+
+		QPointF init = item->pos();
+
+		QPropertyAnimation *animation = new QPropertyAnimation(item, "pos");
+		animation->setDuration(1000);
+		animation->setEasingCurve(QEasingCurve::InBack);
+		animation->setStartValue(init);
+		animation->setKeyValueAt(0.5, QPointF(30,100));
+		animation->setEndValue(init);
+
+		animation->start();
+
+		switch(item->itemType()){
+		case ItemType::Rect:
+			WARect *rect = static_cast<WARect*>(item);
+
+			if(rect){
+
+
+
+			}
+
+			break;
+		}
+
+
+
+
+		break;
+	}
 	case Qt::Key_V:{
 
 		m_scene->clearSelection();
 		qreal exFactor = 4;
-		QRectF targetRect = QRectF(0,0,375*exFactor,667*exFactor);
+		QRectF targetRect = QRectF(10,10,60*exFactor,100*exFactor);
+		QRectF sourceRect = QRectF(10,10,60,100);
 		QImage image(QSize(targetRect.width(), targetRect.height()), QImage::Format_ARGB32_Premultiplied);
 		image.fill(Qt::transparent);
 
 		QPainter painter(&image);
 		//painter.setRenderHint(QPainter::HighQualityAntialiasing);
-		m_scene->render(&painter, targetRect, QRectF(0,0,375,667));
+		m_scene->render(&painter, targetRect, sourceRect);
+		painter.end();
+
 		image.save("file_name.png");
+
+
+		QSvgGenerator generator;        // Create a file generator object
+			generator.setFileName("file_name.svg");    // We set the path to the file where to save vector graphics
+			generator.setSize(targetRect.size().toSize());  // Set the dimensions of the working area of the document in millimeters
+			generator.setViewBox(targetRect); // Set the work area in the coordinates
+			generator.setTitle(trUtf8("SVG Example"));                          // The title document
+			generator.setDescription(trUtf8("File created by WhitePrint Studio"));
+
+		QPainter painterSVG;
+			painterSVG.begin(&generator);
+			m_scene->render(&painterSVG,targetRect, sourceRect);
+			painterSVG.end();
+
 
 
 //		QList<QGraphicsItem *> selectedItems = m_scene->items();

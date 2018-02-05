@@ -31,7 +31,7 @@ private:
 	qreal m_grid;
 
 	int counter;
-	WAGroup * group;
+//	WAGroup * group;
 
 };
 

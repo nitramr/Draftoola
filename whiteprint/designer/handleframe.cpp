@@ -93,6 +93,32 @@ void ItemHandle::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 	event->setAccepted(true);
 }
 
+void ItemHandle::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+	Q_UNUSED(event);
+
+	switch (m_corner) {
+	case TopLeft:
+	case BottomRight:
+		this->setCursor(Qt::SizeFDiagCursor);
+		break;
+	case Top:
+	case Bottom:
+		this->setCursor(Qt::SizeVerCursor);
+		break;
+	case TopRight:
+	case BottomLeft:
+		this->setCursor(Qt::SizeBDiagCursor);
+		break;
+	case Left:
+	case Right:
+		this->setCursor(Qt::SizeHorCursor);
+		break;
+	default:
+		break;
+	}
+}
+
 void ItemHandle::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
 	event->setAccepted(false);
@@ -193,7 +219,7 @@ QRectF HandleFrame::selectionBoundingRect(qreal &angle)
 		WARect * warect = dynamic_cast<WARect*>(current);
 		WAOval * waoval = dynamic_cast<WAOval*>(current);
 		WAText * watext = dynamic_cast<WAText*>(current);
-		WAGroup * wagroup = dynamic_cast<WAGroup*>(current);
+//		WAGroup * wagroup = dynamic_cast<WAGroup*>(current);
 		Artboard * artboard = dynamic_cast<Artboard*>(current);
 
 		if(artboard){
@@ -212,10 +238,10 @@ QRectF HandleFrame::selectionBoundingRect(qreal &angle)
 			selectionBoundingRect = selectionBoundingRect.united(QRectF(waoval->scenePos().x(), waoval->scenePos().y(), waoval->rect().width(), waoval->rect().height()));
 			m_isTextOnly = false;
 		}
-		if(wagroup){
-			selectionBoundingRect = selectionBoundingRect.united(QRectF(wagroup->scenePos().x(), wagroup->scenePos().y(), wagroup->rect().width(), wagroup->rect().height()));
-			m_isTextOnly = false;
-		}
+//		if(wagroup){
+//			selectionBoundingRect = selectionBoundingRect.united(QRectF(wagroup->scenePos().x(), wagroup->scenePos().y(), wagroup->rect().width(), wagroup->rect().height()));
+//			m_isTextOnly = false;
+//		}
 
 		angle = current->rotation();
 
@@ -408,11 +434,19 @@ void HandleFrame::adjustSize(int x, int y)
 				  );
 }
 
-QPointF HandleFrame::updateItemsPosition(QPointF pos)
+QPointF HandleFrame::updateItemsPosition(QGraphicsItem *item)
 {
 
+//	QPointF posItem(item->pos());
+//	QPointF relItem = this->mapFromItem(item, QPointF());
+
+//	qDebug() << "relItem Pos:" << relItem;
+
+//	return posItem;
+
+
 	QPointF posHandle = m_oldPos;
-	QPointF posItem = pos;
+	QPointF posItem = item->pos();
 	qreal diffAX = posItem.x() - posHandle.x();
 	qreal diffAY = posItem.y() - posHandle.y();
 	qreal diffZX = m_oldRect.width() - diffAX;
@@ -452,35 +486,45 @@ QRectF HandleFrame::updateItemSize(QRectF frame)
 void HandleFrame::updateItemsSelection(int x, int y)
 {
 
+//	  QPointF center = this->rect().center();
+//	  QTransform t;
+//	  t.translate(center.x(), center.y());
+//	  t.rotate(angle);
+//	  t.translate(-center.x(), -center.y());
+	  foreach(QGraphicsItem* item, m_scene->selectedItems()) {
 
-	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
-	foreach(QGraphicsItem *current, selectedItems) {
-
-		Artboard * itemArtboard = dynamic_cast<Artboard*>(current);
+		// Scale
+		Artboard * itemArtboard = dynamic_cast<Artboard*>(item);
 		if(itemArtboard){
 			itemArtboard->setRect(updateItemSize(itemArtboard->rect()));
-			itemArtboard->setPos(updateItemsPosition(itemArtboard->pos()));
+			itemArtboard->setPos(updateItemsPosition(itemArtboard));
 		}
 
-		WAText * itemText = dynamic_cast<WAText*>(current);
+		WAText * itemText = dynamic_cast<WAText*>(item);
 		if(itemText){
 			itemText->setRect(updateItemSize(itemText->rect()));
-			itemText->setPos(updateItemsPosition(itemText->pos()));
+			itemText->setPos(updateItemsPosition(itemText));
+
 		}
 
-		WARect * itemRect = dynamic_cast<WARect*>(current);
+		WARect * itemRect = dynamic_cast<WARect*>(item);
 		if(itemRect){
 			itemRect->setRect(updateItemSize(itemRect->rect()));
-			itemRect->setPos(updateItemsPosition(itemRect->pos()));
-			//itemRect->setRect(itemRect->rect().adjusted(x*-1,y*-1,0,0));
+//			itemRect->moveBy(x,y);
+			itemRect->setPos(updateItemsPosition(itemRect));
+
 		}
 
-		WAOval * itemOval = dynamic_cast<WAOval*>(current);
+		WAOval * itemOval = dynamic_cast<WAOval*>(item);
 		if(itemOval){
 			itemOval->setRect(updateItemSize(itemOval->rect()));
-			itemOval->setPos(updateItemsPosition(itemOval->pos()));
+//			itemOval->moveBy(x,y);
+			itemOval->setPos(updateItemsPosition(itemOval));
+
 		}
 
+		// set position
+//		item->setPos(t.map(item->pos()));
 
 	}
 
@@ -498,7 +542,7 @@ void HandleFrame::reset()
 void HandleFrame::sendActiveItems()
 {
 	if(m_scene->selectedItems().size() == 1){
-		QGraphicsItem* m_itemBase = dynamic_cast<QGraphicsItem*>(m_scene->selectedItems()[0]);
+		ItemBase* m_itemBase = dynamic_cast<ItemBase*>(m_scene->selectedItems()[0]);
 		if(m_itemBase){
 			emit emitActiveItem(m_itemBase);
 		}else emit emitActiveItem(0);
@@ -579,34 +623,54 @@ void HandleFrame::setup()
 
 }
 
-void HandleFrame::group()
+//void HandleFrame::group()
+//{
+//	qDebug() << "HandleFrame::Group";
+
+//	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
+
+//	if(selectedItems.size() >0){
+//		m_selectionGroup = m_scene->createItemGroup(selectedItems);//new QGraphicsItemGroup();
+//		qDebug() << "Group" << m_selectionGroup;
+//		this->setVisible(true);
+//	}
+//}
+
+//void HandleFrame::unGroup()
+//{
+//	qDebug() << "HandleFrame::unGroup";
+//	if(m_selectionGroup){
+//		qDebug() << "SelectionGroup is valid";
+//		if(m_scene->items().contains(m_selectionGroup)){
+//			m_scene->destroyItemGroup(m_selectionGroup);
+//			reset();
+//			qDebug() << "UnGroup";
+//		}
+
+
+//	}
+
+
+//}
+
+void HandleFrame::rotateSelection(qreal angle)
 {
-	qDebug() << "HandleFrame::Group";
+	qDebug() << "HandleFrame::rotateSelection";
 
-	QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
+	  QPointF center = this->rect().center();
+	  QTransform t;
+	  t.translate(center.x(), center.y());
+	  t.rotate(angle);
+	  t.translate(-center.x(), -center.y());
 
-	if(selectedItems.size() >0){
-		m_selectionGroup = m_scene->createItemGroup(selectedItems);//new QGraphicsItemGroup();
-		qDebug() << "Group" << m_selectionGroup;
-		this->setVisible(true);
+	  foreach(QGraphicsItem* item, m_scene->selectedItems()) {
+
+		// set position
+		item->setPos(t.map(item->pos()));
+
+		// rotate
+		item->setRotation(item->rotation() + angle);
 	}
-}
-
-void HandleFrame::unGroup()
-{
-	qDebug() << "HandleFrame::unGroup";
-	if(m_selectionGroup){
-		qDebug() << "SelectionGroup is valid";
-		if(m_scene->items().contains(m_selectionGroup)){
-			m_scene->destroyItemGroup(m_selectionGroup);
-			reset();
-			qDebug() << "UnGroup";
-		}
-
-
-	}
-
-
 }
 
 
@@ -673,44 +737,30 @@ void HandleFrame::slotFrameToSelection()
  *
  ***************************************************/
 
-bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
+bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
 {
-	ItemHandle * corner = dynamic_cast<ItemHandle *>(watched);
-	if ( corner == NULL) return false;
+	ItemHandle *corner = dynamic_cast<ItemHandle *>(watched);
+	if ( corner == NULL ) return false;
 
 	QGraphicsSceneMouseEvent * mevent = dynamic_cast<QGraphicsSceneMouseEvent*>(event);
-	if ( mevent == NULL)
-	{
-		// this is not one of the mouse events we are interrested in
-		return false;
-	}
+	if ( mevent == NULL ) return false;
 
 
-	switch (event->type() )
+	switch( event->type() )
 	{
 	// if the mouse went down, record the x,y coords of the press, record it inside the corner object
 	case QEvent::GraphicsSceneMousePress:
-	{
 		corner->setMouseState(ItemHandle::kMouseDown);
 		corner->mouseDownX = mevent->pos().x();
 		corner->mouseDownY = mevent->pos().y();
 		m_ratio = qMax(width() / height(), height() / width());
-	}
 		break;
-
 	case QEvent::GraphicsSceneMouseRelease:
-	{
 		corner->setMouseState(ItemHandle::kMouseReleased);
-
-	}
 		break;
-
 	case QEvent::GraphicsSceneMouseMove:
-	{
 		corner->setMouseState(ItemHandle::kMouseMoving );
-	}
 		break;
-
 	default:
 		// we dont care about the rest of the events
 		return false;
@@ -720,73 +770,54 @@ bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
 
 	if ( corner->getMouseState() == ItemHandle::kMouseMoving )
 	{
-
 		qreal x = mevent->pos().x(), y = mevent->pos().y();
 
 		// depending on which corner has been grabbed, we want to move the position
 		// of the item as it grows/shrinks accordingly. so we need to eitehr add
 		// or subtract the offsets based on which corner this is.
-
 		int XaxisSign = 0;
 		int YaxisSign = 0;
+
 		switch( corner->getCorner() )
 		{
 		case ItemHandle::TopLeft:
-		{
-			XaxisSign = +1;
-			YaxisSign = +1;
-		}
+			XaxisSign = 1;
+			YaxisSign = 1;
 			break;
 		case ItemHandle::Top:
-		{
 			XaxisSign = 0;
-			YaxisSign = +1;
-		}
+			YaxisSign = 1;
 			break;
-
 		case ItemHandle::TopRight:
-		{
 			XaxisSign = -1;
-			YaxisSign = +1;
-		}
+			YaxisSign = 1;
 			break;
 		case ItemHandle::Right:
-		{
 			XaxisSign = -1;
 			YaxisSign = 0;
-		}
 			break;
-
 		case ItemHandle::BottomRight:
-		{
 			XaxisSign = -1;
 			YaxisSign = -1;
-		}
 			break;
 		case ItemHandle::Bottom:
-		{
 			XaxisSign = 0;
 			YaxisSign = -1;
-		}
 			break;
-
 		case ItemHandle::BottomLeft:
-		{
-			XaxisSign = +1;
+			XaxisSign = 1;
 			YaxisSign = -1;
-		}
 			break;
 		case ItemHandle::Left:
-		{
-			XaxisSign = +1;
+			XaxisSign = 1;
 			YaxisSign = 0;
-		}
 			break;
-
 		}
 
 		// if the mouse is being dragged, calculate a new size and also re-position
 		// the box to give the appearance of dragging the corner out/in to resize the box
+
+
 
 
 		int xMoved = corner->mouseDownX - x;
@@ -801,15 +832,20 @@ bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
 		int deltaW  =   newWidth - this->rect().width() ;
 		int deltaH =   newHeight - this->rect().height() ;
 
+
+		qDebug() << "deltaW:" << deltaW << "deltaH:" << deltaH;
+
 		adjustSize(  deltaW ,   deltaH);
 
 		qreal deltaWidth = deltaW * (-1);
 		qreal deltaHeight = deltaH * (-1);
 
+		qDebug() << "deltaWidth:" << deltaWidth << "deltaHeight:" << deltaHeight;
+
 		qreal newX;
 		qreal newY;
 
-		switch(corner->getCorner()){
+		switch( corner->getCorner() ){
 		case ItemHandle::TopLeft:{
 			if(m_shiftModifier){
 				if(height() > width()){
@@ -883,24 +919,26 @@ bool HandleFrame::sceneEventFilter ( QGraphicsItem * watched, QEvent * event )
 }
 
 
+
 void HandleFrame::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
 	event->setAccepted(true);
+
 }
 
-void HandleFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-	Q_UNUSED(event);
-	m_isHovered = true;
-	qDebug() << "HandleFrame::HoverEnter";
-}
+//void HandleFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+//{
+//	Q_UNUSED(event);
+//	m_isHovered = true;
+//	qDebug() << "HandleFrame::HoverEnter";
+//}
 
-void HandleFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-	Q_UNUSED(event);
-	m_isHovered = false;
-	qDebug() << "HandleFrame::HoverLeave";
-}
+//void HandleFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+//{
+//	Q_UNUSED(event);
+//	m_isHovered = false;
+//	qDebug() << "HandleFrame::HoverLeave";
+//}
 
 
 void HandleFrame::mousePressEvent ( QGraphicsSceneMouseEvent * event )
@@ -925,14 +963,13 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *opti
 {
 
 	painter->save();
-	painter->setBrush(Qt::NoBrush);
-	painter->setPen(Qt::NoPen);
+	painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 
 	QPen pen = this->pen();
 	pen.setCosmetic(true);
 
-	painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 	painter->setPen(pen);
+	painter->setBrush(Qt::NoBrush);
 
 	const qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
 	if (lod > 2 ) {

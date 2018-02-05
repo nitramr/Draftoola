@@ -53,7 +53,7 @@ void ArtboardLabel::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 Artboard::Artboard(QString name, QGraphicsItem *parent) : Artboard(name, 0,0,375,667, parent){}
 Artboard::Artboard(QString name, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent) : Artboard(name, QRectF(x,y,w,h), parent){}
-Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : QGraphicsRectItem(rect, parent)
+Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : ItemBase(/*rect, */parent)
 {
 	m_offset= 20;
 	m_buffer = 4;
@@ -70,10 +70,11 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : QGraphics
 
 	m_artboard = new QGraphicsRectItem(m_rect);
 //	m_artboard->setGraphicsEffect(m_shadow);
-	m_artboard->setFlags(QGraphicsItem::ItemClipsChildrenToShape |
-						 QGraphicsItem::ItemContainsChildrenInShape |
-						 QGraphicsItem::ItemSendsScenePositionChanges |
-						 QGraphicsItem::ItemSendsGeometryChanges
+	m_artboard->setFlags(
+				QGraphicsItem::ItemClipsChildrenToShape |
+				QGraphicsItem::ItemContainsChildrenInShape |
+				QGraphicsItem::ItemSendsScenePositionChanges |
+				QGraphicsItem::ItemSendsGeometryChanges
 				);
 	m_artboard->setPen(Qt::NoPen);
 	m_artboard->setBrush(Qt::NoBrush);

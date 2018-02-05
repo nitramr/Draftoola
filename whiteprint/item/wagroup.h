@@ -4,7 +4,7 @@
 #include <QGraphicsItemGroup>
 #include "itembase.h"
 
-class WAGroup : public QGraphicsItemGroup, public ItemBase
+class WAGroup : /*public QGraphicsItemGroup, */public ItemBase
 {
 
 public:

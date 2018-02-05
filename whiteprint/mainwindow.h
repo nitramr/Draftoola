@@ -37,7 +37,7 @@ private:
 
 
 public slots:
-	void setActiveItem(QGraphicsItem *item);
+	void setActiveItem(ItemBase *item);
 
 };
 

@@ -8,7 +8,7 @@
 
 #include "itembase.h"
 
-class WAOval : public QGraphicsEllipseItem, public ItemBase
+class WAOval : public ItemBase
 {
 public:
 	WAOval(qreal x, qreal y, qreal width, qreal height, QGraphicsItem * parent = 0);
@@ -17,14 +17,21 @@ public:
 	WAOval(QGraphicsItem * parent = 0);
 
 	// Properties
-	QPainterPath shape() const override;
+	virtual QPainterPath shape() const;
 	virtual QPainterPath shapeStroke(Stroke stroke) const;
-//	virtual QRectF adjustedRect(StrokePosition strokePosition) const;
+
+	virtual void setRect(QRectF rect);
+	virtual QRectF rect() const;
+
+	virtual QRectF boundingRect() const;
 
 	// Events
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 private:
+
+	QRectF m_rect;
+	QRectF m_boundingRect;
 
 };
 

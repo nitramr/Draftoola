@@ -3,7 +3,8 @@
 
 #include <QGraphicsScene>
 #include <QKeyEvent>
-
+#include "whiteprint/item/itembase.h"
+#include "whiteprint/item/artboard.h"
 
 class WAScene : public QGraphicsScene
 {
@@ -14,6 +15,8 @@ public:
 	void render(QPainter *painter,
 					const QRectF &target = QRectF(), const QRectF &source = QRectF(),
 						Qt::AspectRatioMode aspectRatioMode = Qt::KeepAspectRatio);
+
+	ItemBase *itemByName(const QString name);
 
 private:
 

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui widgets
+QT += core gui widgets svg
 qtHaveModule(printsupport): QT += printsupport
 qtHaveModule(opengl): QT += opengl
 
@@ -28,7 +28,6 @@ SOURCES += whiteprint/main.cpp\
     whiteprint/item/gradient.cpp \
     whiteprint/item/waoval.cpp \
     whiteprint/designer/waview.cpp \
-    whiteprint/designer/canvasframe.cpp \
     whiteprint/item/watext.cpp \
     whiteprint/workspace/tool_itemproperties.cpp \
     whiteprint/workspace/tool_outliner.cpp \
@@ -49,7 +48,6 @@ HEADERS  += whiteprint/mainwindow.h \
     whiteprint/item/gradient.h \
     whiteprint/item/waoval.h \
     whiteprint/designer/waview.h \
-    whiteprint/designer/canvasframe.h \
     whiteprint/item/watext.h \
     whiteprint/workspace/tool_outliner.h \
     whiteprint/workspace/tool_itemproperties.h \

@@ -26,17 +26,19 @@ ItemProperties::~ItemProperties()
  *
  ***************************************************/
 
-void ItemProperties::setActiveItem(QGraphicsItem *item)
+void ItemProperties::setActiveItem(ItemBase *item)
 {
 
 	resetItems();
+	m_item = item;
 
-	m_artboard = dynamic_cast<Artboard*>(item);
-	m_itemRect = dynamic_cast<WARect*>(item);
-	m_itemOval = dynamic_cast<WAOval*>(item);
-	m_itemText = dynamic_cast<WAText*>(item);
+//	m_artboard = dynamic_cast<Artboard*>(item);
+//	m_itemRect = dynamic_cast<WARect*>(item);
+//	m_itemOval = dynamic_cast<WAOval*>(item);
+//	m_itemText = dynamic_cast<WAText*>(item);
 
-	loadProperties();
+	if(m_item)
+		loadProperties();
 }
 
 
@@ -48,39 +50,77 @@ void ItemProperties::setActiveItem(QGraphicsItem *item)
 
 void ItemProperties::loadProperties()
 {
-	if(m_artboard){
 
-		ui->spinboxXPos->setValue(m_artboard->pos().x());
-		ui->spinboxYPos->setValue(m_artboard->pos().y());
-		ui->spinboxWidth->setValue(m_artboard->rect().width());
-		ui->spinboxHeight->setValue(m_artboard->rect().height());
+	ui->spinboxXPos->setValue(m_item->pos().x());
+	ui->spinboxYPos->setValue(m_item->pos().y());
 
-		this->setEnabled(true);
-	}else if(m_itemRect){
+	this->setEnabled(true);
 
-		ui->spinboxXPos->setValue(m_itemRect->pos().x());
-		ui->spinboxYPos->setValue(m_itemRect->pos().y());
-		ui->spinboxWidth->setValue(m_itemRect->rect().width());
-		ui->spinboxHeight->setValue(m_itemRect->rect().height());
+	switch(m_item->itemType()){
 
-		this->setEnabled(true);
-	}else if(m_itemOval){
+	case ItemType::Artboard:{
+		Artboard * item = dynamic_cast<Artboard*>(m_item);
 
-		ui->spinboxXPos->setValue(m_itemOval->pos().x());
-		ui->spinboxYPos->setValue(m_itemOval->pos().y());
-		ui->spinboxWidth->setValue(m_itemOval->rect().width());
-		ui->spinboxHeight->setValue(m_itemOval->rect().height());
+		if(item){
+			ui->spinboxWidth->setValue(item->rect().width());
+			ui->spinboxHeight->setValue(item->rect().height());
+		}
 
-		this->setEnabled(true);
-	}else if(m_itemText){
+	}
+		break;
+	case ItemType::Instance:
 
-		ui->spinboxXPos->setValue(m_itemText->pos().x());
-		ui->spinboxYPos->setValue(m_itemText->pos().y());
-		ui->spinboxWidth->setValue(m_itemText->rect().width());
-		ui->spinboxHeight->setValue(m_itemText->rect().height());
+		break;
+	case ItemType::Line:
 
-		this->setEnabled(true);
-	}else resetItems();
+		break;
+	case ItemType::Oval:{
+		WAOval * item = dynamic_cast<WAOval*>(m_item);
+
+		if(item){
+			ui->spinboxWidth->setValue(item->rect().width());
+			ui->spinboxHeight->setValue(item->rect().height());
+		}
+
+	}
+
+		break;
+	case ItemType::Polygon:
+
+		break;
+	case ItemType::Rect:{
+		WARect * item = dynamic_cast<WARect*>(m_item);
+
+		if(item){
+			ui->spinboxWidth->setValue(item->rect().width());
+			ui->spinboxHeight->setValue(item->rect().height());
+		}
+
+	}
+
+		break;
+	case ItemType::Star:
+
+		break;
+	case ItemType::Text:{
+		WAText * item = dynamic_cast<WAText*>(m_item);
+
+		if(item){
+			ui->spinboxWidth->setValue(item->rect().width());
+			ui->spinboxHeight->setValue(item->rect().height());
+		}
+
+	}
+
+		break;
+	case ItemType::Triangle:
+
+		break;
+	default:
+		resetItems();
+		break;
+	}
+
 
 }
 
@@ -89,10 +129,7 @@ void ItemProperties::resetItems()
 	this->setEnabled(false);
 
 	// items
-	m_artboard = 0;
-	m_itemRect = 0;
-	m_itemOval = 0;
-	m_itemText = 0;
+	m_item = 0;
 
 	// Properties
 	ui->spinboxYPos->setValue(0);

@@ -1,7 +1,6 @@
 #include "wascene.h"
 #include <QDebug>
-#include "whiteprint/item/itembase.h"
-#include "whiteprint/item/artboard.h"
+
 
 WAScene::WAScene(QObject *parent) : QGraphicsScene(parent)
 {
@@ -100,8 +99,21 @@ void WAScene::render(QPainter *painter, const QRectF &target, const QRectF &sour
 //		delete [] itemArray;
 //		delete [] styleOptionArray;
 
-//		painter->restore();
+	//		painter->restore();
+}
+
+ItemBase *WAScene::itemByName(const QString name)
+{
+	foreach(QGraphicsItem *item, this->items()) {
+		ItemBase *ibItem = dynamic_cast<ItemBase*>(item);
+
+		if(ibItem){
+			if(ibItem->name() == name) return ibItem;
+		}
 	}
+
+	return NULL;
+}
 
 
 /***************************************************

@@ -22,15 +22,17 @@ public:
     explicit ItemProperties(QWidget *parent = 0);
     ~ItemProperties();
 
-	void setActiveItem(QGraphicsItem *item);
+	void setActiveItem(ItemBase *item);
 
 private:
     Ui::ItemProperties *ui;
 
-    Artboard * m_artboard;
-	WARect * m_itemRect;
-	WAOval * m_itemOval;
-	WAText * m_itemText;
+//    Artboard * m_artboard;
+//	WARect * m_itemRect;
+//	WAOval * m_itemOval;
+//	WAText * m_itemText;
+
+	ItemBase *m_item;
 
     void loadProperties();
     void resetItems();

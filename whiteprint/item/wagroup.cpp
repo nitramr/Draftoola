@@ -4,7 +4,7 @@
 #include "warect.h"
 #include "watext.h"
 
-WAGroup::WAGroup(QGraphicsItem *parent) : QGraphicsItemGroup(parent)
+WAGroup::WAGroup(QGraphicsItem *parent) : ItemBase(parent)
 {
 	this->setFlags(QGraphicsItem::ItemIsSelectable |
 				   QGraphicsItem::ItemIsFocusable |

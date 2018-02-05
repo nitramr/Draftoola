@@ -8,8 +8,9 @@
 
 #include "itembase.h"
 
-class WARect : public QGraphicsRectItem, public ItemBase
+class WARect : public ItemBase
 {
+
 public:
 	WARect(qreal x, qreal y, qreal width, qreal height, QGraphicsItem * parent = 0);
 	WARect(qreal width, qreal height, QGraphicsItem * parent = 0);
@@ -20,18 +21,21 @@ public:
 	void setRadius(qreal radius);
 	void setRadius(qreal topleft, qreal topright, qreal bottomright, qreal bottomleft);
 	qreal radius() const;
-	QPainterPath shape() const override;
+	virtual void setRect(QRectF rect);
+	virtual QRectF rect() const;
+	virtual QPainterPath shape() const;
+	virtual QPainterPath shapeScaled(qreal scaleFactor, qreal offset = 0, Stroke stroke = Stroke("tmp",QBrush(Qt::transparent),0, StrokePosition::Center)) const;
 	virtual QPainterPath shapeStroke(Stroke stroke) const;
 	virtual QRectF boundingRect() const;
-	QPointF anchorTopLeft() const;
-	QPointF anchorTop() const;
-	QPointF anchorTopRight() const;
-	QPointF anchorRight() const;
-	QPointF anchorBottomRight() const;
-	QPointF anchorBottom() const;
-	QPointF anchorBottomLeft() const;
-	QPointF anchorLeft() const;
-	QPointF anchorCenter() const;
+//	QPointF anchorTopLeft() const;
+//	QPointF anchorTop() const;
+//	QPointF anchorTopRight() const;
+//	QPointF anchorRight() const;
+//	QPointF anchorBottomRight() const;
+//	QPointF anchorBottom() const;
+//	QPointF anchorBottomLeft() const;
+//	QPointF anchorLeft() const;
+//	QPointF anchorCenter() const;
 
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
@@ -41,6 +45,9 @@ private:
 	qreal m_radiusTR;
 	qreal m_radiusBR;
 	qreal m_radiusBL;
+
+	QRectF m_boundingRect;
+	QRectF m_rect;
 
 };
 

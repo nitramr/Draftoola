@@ -1,13 +1,16 @@
 #include "waoval.h"
 
-#include <QtWidgets>
+//#include <QtWidgets>
 
 WAOval::WAOval(QGraphicsItem *parent) : WAOval(0,0,300,350, parent){}
 WAOval::WAOval(qreal x, qreal y, qreal width, qreal height, QGraphicsItem *parent) : WAOval(QRectF(x,y,width,height), parent){}
 WAOval::WAOval(qreal width, qreal height, QGraphicsItem *parent) : WAOval(QRectF(0,0,width,height), parent){}
-WAOval::WAOval(QRectF rect, QGraphicsItem *parent) : QGraphicsEllipseItem(rect, parent){
-	this->setItemType(ItemType::Oval);
+WAOval::WAOval(QRectF rect, QGraphicsItem *parent) : ItemBase(/*rect, */parent){
 
+	m_rect = rect;
+	m_boundingRect = rect;
+
+	this->setItemType(ItemType::Oval);
 	this->setFlags(QGraphicsItem::ItemIsSelectable |
 				   QGraphicsItem::ItemIsFocusable |
 				   QGraphicsItem::ItemClipsChildrenToShape |
@@ -16,6 +19,7 @@ WAOval::WAOval(QRectF rect, QGraphicsItem *parent) : QGraphicsEllipseItem(rect, 
 				   QGraphicsItem::ItemSendsGeometryChanges
 				   );
 	this->setAcceptHoverEvents(true);
+	this->setTransformOriginPoint(rect.center());
 }
 
 /***************************************************
@@ -38,10 +42,10 @@ QPainterPath WAOval::shapeStroke(Stroke stroke) const
 
 	switch(stroke.strokePosition()){
 	case StrokePosition::Inner:
-		rect.adjusted(sw/2, sw/2, -sw/2, -sw/2);
+		rect.adjust(sw/2, sw/2, -sw/2, -sw/2);
 		break;
 	case StrokePosition::Outer:
-		rect.adjusted(-sw/2, -sw/2, sw/2, sw/2);
+		rect.adjust(-sw/2, -sw/2, sw/2, sw/2);
 		break;
 	case StrokePosition::Center:
 	default:
@@ -50,6 +54,24 @@ QPainterPath WAOval::shapeStroke(Stroke stroke) const
 
 	path.addEllipse(rect);
 	return path;
+}
+
+void WAOval::setRect(QRectF rect)
+{
+	m_rect = rect.normalized();
+
+	this->setTransformOriginPoint(rect.center());
+	this->update();
+}
+
+QRectF WAOval::rect() const
+{
+	return m_rect;
+}
+
+QRectF WAOval::boundingRect() const
+{
+	return m_boundingRect;
 }
 
 //QRectF WAOval::adjustedRect(StrokePosition strokePosition) const
@@ -89,7 +111,7 @@ void WAOval::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 	// Draw Fills
 	foreach(Fills fills,this->fillsList()) {
-		painter->setBrush(fills);
+		painter->setBrush(QBrush(fills.color()));
 		painter->drawPath(shape());
 	}
 

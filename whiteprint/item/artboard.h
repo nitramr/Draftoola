@@ -24,7 +24,7 @@ public:
 };
 
 
-class Artboard : public QGraphicsRectItem, public ItemBase
+class Artboard : /*public QGraphicsRectItem, */public ItemBase
 {
 public:
     Artboard(QString name, QGraphicsItem *parent = 0);
@@ -33,9 +33,9 @@ public:
 
     // Properties
 	QGraphicsRectItem *canvas() const;
-	void setRect(QRectF rect);
-	QRectF rect() const ;
-    QRectF boundingRect() const override;
+	virtual void setRect(QRectF rect);
+	virtual QRectF rect() const ;
+	virtual QRectF boundingRect() const;
 
 private:
 	QGraphicsDropShadowEffect * m_shadow;

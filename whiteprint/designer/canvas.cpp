@@ -43,7 +43,7 @@ WAView *Canvas::view() const
 }
 
 
-void Canvas::addItem(QGraphicsItem *item, qreal x, qreal y, QGraphicsItem *parent)
+void Canvas::addItem(ItemBase *item, qreal x, qreal y, QGraphicsItem *parent)
 {
 
 	Artboard * m_artboard = dynamic_cast<Artboard*>(item);

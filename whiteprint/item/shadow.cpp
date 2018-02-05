@@ -1,10 +1,11 @@
 #include "shadow.h"
 
-Shadow::Shadow(QColor color, qreal radius, QPointF offset)
+Shadow::Shadow(QColor color, qreal radius, QPointF offset, qreal spread)
 {
-	m_color = color;
-	m_radius = radius;
-	m_offset = offset;
+	setColor(color);
+	setRadius(radius);
+	setOffset(offset);
+	setSpread(spread);
 }
 
 void Shadow::setColor(QColor color)
@@ -40,4 +41,14 @@ void Shadow::setOffset(qreal x, qreal y)
 QPointF Shadow::offset() const
 {
 	return m_offset;
+}
+
+void Shadow::setSpread(qreal spread)
+{
+	m_spread = spread;
+}
+
+qreal Shadow::spread() const
+{
+	return m_spread;
 }

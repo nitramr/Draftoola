@@ -6,7 +6,7 @@
 class Shadow
 {
 public:
-	Shadow(QColor color= QColor(0,0,0,128), qreal radius = 0, QPointF offset = QPointF(0,2));
+	Shadow(QColor color= QColor(0,0,0,128), qreal radius = 4, QPointF offset = QPointF(0,2), qreal spread = 0);
 
 	// Properties
 	void setColor(QColor color);
@@ -16,11 +16,15 @@ public:
 	void setOffset(QPointF offset);
 	void setOffset(qreal x, qreal y);
 	QPointF offset() const;
+	void setSpread(qreal spread);
+	qreal spread() const;
+
 
 private:
 	QColor m_color;
 	qreal m_radius;
 	QPointF m_offset;
+	qreal m_spread;
 
 };
 

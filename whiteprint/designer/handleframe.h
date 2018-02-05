@@ -75,6 +75,7 @@ private:
 	virtual void mousePressEvent (QGraphicsSceneMouseEvent * event );
 	virtual void mousePressEvent(QGraphicsSceneDragDropEvent *event);
 	virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event );
+	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent * event);
 
 	QColor  m_color;
 	QPen    m_Pen;
@@ -130,8 +131,10 @@ public:
 	// Members
 	void updateHandleFrame();
 	void setup();
-	void group();
-	void unGroup();
+//	void group();
+//	void unGroup();
+
+	void rotateSelection(qreal angle);
 
 
 
@@ -151,11 +154,11 @@ private:
 	QRectF		m_rect;
 	qreal		m_ratio;
 	bool		m_isTextOnly;
-	QGraphicsItemGroup *m_selectionGroup;
+//	QGraphicsItemGroup *m_selectionGroup;
 	bool		m_isHovered;
 
 	void adjustSize(int x, int y);
-	QPointF updateItemsPosition(QPointF pos);
+	QPointF updateItemsPosition(QGraphicsItem *item);
 	QRectF updateItemSize(QRectF frame);
 	void updateItemsSelection(int x, int y);
 	void reset();
@@ -168,8 +171,8 @@ private:
 	virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );///< allows the main object to be moved in the scene by capturing the mouse move events
 	virtual void mousePressEvent (QGraphicsSceneMouseEvent * event );
 	virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event );
-	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+//	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+//	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 	virtual bool sceneEventFilter ( QGraphicsItem * watched, QEvent * event ) ;
 
@@ -177,7 +180,7 @@ public slots:
 	void slotFrameToSelection();
 
 signals:
-	void emitActiveItem(QGraphicsItem * item);
+	void emitActiveItem(ItemBase * item);
 
 };
 
