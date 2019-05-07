@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>dark/close.svg</file>
+        <file>dark/plus.svg</file>
+        <file>dark/eye-off.svg</file>
+        <file>dark/eye.svg</file>
+        <file>dark/settings.svg</file>
+        <file>dark/chevron-right.svg</file>
+        <file>dark/chevron-down.svg</file>
+    </qresource>
+</RCC>
