@@ -15,7 +15,6 @@ Fills::Fills(const QString name, const QColor &color, const Qt::BrushStyle style
     m_gradient = QLinearGradient(0,0,100,100);
     setColor(color);
     m_style = style;
-    setOpacity(100);
     m_fillMode = FillMode::Fill;
 }
 
@@ -131,7 +130,13 @@ QGradient Fills::gradient() const
 
 void Fills::setColor(QColor color)
 {
-	m_color = color;
+    int opacity = qRound(color.alpha() / 2.56);
+    setOpacity(opacity);
+
+    if(color.alpha() < 255) color.setAlpha(255);
+
+    m_color = color;
+
 	setFillType(FillType::Color);
 }
 

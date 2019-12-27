@@ -468,6 +468,7 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
 
     QRectF shapeRect = shape().boundingRect();
 
+    painter->setOpacity(fills.opacity()/100.0);
     painter->setCompositionMode(fills.blendMode());
 
     switch(fills.fillType()){
