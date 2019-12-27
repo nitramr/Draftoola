@@ -17,7 +17,9 @@ public:
     CanvasView(/*WAScene *scene, */QWidget * parent = nullptr);
 	HandleFrame *handleFrame() const;
 
-    void addItem(AbstractItemBase *item, qreal x = 0, qreal y = 0, QGraphicsItem *parent = nullptr);
+    void addItem(AbstractItemBase *item, qreal x = 0, qreal y = 0, AbstractItemBase *parent = nullptr);
+
+    QList<Artboard *> artboardList();
 
 protected:
 	void wheelEvent(QWheelEvent *event);
@@ -34,7 +36,7 @@ private:
     qreal        m_grid;
     QTimer      *timer;
 
-    QMap<QString,Artboard*> *m_artboardList;
+    QList<Artboard*> m_artboardList;
     QDRuler                 *m_HRuler;
     QDRuler                 *m_VRuler;
 
@@ -43,6 +45,8 @@ private:
 
 signals:
     void signalViewIsDragged(bool);
+    void itemsChanged();
+    void signalScaleFactor(qreal);
 
 private slots:
     void resetItemCache();

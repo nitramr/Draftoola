@@ -1,5 +1,7 @@
 #include "tool_outliner.h"
 #include "ui_tool_outliner.h"
+#include "src/item/artboard.h"
+#include "src/designer/canvasview.h"
 
 #include <QDebug>
 
@@ -22,13 +24,27 @@ Outliner::~Outliner()
  *
  ***************************************************/
 
-void Outliner::addNode(AbstractItemBase *node)
+void Outliner::updateList()
 {
-    QTreeWidgetItem * twi = new QTreeWidgetItem();
-    twi->setText(0, node->name());
+    CanvasView *canvas = dynamic_cast<CanvasView*>(sender());
 
-    qDebug() << node->name();
+    if(canvas){
 
-    ui->treeWidget->addTopLevelItem(twi);
+        ui->treeWidget->clear();
+
+        foreach(Artboard* artboard, canvas->artboardList()){
+            QTreeWidgetItem * twi = new QTreeWidgetItem();
+            twi->setText(0, artboard->name());
+
+            foreach(AbstractItemBase *item, artboard->children()){
+                QTreeWidgetItem * twc = new QTreeWidgetItem();
+                twc->setText(0, item->name());
+                twi->addChild(twc);
+
+            }
+            ui->treeWidget->addTopLevelItem(twi);
+        }
+
+    }
 
 }

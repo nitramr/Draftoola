@@ -178,6 +178,7 @@ private:
 	QRectF updateItemSize(QRectF frame);
     void updateItemsSelection(qreal x, qreal y);
 	void reset();
+    bool selectionContainsArtboards() const;
 
 	void sendActiveItems();
 

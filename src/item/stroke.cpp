@@ -23,22 +23,27 @@ Stroke::Stroke(const QString name, const QPen &pen, const StrokePosition strokeP
 
 Stroke::Stroke(const Stroke &other)
 {
-    setID(other.ID());
-    setName(other.name());
-    setStrokePosition(other.strokePosition());
+    m_id = other.m_id;
+    m_name = other.m_name;
+    m_strokePosition = other.m_strokePosition;
+    m_isOn = other.m_isOn;
+    m_blendMode = other.m_blendMode;
 
-//    setColor(other.color());
-    setDashOffset(other.dashOffset());
-    setDashPattern(other.dashPattern());
-    setWidthF(other.widthF());
-    setBrush(other.brush());
-    setStyle(other.style());
-    setCapStyle(other.capStyle());
-    setJoinStyle(other.joinStyle());
-    setBlendMode(other.blendMode());
-    setIsOn(other.isOn());
+    QPen::operator=(static_cast<QPen>(other));
 }
 
+
+bool Stroke::operator==(const Stroke &other) const
+{
+    return m_id == other.m_id &&
+            m_name == other.m_name &&
+            m_blendMode == other.m_blendMode &&
+            m_isOn == other.m_isOn &&
+            m_strokePosition == other.m_strokePosition &&
+
+            QPen::operator==(static_cast<QPen>(other));
+
+}
 
 /***************************************************
  *

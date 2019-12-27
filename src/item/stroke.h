@@ -26,6 +26,7 @@ public:
     ~Stroke(){}
 
     bool operator==( const Stroke & other ) const;
+    inline bool operator!=(const Stroke &stroke) const { return !(operator==(stroke)); }
 
 	// Properties
 	void setStrokePosition(StrokePosition position);

@@ -6,11 +6,17 @@
 
 class AbstractItemProperty
 {
+
+    friend class Fills;
+    friend class Stroke;
+    friend class Gradient;
+    friend class Shadow;
+    friend class ExportLevel;
+
 public:
     AbstractItemProperty();
     AbstractItemProperty(const QString name, QPainter::CompositionMode compositionMode = QPainter::CompositionMode_SourceOver, bool isOn = true);
 
-    void setID(QString id);
     QString ID() const;
 
     void setName(QString name);

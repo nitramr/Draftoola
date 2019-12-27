@@ -323,7 +323,7 @@
   <customwidget>
    <class>IntelligentSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>whiteprint/widgets/intelligentspinbox.h</header>
+   <header>src/widgets/intelligentspinbox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

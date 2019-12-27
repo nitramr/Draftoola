@@ -21,20 +21,20 @@ ExportLevel::ExportLevel(int id, double level, ExportLevel::FileFormat fileForma
 
 ExportLevel::ExportLevel(const ExportLevel &other)
 {
-    m_id = other.ID();
-    m_renderLevel = other.renderLevel();
-    m_fileFormat = other.fileFormat();
-    m_path = other.path();
-    m_pathType = other.pathType();
+    m_id = other.m_id;
+    m_renderLevel = other.m_renderLevel;
+    m_fileFormat = other.m_fileFormat;
+    m_path = other.m_path;
+    m_pathType = other.m_pathType;
 }
 
 bool ExportLevel::operator==(const ExportLevel &other) const
 {
-    return m_id == other.ID() &&
-            m_renderLevel == other.renderLevel() &&
-            m_fileFormat == other.fileFormat() &&
-            m_pathType == other.pathType() &&
-            m_path == other.path();
+    return m_id == other.m_id &&
+            m_renderLevel == other.m_renderLevel &&
+            m_fileFormat == other.m_fileFormat &&
+            m_path == other.m_path &&
+            m_pathType == other.m_pathType;
 }
 
 void ExportLevel::setID(int id)

@@ -79,7 +79,7 @@ void PropertyExportLevel::connectSlots()
     connect(ui->btnDelete, &QToolButton::clicked, this, &PropertyExportLevel::removeClick);
     connect(ui->comboSize, &QComboBox::currentTextChanged, this, &PropertyExportLevel::updateFill);
     connect(ui->comboPath, &QComboBox::currentTextChanged, this, &PropertyExportLevel::updateFill);
-    connect(ui->comboFormat, qOverload<int>(&QComboBox::currentIndexChanged), this, &PropertyExportLevel::updateFill);
+    connect(ui->comboFormat, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyExportLevel::updateFill);
 }
 
 void PropertyExportLevel::disconnectSlots()
@@ -87,7 +87,7 @@ void PropertyExportLevel::disconnectSlots()
     disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyExportLevel::removeClick);
     disconnect(ui->comboSize, &QComboBox::currentTextChanged, this, &PropertyExportLevel::updateFill);
     disconnect(ui->comboPath, &QComboBox::currentTextChanged, this, &PropertyExportLevel::updateFill);
-    disconnect(ui->comboFormat, qOverload<int>(&QComboBox::currentIndexChanged), this, &PropertyExportLevel::updateFill);
+    disconnect(ui->comboFormat, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyExportLevel::updateFill);
 }
 
 void PropertyExportLevel::updateFill()

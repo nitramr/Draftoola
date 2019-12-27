@@ -11,9 +11,9 @@ public:
     IntelligentSpinBox(QWidget *parent = nullptr);
 
 private:
-    double dbl_value;
-    QString str_value;
-    QLineEdit *lineEdit;
+//    double dbl_value;
+//    QString str_value;
+//    QLineEdit *lineEdit;
     QRegExpValidator *validator;
 
 protected:

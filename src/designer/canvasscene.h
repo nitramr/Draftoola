@@ -27,6 +27,13 @@ public:
 
 private:
     qreal m_scaleFactor;
+    int m_grid;
+
+    void saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
+    void saveSVG(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
+    void savePDF(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
+
+    void renderHighQuality(AbstractItemBase * item, bool enableQuality = true);
 
 
 protected:

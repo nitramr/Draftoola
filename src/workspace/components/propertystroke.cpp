@@ -85,7 +85,7 @@ void PropertyStroke::drawStroke(Stroke stroke)
 void PropertyStroke::connectSlots()
 {
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyStroke::updateStroke);
-    connect(ui->sb_width, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
+    connect(ui->sb_width, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
     connect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
     connect(btn_inner, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
     connect(btn_outer, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
@@ -94,7 +94,7 @@ void PropertyStroke::connectSlots()
 void PropertyStroke::disconnectSlots()
 {
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyStroke::updateStroke);
-    disconnect(ui->sb_width, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
+    disconnect(ui->sb_width, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
     disconnect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
     disconnect(btn_inner, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
     disconnect(btn_outer, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
@@ -104,7 +104,7 @@ void PropertyStroke::updateStroke()
 {
     m_stroke.setIsOn(ui->cb_active->isChecked());
     m_stroke.setBlendMode(m_stroke.blendMode());  // need real data
-    m_stroke.setColor(m_stroke.color()); // need real data
+    m_stroke.setBrush(m_stroke.brush()); // need real data (use brush for solid color too)
     m_stroke.setWidthF(ui->sb_width->value());
 
     if(btn_outer->isChecked()){

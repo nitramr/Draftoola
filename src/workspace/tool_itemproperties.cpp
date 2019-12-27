@@ -29,7 +29,7 @@ ItemProperties::ItemProperties(QScrollArea *container, QWidget *parent) :
     m_container->setWidget(this);
     m_container->setWidgetResizable(true);
     m_container->setFrameStyle(0);
-    m_container->setSizePolicy(QSizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding));
+   // m_container->setSizePolicy(QSizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding));
 
 }
 

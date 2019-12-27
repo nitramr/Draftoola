@@ -19,6 +19,21 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
 
 }
 
+AbstractItemBase::AbstractItemBase(const AbstractItemBase &other) : QGraphicsObject(other.parentItem())
+{
+    m_itemType = other.m_itemType;
+    m_name = other.m_name;
+    m_id = other.m_id;
+    m_scaleFactor = other.m_scaleFactor;
+    m_renderQuality = other.m_renderQuality;
+    m_boundingRect = other.m_boundingRect;
+    m_exportFactorList = other.m_exportFactorList;
+    m_shape = other.m_shape;
+    m_invaliateCache = other.m_invaliateCache;
+    m_rect = other.m_rect;
+}
+
+
 /***************************************************
  *
  * Properties
@@ -80,7 +95,7 @@ void AbstractItemBase::setShape(QPainterPath itemShape)
     m_shape = itemShape;
     m_rect = m_shape.boundingRect().normalized();
     setInvalidateCache(true);
-    this->setTransformOriginPoint(m_rect.center());
+    setTransformOriginPoint(m_rect.center());
     update();
 }
 
@@ -107,12 +122,31 @@ QRectF AbstractItemBase::boundingRect() const
 void AbstractItemBase::setHighRenderQuality(bool isHighResolution)
 {
     m_renderQuality = isHighResolution;
+
+
+//    QList<QGraphicsItem*> list = childItems();
+
+//    if(list.count() == 0) return;
+
+//    foreach(QGraphicsItem *child, this->childItems()){
+
+//        qDebug() << "item child" << child;
+
+//        AbstractItemBase *abItem = static_cast<AbstractItemBase*>(child);
+//        if(abItem) {
+//            //qDebug() << "item child" << abItem->ID();
+//            //abItem->setHighRenderQuality(isHighResolution);
+//            //abItem->update();
+//        }
+//    }
+
 }
 
 bool AbstractItemBase::highRenderQuality() const
 {
     return m_renderQuality;
 }
+
 
 QPointF AbstractItemBase::anchorTopLeft() const
 {
@@ -202,21 +236,8 @@ ExportLevel AbstractItemBase::exportLevel(int index)
     return m_exportFactorList.value(index);
 }
 
-/***************************************************
- *
- * Events
- *
- ***************************************************/
-
-//void AbstractItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-//{
-//    Q_UNUSED(option);
-//    Q_UNUSED(widget);
-
-//    setScaleFactor(option->levelOfDetailFromTransform(painter->transform()));
-
-    // reset bounding box to minimum shape
-//   m_boundingRect = rect();
-
-//}
+QList<AbstractItemBase *> AbstractItemBase::children()
+{
+    return m_children;
+}
 

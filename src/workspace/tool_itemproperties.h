@@ -25,6 +25,7 @@ public:
     explicit ItemProperties(QScrollArea * container, QWidget *parent = nullptr);
     ~ItemProperties();
 
+public slots:
     void setActiveItem(AbstractItemBase *item);
 
 private:

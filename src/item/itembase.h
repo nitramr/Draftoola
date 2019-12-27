@@ -1,7 +1,7 @@
 #ifndef ITEMBASE_H
 #define ITEMBASE_H
 
-#include <QGraphicsObject>
+//#include <QGraphicsObject>
 #include <QPen>
 #include <QBrush>
 #include <QMap>
@@ -16,7 +16,7 @@
 #include "shadow.h"
 #include "abstractitembase.h"
 
-#include <QGraphicsDropShadowEffect>
+//#include <QGraphicsDropShadowEffect>
 
 
 class ItemBase : public AbstractItemBase
@@ -53,9 +53,7 @@ public:
     bool hasInnerShadows() const;
 
     void setShape(QPainterPath itemShape) override;
-
-//    void setInvalidateCache(bool invalidate);
-//    bool invalidateCache() const;
+    QRectF renderRect() const override;
 
     void setGeometryHasChanged(bool hasChanged);
     bool geometryHasChanged() const;
@@ -66,8 +64,11 @@ public:
 	// Members
     QPainterPath scaleStroke(const QPainterPath & path, qreal amount , QPen pen = QPen()) const;
 
+    void addItem(AbstractItemBase *item) override;
+
+    // Events
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
-    virtual void render(QPainter *painter, qreal scale = 1);
+    void render(QPainter *painter, qreal scale = 1) override;
 
 
 private:
@@ -78,7 +79,7 @@ private:
     QPainterPath m_shadowMapFill;
     bool m_geometryHasChanged;
     bool m_contentHasChanged;
-    QGraphicsDropShadowEffect * qShadow;
+//    QGraphicsDropShadowEffect * qShadow;
     QPixmapCache m_cache;
     mutable QPixmapCache::Key m_cacheKey;
 

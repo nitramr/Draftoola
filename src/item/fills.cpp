@@ -41,33 +41,34 @@ Fills::Fills(const QString name, const QGradient &gradient) : Fills(name, QColor
 }
 
 Fills::Fills(const Fills &other)
-{
-    setID(other.ID());
-    setName(other.name());
-    setFillMode(other.fillMode());
-    setGradient(other.gradient());
-    setColor(other.color());
-    setPixmap(other.pixmap());
-    setStyle(other.style());
-    setBlendMode(other.blendMode());
-    setOpacity(other.opacity());
-    setIsOn(other.isOn());
-    setFillType(other.fillType()); // overrides type
+{    
+    m_id = other.m_id;
+        m_name = other.m_name;
+        m_fillType = other.m_fillType;
+        m_fillMode = other.m_fillMode;
+        m_gradient = other.m_gradient;
+        m_color = other.m_color;
+       m_pixmap = other.m_pixmap;
+        m_style = other.m_style;
+        m_blendMode = other.m_blendMode;
+        m_opacity = other.m_opacity;
+        m_isOn = other.m_isOn;
+
 }
 
 bool Fills::operator==(const Fills &other) const
 {
-    return ID() == other.ID() &&
-    name() == other.name() &&
-    fillType() == other.fillType() &&
-    fillMode() == other.fillMode() &&
-    gradient() == other.gradient() &&
-    color() == other.color() &&
-//    pixmap() == other.pixmap() &&
-    style() == other.style() &&
-    blendMode() == other.blendMode() &&
-    opacity() == other.opacity() &&
-    isOn() == other.isOn();
+    return m_id == other.m_id &&
+    m_name == other.m_name &&
+    m_fillType == other.m_fillType &&
+    m_fillMode == other.m_fillMode &&
+    m_gradient == other.m_gradient &&
+    m_color == other.m_color &&
+   // m_pixmap == other.m_pixmap &&
+    m_style == other.m_style &&
+    m_blendMode == other.m_blendMode &&
+    m_opacity == other.m_opacity &&
+    m_isOn == other.m_isOn;
 }
 
 QDebug operator<<(QDebug dbg, const Fills &fills)

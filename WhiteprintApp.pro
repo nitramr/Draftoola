@@ -9,6 +9,8 @@ QT += core gui widgets svg
 QT += script
 #qtHaveModule(printsupport): QT += printsupport
 
+#CONFIG += c++14
+
 TARGET = WhiteprintApp
 TEMPLATE = app
 

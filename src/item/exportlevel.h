@@ -11,7 +11,7 @@ class ExportLevel
 //    Q_GADGET
 public:
 
-    enum class FileFormat{
+    enum FileFormat{
         JPG = 0,
         PNG = 1,
         SVG = 2,
@@ -19,7 +19,7 @@ public:
     };
 //    Q_ENUM(FileFormat)
 
-    enum class PathType{
+    enum PathType{
         prefix = 0,
         suffix = 1
     };

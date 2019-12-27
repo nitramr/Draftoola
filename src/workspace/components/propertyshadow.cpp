@@ -56,19 +56,19 @@ void PropertyShadow::drawShadow(Shadow shadow)
 void PropertyShadow::connectSlots()
 {
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
-    connect(ui->sb_blur, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    connect(ui->sb_spread, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    connect(ui->sb_xOffset, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    connect(ui->sb_yOffset, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    connect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    connect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    connect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    connect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
 }
 
 void PropertyShadow::disconnectSlots()
 {
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
-    disconnect(ui->sb_blur, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    disconnect(ui->sb_spread, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    disconnect(ui->sb_xOffset, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    disconnect(ui->sb_yOffset, qOverload<double>(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    disconnect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    disconnect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    disconnect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    disconnect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
 }
 
 void PropertyShadow::updateShadow()

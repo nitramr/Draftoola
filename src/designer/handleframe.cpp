@@ -255,9 +255,8 @@ QRectF HandleFrame::adjustedRect() const
 QRectF HandleFrame::selectionRect() const
 {
 
-    qDebug() << "Enter";
-
     QRectF selectionRect;
+    bool onlyArtboards = selectionContainsArtboards();
 
     QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
     foreach(QGraphicsItem *current, selectedItems) {
@@ -279,6 +278,7 @@ void HandleFrame::moveBy(qreal dx, qreal dy)
     QGraphicsItem::moveBy(dx,dy);
 
     QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
+
     foreach(QGraphicsItem *current, selectedItems) {
 
         AbstractItemBase * item = dynamic_cast<AbstractItemBase*>(current);
@@ -286,7 +286,6 @@ void HandleFrame::moveBy(qreal dx, qreal dy)
         if(!item) continue;
 
         item->moveBy(dx,dy);
-
     }
 
     sendActiveItems();
@@ -585,6 +584,23 @@ void HandleFrame::reset()
     this->setVisible(false);
     this->setRotation(0);
     emit sendActiveItem(nullptr);
+}
+
+
+bool HandleFrame::selectionContainsArtboards() const
+{
+    if(m_scene->selectedItems().count() <= 0) return false;
+
+    QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
+
+    foreach(QGraphicsItem *current, selectedItems) {
+        Artboard * item = dynamic_cast<Artboard*>(current);
+        if(item){
+            return true;
+        }
+    }
+
+    return false;
 }
 
 

@@ -19,6 +19,7 @@ class AbstractItemBase : public QGraphicsObject
 public:
 
     AbstractItemBase(const QRectF rect, QGraphicsItem *parent = nullptr);
+    AbstractItemBase(const AbstractItemBase &other);
 
     // Properties
     void setID(int id);
@@ -35,14 +36,13 @@ public:
 
     virtual QRectF rect() const;
     virtual QRectF boundingRect() const;
+    virtual QRectF renderRect() const = 0;
 
-    void setHighRenderQuality(bool isHighResolution);
     bool highRenderQuality() const;
 
     void setInvalidateCache(bool invalidate);
     bool invalidateCache() const;
 
-    void setScaleFactor(qreal scaleFactor);
     qreal scaleFactor() const;
 
     QPointF anchorTopLeft() const;
@@ -63,7 +63,19 @@ public:
     QList<ExportLevel> exportLevels() const;
     ExportLevel exportLevel(int index);
 
-//    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) = 0;
+    QList<AbstractItemBase*> children();
+
+    // Functions
+    virtual void addItem(AbstractItemBase * children) = 0;
+
+    // Events
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) = 0;
+    virtual void render(QPainter *painter, qreal scale = 1) = 0;
+
+public slots:
+    void setScaleFactor(qreal scaleFactor);
+    void setHighRenderQuality(bool isHighResolution);
+
 
 private:
     // Properties
@@ -75,7 +87,8 @@ private:
     ItemType m_itemType;
     qreal m_scaleFactor;
     bool m_renderQuality;
-    QPainterPath m_shape;
+    QPainterPath m_shape;    
+    QList<AbstractItemBase*> m_children;
 
     void setBoundingRect(QRectF boundingrect);
 

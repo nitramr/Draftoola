@@ -24,11 +24,6 @@ AbstractItemProperty::AbstractItemProperty(const QString name , QPainter::Compos
  *
  ***************************************************/
 
-void AbstractItemProperty::setID(QString id)
-{
-    m_id = id;
-}
-
 QString AbstractItemProperty::ID() const
 {
     return m_id;

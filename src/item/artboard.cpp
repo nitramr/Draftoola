@@ -8,14 +8,9 @@
  *
  *********************/
 
-ArtboardLabel::ArtboardLabel(QString name, Artboard *parent) : QGraphicsTextItem(name)
+ArtboardLabel::ArtboardLabel(QString name, Artboard *parent) : QGraphicsSimpleTextItem(name, parent)
 {
-
-//    this->setFlag( QGraphicsItem::ItemIsFocusable, true );
     this->setFlag( QGraphicsItem::ItemIgnoresTransformations, true );
-//    this->setFlag( QGraphicsItem::ItemIsSelectable, true );
-
-    this->setTextInteractionFlags(Qt::NoTextInteraction);
 }
 
 void ArtboardLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -23,23 +18,13 @@ void ArtboardLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
     QStyleOptionGraphicsItem myOption(*option);
         myOption.state &= ~QStyle::State_Selected;
-    QGraphicsTextItem::paint(painter, &myOption, widget);
+        QGraphicsSimpleTextItem::paint(painter, &myOption, widget);
 }
 
-void ArtboardLabel::focusOutEvent(QFocusEvent *event)
+void ArtboardLabel::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    Q_UNUSED(event);
-    setTextInteractionFlags(Qt::NoTextInteraction);
-}
-
-void ArtboardLabel::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-    //	Q_UNUSED(event);
-
-    if (this->textInteractionFlags() == Qt::NoTextInteraction)
-        this->setTextInteractionFlags(Qt::TextEditorInteraction);
-    setFocus();
-    QGraphicsTextItem::mouseDoubleClickEvent(event);
+    //dynamic_cast<Artboard*>(this->parentItem())->canvas()->setSelected(true);
+    this->parentItem()->setSelected(true);
 }
 
 
@@ -57,6 +42,9 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
 {
     m_offset= 24;
     m_buffer = 4;
+    m_backgroundColor = Qt::white;
+    m_useBGColor = true;
+    m_doRender = false;
 
     m_artboard = new QGraphicsRectItem(rect);
     m_artboard->setFlags(
@@ -70,7 +58,6 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
     m_artboard->setParentItem(this);
 
     m_label = new ArtboardLabel(name, this);
-    m_label->setParentItem(this);
 
 
     this->setFlag( QGraphicsItem::ItemIsSelectable, true );
@@ -79,6 +66,8 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
 
     this->setAcceptHoverEvents(true);
     this->setName(name);
+    this->setItemType(ItemType::Artboard);
+
 }
 
 /***************************************************
@@ -104,6 +93,39 @@ void Artboard::setRect(QRectF rect)
 void Artboard::addItem(AbstractItemBase *item)
 {
     item->setParentItem(m_artboard);
+    m_children.append(item);
+
+}
+
+
+QRectF Artboard::renderRect() const
+{
+    return m_rect;
+}
+
+void Artboard::setBackgroundColor(const QColor color)
+{
+    m_backgroundColor = color;
+}
+
+QColor Artboard::backgroundColor() const
+{
+    return m_backgroundColor;
+}
+
+void Artboard::setUseBackgroundColor(bool useBGColor)
+{
+    m_useBGColor = useBGColor;
+}
+
+bool Artboard::useBackgroundColor() const
+{
+    return m_useBGColor;
+}
+
+void Artboard::setDoRender(bool doRender)
+{
+    m_doRender = doRender;
 }
 
 
@@ -118,35 +140,65 @@ void Artboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    setBoundingRect(rect().adjusted( -m_buffer, -m_offset/scaleFactor() - m_buffer, m_buffer, m_buffer));
+    qreal offset = m_offset/scaleFactor();
+
+    setBoundingRect(rect().adjusted( -m_buffer, -offset - m_buffer, m_buffer, m_buffer));
+
+    m_label->setPos(this->rect().x(), this->rect().y() -offset);
+
+    if(m_useBGColor) painter->fillRect(canvas()->rect(), QBrush(m_backgroundColor));
+
+    if(!m_doRender){
+        QPen pen = QPen(QColor(200,200,200));
+        pen.setCosmetic(true);
+
+        painter->setBrush(QBrush(m_backgroundColor));
+        painter->setPen(pen);
+        painter->drawRect(this->rect());
+    }
+
+}
+
+void Artboard::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mouseReleaseEvent(event);
+    this->setSelected(false);
+}
+
+void Artboard::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mousePressEvent(event);
+    this->setSelected(false);
+}
+
+void Artboard::render(QPainter *painter, qreal scale)
+{
+    setScaleFactor(scale);
 
     painter->save();
-    painter->setRenderHint(QPainter::Antialiasing, false);
+    painter->setBrush(Qt::NoBrush);
+    painter->setPen(Qt::NoPen);
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    // zoom level
-    //	const qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
-    m_label->setPos(this->rect().x(), this->rect().y() - m_offset/scaleFactor());
+    m_doRender = true;
+    paint(painter, nullptr);
+    m_doRender = false;
 
-    // draw border outside of canvas
-    QPen pen = QPen(QColor(200,200,200));
-    pen.setCosmetic(true);
+    QList<QGraphicsItem*> list = canvas()->childItems();
 
-    painter->setPen(pen);
-    painter->setBrush(QBrush(Qt::white));
-    painter->drawRect(this->rect());
+    foreach(QGraphicsItem *object, list){
+        AbstractItemBase *abItem = static_cast<AbstractItemBase*>(object);
+        if(abItem){
+            abItem->setHighRenderQuality(true);
+            painter->translate(abItem->pos());
+            abItem->render(painter, scale );
+            abItem->setHighRenderQuality(false);
+            painter->translate(-abItem->pos());
+        }
+    }
 
-    // reset painter
     painter->restore();
-
-    // BoundingBox
-//    painter->save();
-//    QPen penB = QPen(QColor(0,0,0));
-//    penB.setCosmetic(true);
-//    penB.setStyle(Qt::PenStyle::DotLine);
-//    painter->setPen(penB);
-//    painter->setBrush(Qt::NoBrush);
-//    painter->drawRect(this->boundingRect());
-//    painter->restore();
 
 }
 

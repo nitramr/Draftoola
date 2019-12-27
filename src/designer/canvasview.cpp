@@ -28,7 +28,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     this->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate); // http://doc.qt.io/archives/qt-4.8/qgraphicsview.html#ViewportUpdateMode-enum
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     this->setBackgroundBrush(QColor(240,240,240));
-    //    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
+//    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
 
 
     m_scene = new CanvasScene();
@@ -38,7 +38,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     this->setScene(m_scene);
 
     m_grid = 1;
-    m_artboardList = new QMap<QString, Artboard*>();
+    m_artboardList = QList<Artboard*>();
     QColor color(0, 128, 255);
 
     m_handleFrame = new HandleFrame(m_scene, m_grid);
@@ -93,7 +93,7 @@ void CanvasView::resetItemCache()
     foreach(QGraphicsItem *item, m_scene->items()){
         ItemBase * b_item = dynamic_cast<ItemBase*>(item);
         if(b_item){
-            b_item->setCacheMode(QGraphicsItem::NoCache); // http://doc.qt.io/archives/qt-4.8/qgraphicsitem.html#CacheMode-enum
+            b_item->setCacheMode(QGraphicsItem::NoCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
            // b_item->setInvalidateCache(true);
         }
     }
@@ -116,7 +116,7 @@ void CanvasView::updateHRuler()
  *
  ***************************************************/
 
-void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, QGraphicsItem *parent)
+void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemBase *parent)
 {
 
     Artboard * m_artboard = dynamic_cast<Artboard*>(item);
@@ -126,25 +126,28 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, QGraphicsItem
         qDebug() << "Canvas: Item is Artboard";
 
         m_scene->addItem(m_artboard);
-        m_artboardList->insert(m_artboard->name(), m_artboard);
+        m_artboardList.append(m_artboard);
         m_artboard->setPos(x,y);
 
-        qDebug() << "Canvas: Artboard added";
+        emit itemsChanged();
+
+        qDebug() << "Canvas: Artboard added" << item->name();
+
 
     }else{ // Item is no Artboard
 
         qDebug() << "Canvas: Item is no Artboard";
 
-        if(parent == nullptr && m_artboardList->count() > 0){
+        if(parent == nullptr && m_artboardList.count() > 0){
 
             qDebug() << "Canvas: Item has no Parent";
-            Artboard * artboard = m_artboardList->first();
+            Artboard * artboard = m_artboardList.first();
 
-            if(artboard){
-                //item->setParentItem(artboard->canvas());
+            if(artboard){                
                 artboard->addItem(item);
                 item->setPos(x,y);
-                qDebug() << "Canvas: add Item to Artboard";
+                emit itemsChanged();
+                qDebug() << "Canvas: add Item to Artboard" << item->name();
             }
 
         }else if(parent){
@@ -153,10 +156,18 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, QGraphicsItem
 
             item->setParentItem(parent);
             item->setPos(x,y);
-            qDebug() << "Canvas: add Item to Parent";
+            emit itemsChanged();
+            qDebug() << "Canvas: add Item to Parent" << item->name();
         }
 
     }
+
+    connect(this, &CanvasView::signalScaleFactor, item, &AbstractItemBase::setScaleFactor);
+}
+
+QList<Artboard *> CanvasView::artboardList()
+{
+    return m_artboardList;
 }
 
 void CanvasView::applyScaleFactor()
@@ -167,6 +178,8 @@ void CanvasView::applyScaleFactor()
     m_scene->setScaleFactor(scaleFactor);
     m_VRuler->setScaleFactor(scaleFactor);
     m_HRuler->setScaleFactor(scaleFactor);
+
+    emit signalScaleFactor(scaleFactor);
 }
 
 qreal CanvasView::scaleFactor() const
@@ -208,7 +221,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
         foreach(QGraphicsItem *item, m_scene->items()){
             ItemBase * b_item = dynamic_cast<ItemBase*>(item);
             if(b_item){
-                b_item->setCacheMode(QGraphicsItem::ItemCoordinateCache); // http://doc.qt.io/archives/qt-4.8/qgraphicsitem.html#CacheMode-enum
+                b_item->setCacheMode(QGraphicsItem::ItemCoordinateCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
                // b_item->setInvalidateCache(false);
             }
         }

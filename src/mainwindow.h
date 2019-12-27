@@ -36,6 +36,8 @@ private:
     QDockWidget * m_outlinerDock;
     QDockWidget * m_propertiesDock;
 
+    void tmpSetup();
+
 
 public slots:
     void setActiveItem(AbstractItemBase *item);

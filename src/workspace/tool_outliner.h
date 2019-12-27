@@ -20,7 +20,8 @@ public:
     explicit Outliner(QWidget *parent = nullptr);
     ~Outliner();
 
-    void addNode(AbstractItemBase * node);
+public slots:
+    void updateList();
 
 private:
     Ui::Outliner *ui;

@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<Fills>("Fills");
     qRegisterMetaType<Stroke>("Stroke");
     qRegisterMetaType<Gradient>("Gradient");
+//    qRegisterMetaType<AbstractItemBase>("AbstractItemBase");
 
     MainWindow w;
     w.show();

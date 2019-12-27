@@ -21,11 +21,11 @@ public:
     inline bool operator!=(const Gradient &gradient) const { return !(operator==(gradient)); }
 
 	// Properties
-	void setType(GradientType type);
+    void setType(GradientType type);
     GradientType type() const;
 
 private:
-	GradientType m_type;
+    GradientType m_type;
 
 };
 Q_DECLARE_METATYPE(Gradient)

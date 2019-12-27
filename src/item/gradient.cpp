@@ -10,18 +10,18 @@ Gradient::Gradient(QString name, GradientType type) : AbstractItemProperty (name
 
 Gradient::Gradient(const Gradient &other)
 {
-    setID(other.ID());
-    setName(other.name());
-    setType(other.type());
-    setBlendMode(other.blendMode());
+    m_id = other.m_id;
+    m_name = other.m_name;
+    m_type = other.m_type;
+    m_blendMode = other.m_blendMode;
 }
 
 bool Gradient::operator==(const Gradient &other) const
 {
-    return ID() == other.ID() &&
-            name() == other.name() &&
-            type() == other.type() &&
-            blendMode() == other.blendMode();
+    return m_id == other.m_id &&
+            m_name == other.m_name &&
+            m_type == other.m_type &&
+            m_blendMode == other.m_blendMode;
 }
 
 QDebug operator<<(QDebug dbg, const Gradient &gradient)
@@ -44,11 +44,11 @@ QDebug operator<<(QDebug dbg, const Gradient &gradient)
  ***************************************************/
 
 void Gradient::setType(GradientType type){
-	m_type = type;
+    m_type = type;
 }
 
 GradientType Gradient::type() const{
-	return m_type;
+    return m_type;
 }
 
 

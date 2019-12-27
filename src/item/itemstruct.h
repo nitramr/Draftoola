@@ -4,23 +4,24 @@
 #include <QMetaType>
 
 enum class GradientType {
-	Linear = 0,
-	Radial = 1
+        Linear = 0,
+        Radial = 1
 };
 Q_DECLARE_METATYPE(GradientType)
 
-enum class ItemType {
-	Artboard = 0,
-	Rect = 1,
-	Oval = 2,
-	Triangle = 3,
-	Star = 4,
-	Polygon = 5,
-	Line = 6,
-	Text = 7,
-	Instance = 8
+    enum class ItemType{
+        Artboard = 0,
+        Rect = 1,
+        Oval = 2,
+        Triangle = 3,
+        Star = 4,
+        Polygon = 5,
+        Line = 6,
+        Text = 7,
+        Instance = 8
 };
 Q_DECLARE_METATYPE(ItemType)
+
 
 enum class StrokePosition {
 	Center = 0,

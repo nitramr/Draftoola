@@ -74,13 +74,13 @@ void PropertyFill::drawFill(Fills fill)
 void PropertyFill::connectSlots()
 {
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
-    connect(ui->sb_opacity, qOverload<int>(&QSpinBox::valueChanged), this, &PropertyFill::updateFill);
+    connect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateFill);
 }
 
 void PropertyFill::disconnectSlots()
 {
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
-    disconnect(ui->sb_opacity, qOverload<int>(&QSpinBox::valueChanged), this, &PropertyFill::updateFill);
+    disconnect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateFill);
 }
 
 void PropertyFill::updateFill()

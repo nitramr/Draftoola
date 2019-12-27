@@ -19,26 +19,26 @@ Shadow::Shadow(QString name, QColor color, qreal radius, QPointF offset, qreal s
 
 Shadow::Shadow(const Shadow &other)
 {
-    setID(other.ID());
-    setName(other.name());
-    setColor(other.color());
-    setRadius(other.radius());
-    setOffset(other.offset());
-    setSpread(other.spread());
-    setBlendMode(other.blendMode());
-    setIsOn(other.isOn());
+    m_id = other.m_id;
+    m_name = other.m_name;
+    m_color = other.m_color;
+    m_radius = other.m_radius;
+    m_offset = other.m_offset;
+    m_spread = other.m_spread;
+    m_blendMode = other.m_blendMode;
+    m_isOn = other.m_isOn;
 }
 
 bool Shadow::operator==(const Shadow &other) const
 {
-    return ID() == other.ID() &&
-            name() == other.name() &&
-            color() == other.color() &&
-            radius() == other.radius() &&
-            offset() == other.offset() &&
-            spread() == other.spread() &&
-            blendMode() == other.blendMode() &&
-            isOn() == other.isOn();
+    return m_id == other.m_id &&
+            m_name == other.m_name &&
+            m_color == other.m_color &&
+            m_radius == other.m_radius &&
+            m_offset == other.m_offset &&
+            m_spread == other.m_spread &&
+            m_blendMode == other.m_blendMode &&
+            m_isOn == other.m_isOn;
 }
 
 QDebug operator<<(QDebug dbg, const Shadow &shadow)

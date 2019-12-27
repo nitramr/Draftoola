@@ -1,10 +1,10 @@
 #include "itembase.h"
 #include <QDebug>
-#include <QGraphicsScene>
-#include <QPainter>
-#include <QtWidgets>
+//#include <QGraphicsScene>
+//#include <QPainter>
+//#include <QtWidgets>
 #include "path/pathhandler.h"
-#include <QGraphicsEffect>
+//#include <QGraphicsEffect>
 
 QT_BEGIN_NAMESPACE
 // https://code.woboq.org/qt5/qtbase/src/widgets/effects/qpixmapfilter.cpp.html
@@ -24,9 +24,9 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     m_cache = QPixmapCache();
     //    m_cache.setCacheLimit(51200); // 50MB
 
-    qShadow = new QGraphicsDropShadowEffect();
-    qShadow->setBlurRadius(10);
-    qShadow->setXOffset(2);
+//    qShadow = new QGraphicsDropShadowEffect();
+//    qShadow->setBlurRadius(10);
+//    qShadow->setXOffset(2);
 
     //       setGraphicsEffect(qShadow);
 
@@ -77,14 +77,13 @@ QList<Stroke> ItemBase::strokeList() const
 
 bool ItemBase::hasStrokes() const
 {
-    if(m_strokeList.count() <= 0) return true;
-    bool has = false;
+    if(m_strokeList.count() <= 0) return false;
     foreach(Stroke m_item, m_strokeList){
         if(m_item.isOn()){
             return true;
         }
     }
-    return has;
+    return false;
 }
 
 void ItemBase::addFills(Fills fills)
@@ -119,14 +118,14 @@ QList<Fills> ItemBase::fillsList() const
 
 bool ItemBase::hasFills() const
 {
-    if(m_fillsList.count() <= 0) return true;
-    bool has = false;
+    if(m_fillsList.count() <= 0) return false;
+
     foreach(Fills m_item, m_fillsList){
         if(m_item.isOn()){
             return true;
         }
     }
-    return has;
+    return false;
 }
 
 void ItemBase::addShadow(Shadow shadow)
@@ -161,14 +160,14 @@ QList<Shadow> ItemBase::shadowList() const
 
 bool ItemBase::hasShadows() const
 {
-    if(m_shadowList.count() <= 0) return true;
-    bool has = false;
+    if(m_shadowList.count() <= 0) return false;
+
     foreach(Shadow m_item, m_shadowList){
         if(m_item.isOn()){
             return true;
         }
     }
-    return has;
+    return false;
 }
 
 void ItemBase::addInnerShadow(Shadow shadow)
@@ -203,7 +202,8 @@ QList<Shadow> ItemBase::innerShadowList() const
 
 bool ItemBase::hasInnerShadows() const
 {
-    if(m_innerShadowList.count() <= 0) return true;
+    if(m_innerShadowList.count() <= 0) return false;
+
     foreach(Shadow m_item, m_innerShadowList){
         if(m_item.isOn()){
             return true;
@@ -212,6 +212,11 @@ bool ItemBase::hasInnerShadows() const
     return false;
 }
 
+
+/**
+ * @brief Returns level of details value. If highRenderQuality() = true it returns best level but results in slow rendering.
+ * @return
+ */
 qreal ItemBase::lod() const
 {    
     qreal m_lod = scaleFactor();
@@ -221,9 +226,11 @@ qreal ItemBase::lod() const
     if(m_lod > 2){
         // scaleFactor = best render result but slow
         // 1 = worst render result but fast
+        // returns amount of pixels within 1 pixel
         return 2;
     }else return m_lod;
 }
+
 
 void ItemBase::setShape(QPainterPath itemShape)
 {
@@ -233,6 +240,11 @@ void ItemBase::setShape(QPainterPath itemShape)
     this->setTransformOriginPoint(m_rect.center());
     m_geometryHasChanged = true;
     update();
+}
+
+QRectF ItemBase::renderRect() const
+{
+    return m_boundingRect;
 }
 
 
@@ -308,6 +320,12 @@ QPainterPath ItemBase::scaleStroke(const QPainterPath &path, qreal amount, QPen 
     }else return path;
 }
 
+void ItemBase::addItem(AbstractItemBase *item)
+{
+    item->setParentItem(this);
+    m_children.append(item);
+}
+
 QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
 {
     if(!shadow.isOn()) return QRectF();
@@ -318,7 +336,7 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, highRenderQuality());
     painter->setCompositionMode(shadow.blendMode());
 
 
@@ -394,7 +412,7 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, highRenderQuality());
     painter->setCompositionMode(shadow.blendMode());
     painter->setClipPath(shape(), Qt::ClipOperation::IntersectClip);
 
@@ -446,7 +464,7 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, highRenderQuality());
 
     QRectF shapeRect = shape().boundingRect();
 
@@ -532,6 +550,7 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
 
 QRectF ItemBase::drawStrokes(Stroke stroke, QPainter *painter)
 {
+
     if(!stroke.isOn() || stroke.widthF() <= 0) return QRectF();
 
     PathHandler pHandler;
@@ -656,10 +675,12 @@ QImage ItemBase::blurShadow(QPainterPath shape, QSize size, qreal radius, qreal 
 
 }
 
-/*!
-    \brief Calculates bounding rectangle of all used shadows
-    \return
-*/
+
+/**
+ * @brief Calculates bounding rectangle of all used shadows
+ * @param shape
+ * @return
+ */
 QRectF ItemBase::ShadowBound(QPainterPath shape) const
 {
     QRectF bound = shape.boundingRect();
@@ -689,7 +710,7 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     if (rect().width() <= 0 || rect().height() <= 0)
         return;
 
-    qreal multiplier = option->levelOfDetailFromTransform( painter->transform());
+    qreal multiplier = scaleFactor(); //option->levelOfDetailFromTransform( painter->transform());
 
     // reset bounding box to minimum shape
 
@@ -701,7 +722,7 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 //    painter->scale(m_scale,m_scale);
 
 //    setHighRenderQuality(true);
-    render(painter, multiplier  );
+    render(painter, multiplier );
 
 //    painter->drawPixmap(rect(),cache, cache.rect());
 
@@ -737,6 +758,11 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 }
 
+/**
+ * @brief Render all layers of an object. Scalefactor set size multiplier of render output, renderHighQuality() set render quality level.
+ * @param painter
+ * @param scale
+ */
 void ItemBase::render(QPainter *painter, qreal scale)
 {
     setScaleFactor(scale);
