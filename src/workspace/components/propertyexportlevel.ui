@@ -49,7 +49,7 @@
      <item>
       <widget class="QComboBox" name="comboSize">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -161,7 +161,7 @@
        </property>
        <property name="icon">
         <iconset resource="../../resources/icons/icons.qrc">
-         <normaloff>:/icons/dark/close.svg</normaloff>:/icons/dark/close.svg</iconset>
+         <normaloff>:/icons/dark/delete-24px.svg</normaloff>:/icons/dark/delete-24px.svg</iconset>
        </property>
        <property name="checkable">
         <bool>false</bool>

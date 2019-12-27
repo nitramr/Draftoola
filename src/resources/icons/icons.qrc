@@ -7,5 +7,6 @@
         <file>dark/settings.svg</file>
         <file>dark/chevron-right.svg</file>
         <file>dark/chevron-down.svg</file>
+        <file>dark/delete-24px.svg</file>
     </qresource>
 </RCC>

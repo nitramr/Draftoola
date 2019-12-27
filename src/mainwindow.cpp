@@ -40,12 +40,18 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_propertiesDock = new QDockWidget("Properties");
     m_propertiesDock->setWidget(scrollProp);
     m_propertiesDock->setAllowedAreas(Qt::DockWidgetArea::RightDockWidgetArea | Qt::DockWidgetArea::LeftDockWidgetArea);
-//
+    m_propertiesDock->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::MinimumExpanding);
+//    m_propertiesDock->setFixedWidth(300);
 	this->addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
-    m_propertiesDock->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::MinimumExpanding);
+
 
     connect(m_canvas->handleFrame(), &HandleFrame::sendActiveItem, this, &MainWindow::setActiveItem);
     connect(m_canvas, &CanvasView::itemsChanged, m_outliner, &Outliner::updateList);
+
+    // signal to signal connection
+    connect(m_properties, &ItemProperties::exportItem, [this](AbstractItemBase *item){
+        emit m_scene->exportItem(item);
+    });
 
     tmpSetup();
 

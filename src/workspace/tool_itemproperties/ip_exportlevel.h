@@ -39,14 +39,17 @@ private:
     void addExportLevel(PropertyExportLevel *propertyItem);
     void removeExportLevel(PropertyExportLevel *propertyItem);
 
+
 signals:
     void sendCollapse(bool);
+    void exportItem(AbstractItemBase *item);
 
 public slots:
         void newExportLevel();
 
 private slots:
         void updateItem();
+        void doExport();
 };
 
 #endif // IP_EXPORT_H

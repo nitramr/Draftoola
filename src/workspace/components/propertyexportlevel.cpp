@@ -92,7 +92,9 @@ void PropertyExportLevel::disconnectSlots()
 
 void PropertyExportLevel::updateFill()
 {
-    QString path = "@1.5x";
+    QString path = ui->comboPath->currentText();
+
+
 
     ExportLevel::FileFormat fileFormat = ExportLevel::FileFormat::PNG;
     QString fileString = ui->comboFormat->currentText();
@@ -109,6 +111,13 @@ void PropertyExportLevel::updateFill()
 
     double renderLevel = 1;
 
+    // TODO: Pattern need to optimize for suffix (x=multiplier; w=fixed width)
+    QRegularExpression re("(\\d+.\\d)|(\\d+)");
+    QRegularExpressionMatch match = re.match(ui->comboSize->currentText());
+    if (match.hasMatch()) {
+        QString matched = match.captured(0);
+        renderLevel = matched.toDouble();
+    }
 
     m_exportLevel.setRenderLevel(renderLevel);
     m_exportLevel.setPath(path);

@@ -111,7 +111,9 @@ void CanvasScene::render(QPainter *painter, const QRectF &target, const QRectF &
     //		painter->restore();
 }
 
-
+/**
+ * @brief [SLOT] Export all items on canvas into all provided output formats.
+ */
 void CanvasScene::exportItems()
 {
     this->clearSelection();
@@ -129,7 +131,7 @@ void CanvasScene::exportItems()
 }
 
 /**
- * @brief Export item into all provided output formats
+ * @brief [SLOT] Export single item into all provided output formats.
  * @param item
  */
 void CanvasScene::exportItem(AbstractItemBase *item)
@@ -146,7 +148,7 @@ void CanvasScene::exportItem(AbstractItemBase *item)
 
             switch(expLevel.fileFormat()){
             case ExportLevel::FileFormat::JPG:
-                saveImage(item, multiplier, output + ".jpg");
+                saveImage(item, multiplier, output + ".jpg", Qt::white);
                 break;
             case ExportLevel::FileFormat::SVG:
                 saveSVG(item, multiplier, output + ".svg");
@@ -170,12 +172,12 @@ void CanvasScene::exportItem(AbstractItemBase *item)
  * @param multiplier
  * @param outputPath
  */
-void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath)
+void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath, QColor bgColor)
 {
     qDebug() << "saveImage start";
 
     QImage image(QSizeF(bi->renderRect().width()*multiplier,bi->renderRect().height()*multiplier ).toSize(), QImage::Format_ARGB32_Premultiplied);
-    image.fill(Qt::transparent);
+    image.fill(bgColor);
 
     QPainter painter(&image);
     painter.scale(multiplier,multiplier);

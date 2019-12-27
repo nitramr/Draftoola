@@ -8,6 +8,8 @@ ipExportLevels::ipExportLevels(QWidget *parent) :
     ui->setupUi(this);
 
     unloadItems();
+
+    connect(ui->btnExport, &QPushButton::clicked, this, &ipExportLevels::doExport);
 }
 
 ipExportLevels::~ipExportLevels()
@@ -155,5 +157,12 @@ void ipExportLevels::updateItem()
        m_item->updateExportLevel(m_changedProperty->exportLevel());
 
     }
+
+}
+
+void ipExportLevels::doExport()
+{
+    if(m_item == nullptr) return;
+    emit exportItem(m_item);
 
 }

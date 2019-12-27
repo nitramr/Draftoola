@@ -28,6 +28,9 @@ public:
 public slots:
     void setActiveItem(AbstractItemBase *item);
 
+signals:
+    void exportItem(AbstractItemBase *item);
+
 private:
     Ui::ItemProperties *ui;
     QScrollArea * m_container;

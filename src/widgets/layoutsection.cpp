@@ -55,8 +55,8 @@ LayoutSectionHeader::LayoutSectionHeader( QString text, QWidget *menu, bool togg
     m_headerLayout->addStretch( 0 );
     m_headerLayout->addWidget( m_btnMenu );
     m_headerLayout->addWidget( m_btnCollapse );
-    m_headerLayout->setContentsMargins( 4,4,8,4 );
-    m_headerLayout->setSpacing( 0 );
+    m_headerLayout->setContentsMargins( 4,4,4,4 );
+//    m_headerLayout->setSpacing( 0 );
 
 
     this->setLayout( m_headerLayout );
@@ -113,8 +113,8 @@ LayoutSection::LayoutSection(QString text, QWidget *menu, bool toggle, QWidget *
 
     QSizePolicy sizePol = QSizePolicy( QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding );
 
-    m_flowLayout = new QVBoxLayout();//FlowLayout();
-    m_flowLayout->setContentsMargins( 0,4,0,4 );
+    m_flowLayout = new QVBoxLayout();
+    m_flowLayout->setContentsMargins( 0,0,0,0 );
     m_header = new LayoutSectionHeader( text, menu, toggle );
     m_drawer = new QWidget();
     m_drawer->setLayout(m_flowLayout);

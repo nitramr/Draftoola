@@ -142,6 +142,7 @@ void ItemProperties::setupExportLevel()
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemExportLevels, &ipExportLevels::newExportLevel);
     this->connect(itemExportLevels, &ipExportLevels::sendCollapse, m_section, &LayoutSection::setCollapsedState);
+    this->connect(itemExportLevels, &ipExportLevels::exportItem, this, &ItemProperties::exportItem);
 
     ui->layout->addWidget(m_section);
 }

@@ -22,6 +22,7 @@ public:
     qreal scaleFactor() const;
     void setScaleFactor(qreal factor);
 
+public slots:
     void exportItems();
     void exportItem(AbstractItemBase *item);
 
@@ -29,7 +30,7 @@ private:
     qreal m_scaleFactor;
     int m_grid;
 
-    void saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
+    void saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath, QColor bgColor = Qt::transparent);
     void saveSVG(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
     void savePDF(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
 
