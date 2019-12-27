@@ -13,6 +13,8 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
     m_boundingRect = rect;
     m_exportFactorList = QList<ExportLevel>();
 
+    setAcceptHoverEvents(true);
+
     QPainterPath path;
     path.addRect(rect);
     setShape(path);
@@ -96,6 +98,10 @@ void AbstractItemBase::setShape(QPainterPath itemShape)
     m_rect = m_shape.boundingRect().normalized();
     setInvalidateCache(true);
     setTransformOriginPoint(m_rect.center());
+
+    emit this->widthChanged();
+    emit this->heightChanged();
+
     update();
 }
 

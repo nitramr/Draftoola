@@ -61,8 +61,8 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
 
 
     this->setFlag( QGraphicsItem::ItemIsSelectable, true );
-    this->setFlag( QGraphicsItem::ItemSendsScenePositionChanges, true );
-    this->setFlag( QGraphicsItem::ItemSendsGeometryChanges, true );
+//    this->setFlag( QGraphicsItem::ItemSendsScenePositionChanges, true );
+//    this->setFlag( QGraphicsItem::ItemSendsGeometryChanges, true );
 
     this->setAcceptHoverEvents(true);
     this->setName(name);

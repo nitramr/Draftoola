@@ -1,6 +1,7 @@
 #include "canvasscene.h"
 #include <QDebug>
 #include <QtGlobal>
+#include <QGraphicsSceneMouseEvent>
 
 /***************************************************
  *
@@ -288,7 +289,7 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
 
     // draw grid
     if (scaleFactor() > 10 ) {
-        // painter->setClipRect( rect);
+       // painter->setClipRect( rect);
 
         qreal left = int(rect.left()) - (int(rect.left()) % m_grid);
         qreal top = int(rect.top()) - (int(rect.top()) % m_grid);
@@ -305,6 +306,44 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
         painter->setPen(pen);
         painter->drawLines(lines.data(), lines.size());
     }
+
+    // hover highlight
+    painter->save();
+
+    QPen highlightPen(QColor(0, 128, 255));
+    highlightPen.setWidthF(2/scaleFactor());
+
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setPen(highlightPen);
+    painter->setBrush(Qt::NoBrush);
+    painter->translate(m_hoverPoint);
+    painter->drawPath(m_hoverPath);
+
+    painter->restore();
+
+
+
+}
+
+void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsScene::mouseMoveEvent(event);
+
+    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( this->itemAt(event->scenePos().toPoint(), QTransform()) );
+
+    // get hover path from item under mouse
+    if(item){
+
+        QPainterPath shape = m_hoverPath;
+        m_hoverPath = item->shape();
+        m_hoverPoint = item->scenePos();
+
+        if(m_hoverPath != shape){
+            update();
+        }
+
+    }else m_hoverPath = QPainterPath();
+
 
 }
 

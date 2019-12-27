@@ -52,14 +52,7 @@ public:
 	QList<Shadow> innerShadowList() const;
     bool hasInnerShadows() const;
 
-    void setShape(QPainterPath itemShape) override;
     QRectF renderRect() const override;
-
-    void setGeometryHasChanged(bool hasChanged);
-    bool geometryHasChanged() const;
-
-    void setContentHasChanged(bool hasChanged);
-    bool contentHasChanged() const;
 
 	// Members
     QPainterPath scaleStroke(const QPainterPath & path, qreal amount , QPen pen = QPen()) const;
@@ -70,15 +63,12 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     void render(QPainter *painter, qreal scale = 1) override;
 
-
 private:
 	// Properties
 	StrokePosition m_strokePosition;
     bool m_renderQuality;
     QPainterPath m_shadowMapStroke;
     QPainterPath m_shadowMapFill;
-    bool m_geometryHasChanged;
-    bool m_contentHasChanged;
 //    QGraphicsDropShadowEffect * qShadow;
     QPixmapCache m_cache;
     mutable QPixmapCache::Key m_cacheKey;

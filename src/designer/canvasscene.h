@@ -3,6 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QKeyEvent>
+
 #include "src/item/itembase.h"
 #include "src/item/artboard.h"
 
@@ -29,6 +30,8 @@ public slots:
 private:
     qreal m_scaleFactor;
     int m_grid;
+    QPainterPath m_hoverPath;
+    QPointF m_hoverPoint;
 
     void saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath, QColor bgColor = Qt::transparent);
     void saveSVG(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
@@ -42,6 +45,8 @@ protected:
 	void keyReleaseEvent(QKeyEvent * e);
     void drawBackground(QPainter *painter, const QRectF &rect);
 	void drawForeground(QPainter *painter, const QRectF &rect);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+
 
 
 };

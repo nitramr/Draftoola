@@ -19,14 +19,13 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     m_shadowList = QList<Shadow>();
     m_innerShadowList = QList<Shadow>();
     m_invaliateCache = false;
-    m_geometryHasChanged = true;
-    m_contentHasChanged = true;
     m_cache = QPixmapCache();
     //    m_cache.setCacheLimit(51200); // 50MB
 
-//    qShadow = new QGraphicsDropShadowEffect();
-//    qShadow->setBlurRadius(10);
-//    qShadow->setXOffset(2);
+
+    //    qShadow = new QGraphicsDropShadowEffect();
+    //    qShadow->setBlurRadius(10);
+    //    qShadow->setXOffset(2);
 
     //       setGraphicsEffect(qShadow);
 
@@ -232,16 +231,6 @@ qreal ItemBase::lod() const
 }
 
 
-void ItemBase::setShape(QPainterPath itemShape)
-{
-    m_shape = itemShape;
-    m_rect = m_shape.boundingRect().normalized();
-    setInvalidateCache(true);
-    this->setTransformOriginPoint(m_rect.center());
-    m_geometryHasChanged = true;
-    update();
-}
-
 QRectF ItemBase::renderRect() const
 {
     return m_boundingRect;
@@ -268,25 +257,6 @@ QPainterPath ItemBase::shadowMapFill() const
     return m_shadowMapFill;
 }
 
-void ItemBase::setGeometryHasChanged(bool hasChanged)
-{
-    m_geometryHasChanged = hasChanged;
-}
-
-bool ItemBase::geometryHasChanged() const
-{
-    return m_geometryHasChanged;
-}
-
-void ItemBase::setContentHasChanged(bool hasChanged)
-{
-    m_contentHasChanged = hasChanged;
-}
-
-bool ItemBase::contentHasChanged() const
-{
-    return m_contentHasChanged;
-}
 
 /***************************************************
  *
@@ -716,46 +686,25 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     // reset bounding box to minimum shape
 
 
-//    QPixmap cache(qRound(rect().width() * m_scale), qRound(rect().height() * m_scale));
-//    cache.fill(Qt::transparent);
+    //    QPixmap cache(qRound(rect().width() * m_scale), qRound(rect().height() * m_scale));
+    //    cache.fill(Qt::transparent);
 
-//    QPainter cachePainter(&cache);
-//    painter->scale(m_scale,m_scale);
+    //    QPainter cachePainter(&cache);
+    //    painter->scale(m_scale,m_scale);
 
-//    setHighRenderQuality(true);
     render(painter, multiplier );
 
-//    painter->drawPixmap(rect(),cache, cache.rect());
-
-
-
-
-//    QImage image(QSize(qRound(boundingRect().width()*multiplier),qRound(boundingRect().height()*multiplier) ), QImage::Format_ARGB32_Premultiplied);
-//            image.fill(Qt::transparent);
-
-//            QPainter painter2(&image);
-//            painter2.scale(multiplier,multiplier);
-//            painter2.translate(boundingRect().topLeft().x() * -1, boundingRect().topLeft().y() * -1);
-//            //painter.setRenderHint(QPainter::HighQualityAntialiasing);
-//            setHighRenderQuality(true);
-//            render(&painter2);
-//            setHighRenderQuality(false);
-//            painter2.end();
-
-//            image.save("file_name_"+ QString::number(multiplier) + ".png");
-
-
-
+    //    painter->drawPixmap(rect(),cache, cache.rect());
 
 
     // BoundingBox
-//    painter->save();
-//    QPen pen = QPen(QColor(0,0,0));
-//    pen.setCosmetic(true);
-//    pen.setStyle(Qt::PenStyle::DotLine);
-//    painter->setPen(pen);
-//    painter->drawRect(this->boundingRect());
-//    painter->restore();
+    //    painter->save();
+    //    QPen pen = QPen(QColor(0,0,0));
+    //    pen.setCosmetic(true);
+    //    pen.setStyle(Qt::PenStyle::DotLine);
+    //    painter->setPen(pen);
+    //    painter->drawRect(this->boundingRect());
+    //    painter->restore();
 
 }
 
@@ -776,7 +725,7 @@ void ItemBase::render(QPainter *painter, qreal scale)
     m_boundingRect = rect();
 
     // Drop Shadow
-    if(m_hasShadows){       
+    if(m_hasShadows){
 
         // create new stroke and fill path only if cache have been invalidated
         if(invalidateCache()){
@@ -862,11 +811,11 @@ void ItemBase::render(QPainter *painter, qreal scale)
 
 
     // Draw Shadows
-//    if(shadowList().count() > 0){
-//        foreach(Shadow shadow, shadowList()) {
-//            setBoundingRect(boundingRect().united(drawShadow(shadow, painter)));
-//        }
-//    }
+    //    if(shadowList().count() > 0){
+    //        foreach(Shadow shadow, shadowList()) {
+    //            setBoundingRect(boundingRect().united(drawShadow(shadow, painter)));
+    //        }
+    //    }
 
 
     // Draw Fills
@@ -900,3 +849,4 @@ void ItemBase::render(QPainter *painter, qreal scale)
     //       }
 
 }
+

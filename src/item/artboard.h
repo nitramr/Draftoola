@@ -61,7 +61,6 @@ private:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void render(QPainter *painter, qreal scale = 1) override;
-
 };
 
 #endif // ARTBOARD_H
