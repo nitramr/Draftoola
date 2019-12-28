@@ -14,6 +14,7 @@ CanvasScene::CanvasScene(QObject *parent) : QGraphicsScene(parent)
 {
     m_scaleFactor = 1;
     m_grid = 1;
+
 }
 
 /***************************************************
@@ -121,9 +122,8 @@ void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QStrin
 
     painter.end();
 
-    image.save(outputPath);
+    image.save(outputPath, nullptr, 100);
 
-    qDebug() << "saveImage end: " + outputPath;
 }
 
 /**

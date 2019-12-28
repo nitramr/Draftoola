@@ -6,16 +6,8 @@ ItemOval::ItemOval(qreal width, qreal height, QGraphicsItem *parent) : ItemOval(
 ItemOval::ItemOval(QRectF rect, QGraphicsItem *parent) : ItemBase(rect, parent){
 
     this->setRect(rect);
-
     this->setItemType(ItemType::Oval);
-    this->setFlags(QGraphicsItem::ItemIsSelectable |
-                   QGraphicsItem::ItemIsFocusable |
-                   QGraphicsItem::ItemClipsChildrenToShape |
-                   QGraphicsItem::ItemContainsChildrenInShape |
-                   QGraphicsItem::ItemSendsScenePositionChanges |
-                   QGraphicsItem::ItemSendsGeometryChanges
-                   );
-    this->setAcceptHoverEvents(true);
+
 }
 
 /***************************************************
@@ -31,27 +23,3 @@ void ItemOval::setRect(QRectF rect)
     ItemBase::setShape(path); // setRect() will set by setShape()
 }
 
-
-/***************************************************
- *
- * Events
- *
- ***************************************************/
-
-//void ItemOval::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-//{
-////    ItemBase::paint(painter, option, widget);
-
-//    painter->save();
-
-//    // BoundingBox
-//    QPen pen = QPen(QColor(0,0,0));
-//    pen.setCosmetic(true);
-//    pen.setStyle(Qt::PenStyle::DotLine);
-//    painter->setPen(pen);
-//    painter->drawRect(this->boundingRect());
-
-//    painter->restore();
-
-//    qDebug() << "ItemOval::Paint" << boundingRect() << rect();
-//}

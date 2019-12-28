@@ -71,6 +71,7 @@ void ipFills::loadProperties()
 
 void ipFills::resetItems()
 {
+    emit enabled(false);
 
     m_propertyItemList = new QList<PropertyFill*>();
 
@@ -98,6 +99,7 @@ void ipFills::loadFills()
         addFill(pf);
     }
 
+    emit enabled(true);
 }
 
 void ipFills::addFill(PropertyFill *propertyItem)

@@ -13,7 +13,7 @@ class ItemText: public ItemBase
 {
 public:
     ItemText(const QString &text, QGraphicsItem * parent = nullptr);
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+
 
 	// Properties
     void setRect(QRectF rect);
@@ -39,9 +39,11 @@ public:
     void setLineHeight(qreal lineHeight);
     qreal lineHeight() const;
 
+    // Events
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
 private:
-	QGraphicsTextItem *m_text;
+    QGraphicsTextItem *m_text;
     bool m_frameFitText;
     QColor m_color;
 

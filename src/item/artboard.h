@@ -52,6 +52,7 @@ private:
     ArtboardLabel * m_label;
 	QGraphicsRectItem * m_artboard;
 
+protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

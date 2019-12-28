@@ -147,7 +147,7 @@ void MainWindow::tmpSetup()
     // Object Text
     ItemText *text = new ItemText("Hello World");
     text->setName("Text");
-  //  m_canvas->addItem(text, 100, 10);
+    m_canvas->addItem(text, 100, 10);
 
 //	stroke.setStrokePosition(StrokePosition::Outer);
 //	WAOval * ovalG = new WAOval(50,50);

@@ -15,15 +15,7 @@ ItemRect::ItemRect(QRectF rect, QGraphicsItem *parent) : ItemBase(rect, parent){
     this->setRect(rect);
 
     this->setItemType(ItemType::Rect);
-    this->setFlags(QGraphicsItem::ItemIsSelectable |
-                   QGraphicsItem::ItemIsFocusable |
-                   QGraphicsItem::ItemClipsChildrenToShape |
-                   QGraphicsItem::ItemContainsChildrenInShape |
-                   QGraphicsItem::ItemSendsScenePositionChanges |
-                   QGraphicsItem::ItemSendsGeometryChanges
-                   );
-    this->setAcceptHoverEvents(true);
-}
+   }
 
 /***************************************************
  *

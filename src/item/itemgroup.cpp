@@ -4,17 +4,7 @@
 #include "itemrect.h"
 #include "itemtext.h"
 
-ItemGroup::ItemGroup(QGraphicsItem *parent) : ItemBase(QRectF(), parent)
-{
-	this->setFlags(QGraphicsItem::ItemIsSelectable |
-				   QGraphicsItem::ItemIsFocusable |
-				   QGraphicsItem::ItemClipsChildrenToShape |
-				   QGraphicsItem::ItemContainsChildrenInShape |
-				   QGraphicsItem::ItemSendsScenePositionChanges |
-				   QGraphicsItem::ItemSendsGeometryChanges
-				   );
-	this->setAcceptHoverEvents(true);
-}
+ItemGroup::ItemGroup(QGraphicsItem *parent) : ItemBase(QRectF(), parent){}
 
 //QRectF WAGroup::rect() const
 //{

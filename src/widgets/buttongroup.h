@@ -5,13 +5,16 @@
 #include <QLayout>
 #include <QToolButton>
 #include <QButtonGroup>
+#include <QStyle>
+#include <QStyleOption>
+#include <QStylePainter>
 
 class ButtonGroupButton : public QToolButton
 {
     Q_OBJECT
 public:
 
-    enum class Type{
+    enum Type{
         normal = 0,
         left = 1,
         middle = 2,
@@ -25,6 +28,9 @@ public:
     ButtonGroupButton::Type buttonType();
 
     void paintEvent(QPaintEvent *event);
+
+protected:
+//    void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget);
 
 private:
     ButtonGroupButton::Type m_type;

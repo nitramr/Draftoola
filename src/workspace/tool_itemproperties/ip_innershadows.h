@@ -40,6 +40,7 @@ private:
 
 signals:
     void sendCollapse(bool);
+    void enabled(bool);
 
 public slots:
     void newShadow();

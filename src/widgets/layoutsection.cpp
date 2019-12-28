@@ -132,7 +132,6 @@ LayoutSection::LayoutSection(QString text, QWidget *menu, bool toggle, QWidget *
     this->connect( m_header, &LayoutSectionHeader::sendCollapsedState, this, &LayoutSection::setCollapsedState );
 }
 
-
 void LayoutSection::addWidget(QWidget * item){
 
     m_flowLayout->addWidget(item);

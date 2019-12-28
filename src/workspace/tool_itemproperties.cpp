@@ -68,6 +68,7 @@ void ItemProperties::setupFills()
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemFills, &ipFills::newFill);
     this->connect(itemFills, &ipFills::sendCollapse, m_section, &LayoutSection::setCollapsedState);
+    this->connect(itemFills, &ipFills::enabled, btn_Addnew, &QToolButton::setEnabled);
 
     ui->layout->addWidget(m_section);
 }
@@ -87,6 +88,7 @@ void ItemProperties::setupStrokes()
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemStrokes, &ipStrokes::newStroke);
     this->connect(itemStrokes, &ipStrokes::sendCollapse, m_section, &LayoutSection::setCollapsedState);
+    this->connect(itemStrokes, &ipStrokes::enabled, btn_Addnew, &QToolButton::setEnabled);
 
     ui->layout->addWidget(m_section);
 }
@@ -106,8 +108,9 @@ void ItemProperties::setupShadows()
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemShadows, &ipShadows::newShadow);
     this->connect(itemShadows, &ipShadows::sendCollapse, m_section, &LayoutSection::setCollapsedState);
+    this->connect(itemShadows, &ipShadows::enabled, btn_Addnew, &QToolButton::setEnabled);
 
-    ui->layout->addWidget(m_section);
+    ui->layout->addWidget(itemShadows);
 }
 
 void ItemProperties::setupInnerShadows()
@@ -124,6 +127,7 @@ void ItemProperties::setupInnerShadows()
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemInnerShadows, &ipInnerShadows::newShadow);
     this->connect(itemInnerShadows, &ipInnerShadows::sendCollapse, m_section, &LayoutSection::setCollapsedState);
+    this->connect(itemInnerShadows, &ipInnerShadows::enabled, btn_Addnew, &QToolButton::setEnabled);
 
     ui->layout->addWidget(m_section);
 }

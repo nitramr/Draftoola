@@ -19,8 +19,6 @@ public:
 	// Properties
     void setRect(QRectF rect);
 
-	// Events
-//    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 };
 
-#endif // WARECT_H
+#endif // ITEMOVAL_H

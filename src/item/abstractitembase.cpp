@@ -13,11 +13,11 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
     m_boundingRect = rect;
     m_exportFactorList = QList<ExportLevel>();
 
-//    setAcceptHoverEvents(true);
-
     QPainterPath path;
     path.addRect(rect);
     setShape(path);
+
+    this->setAcceptHoverEvents(true);
 
 }
 
@@ -33,6 +33,8 @@ AbstractItemBase::AbstractItemBase(const AbstractItemBase &other) : QGraphicsObj
     m_shape = other.m_shape;
     m_invaliateCache = other.m_invaliateCache;
     m_rect = other.m_rect;
+
+    this->setFlags(other.flags());
 }
 
 
@@ -130,29 +132,12 @@ QRectF AbstractItemBase::rect() const
  */
 QRectF AbstractItemBase::boundingRect() const
 {
-    return m_boundingRect;
+    return m_rect; //m_boundingRect;
 }
 
 void AbstractItemBase::setHighRenderQuality(bool isHighResolution)
 {
     m_renderQuality = isHighResolution;
-
-
-//    QList<QGraphicsItem*> list = childItems();
-
-//    if(list.count() == 0) return;
-
-//    foreach(QGraphicsItem *child, this->childItems()){
-
-//        qDebug() << "item child" << child;
-
-//        AbstractItemBase *abItem = static_cast<AbstractItemBase*>(child);
-//        if(abItem) {
-//            //qDebug() << "item child" << abItem->ID();
-//            //abItem->setHighRenderQuality(isHighResolution);
-//            //abItem->update();
-//        }
-//    }
 
 }
 
@@ -263,7 +248,6 @@ QList<AbstractItemBase *> AbstractItemBase::children()
  */
 void AbstractItemBase::render(QPainter *painter, qreal scale)
 {
-    setScaleFactor(scale);
 
     painter->save();
     painter->setBrush(Qt::NoBrush);
@@ -282,6 +266,9 @@ void AbstractItemBase::render(QPainter *painter, qreal scale)
     foreach(AbstractItemBase *abItem, list){
 
         if(abItem){
+
+            qDebug() << abItem->name() << abItem;
+
             painter->translate(abItem->pos());
             abItem->render(painter, scale );
             painter->translate(-abItem->pos());

@@ -23,7 +23,7 @@ void ArtboardLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 void ArtboardLabel::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    //dynamic_cast<Artboard*>(this->parentItem())->canvas()->setSelected(true);
+    this->parentItem()->setFlag( QGraphicsItem::ItemIsSelectable, true );
     this->parentItem()->setSelected(true);
 }
 
@@ -48,10 +48,10 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
 
     m_artboard = new QGraphicsRectItem(rect);
     m_artboard->setFlags(
-                QGraphicsItem::ItemClipsChildrenToShape |
+                QGraphicsItem::ItemClipsChildrenToShape /*|
                 QGraphicsItem::ItemContainsChildrenInShape |
                 QGraphicsItem::ItemSendsScenePositionChanges |
-                QGraphicsItem::ItemSendsGeometryChanges
+                QGraphicsItem::ItemSendsGeometryChanges*/
                 );
     m_artboard->setPen(Qt::NoPen);
     m_artboard->setBrush(Qt::NoBrush);
@@ -60,7 +60,7 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
     m_label = new ArtboardLabel(name, this);
 
 
-    this->setFlag( QGraphicsItem::ItemIsSelectable, true );
+    this->setFlag( QGraphicsItem::ItemIsSelectable, false );
 //    this->setFlag( QGraphicsItem::ItemSendsScenePositionChanges, true );
 //    this->setFlag( QGraphicsItem::ItemSendsGeometryChanges, true );
 

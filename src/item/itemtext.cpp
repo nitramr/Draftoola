@@ -24,11 +24,6 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
     setRect(m_text->boundingRect());
 
     this->setItemType(ItemType::Text);
-    this->setFlags(QGraphicsItem::ItemIsSelectable |
-                   QGraphicsItem::ItemIsFocusable |
-                   QGraphicsItem::ItemClipsChildrenToShape |
-                   QGraphicsItem::ItemContainsChildrenInShape
-                   );
 
     //	setTextInteractionFlags(Qt::NoTextInteraction);
 
@@ -209,17 +204,20 @@ qreal ItemText::lineHeight() const
 
 void ItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    //	painter->setCompositionMode( QPainter::CompositionMode_SourceAtop );
+//    //	painter->setCompositionMode( QPainter::CompositionMode_SourceAtop );
 
     ItemBase::paint(painter, option, widget);
 
-    m_text->paint(painter, option, widget);
+ //   m_text->paint(painter, option, widget);
 
-    // Bounding Box
-//    QPen pen(Qt::black);
-//    pen.setCosmetic(true);
-//    pen.setStyle(Qt::PenStyle::DotLine);
-//    painter->setPen(pen);
-//    painter->drawRect(boundingRect());
+
+
+
+//    // Bounding Box
+////    QPen pen(Qt::black);
+////    pen.setCosmetic(true);
+////    pen.setStyle(Qt::PenStyle::DotLine);
+////    painter->setPen(pen);
+////    painter->drawRect(boundingRect());
 
 }

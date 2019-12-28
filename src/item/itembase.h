@@ -7,7 +7,7 @@
 #include <QMap>
 #include <QList>
 #include <QImage>
-#include <QPixmapCache>
+//#include <QPixmapCache>
 
 #include "itemstruct.h"
 #include "stroke.h"
@@ -54,13 +54,17 @@ public:
 
     QRectF renderRect() const override;
 
+    void clipsChildrenToShape(bool doClip);
+
 	// Members
     QPainterPath scaleStroke(const QPainterPath & path, qreal amount , QPen pen = QPen()) const;
 
     void addItem(AbstractItemBase *item) override;
 
     // Events
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
 	// Properties
@@ -68,15 +72,17 @@ private:
     bool m_renderQuality;
     QPainterPath m_shadowMapStroke;
     QPainterPath m_shadowMapFill;
+    QRectF m_renderRect;
 //    QGraphicsDropShadowEffect * qShadow;
-    QPixmapCache m_cache;
-    mutable QPixmapCache::Key m_cacheKey;
+//    QPixmapCache m_cache;
+//    mutable QPixmapCache::Key m_cacheKey;
 
     // Members
     QList<Fills>			m_fillsList;
     QList<Stroke>			m_strokeList;
     QList<Shadow>			m_shadowList;
     QList<Shadow>			m_innerShadowList;
+
 
     qreal lod() const;
 

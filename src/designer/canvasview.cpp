@@ -21,20 +21,20 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 //    this->setRenderHint(QPainter::Antialiasing, true);
 //    this->setRenderHint( QPainter::SmoothPixmapTransform, true );
     this->setDragMode(QGraphicsView::RubberBandDrag);
-    this->setCacheMode(QGraphicsView::CacheBackground);
-    this->setOptimizationFlag(DontAdjustForAntialiasing, true); // http://doc.qt.io/archives/qt-4.8/qgraphicsview.html#OptimizationFlag-enum
-//    this->setOptimizationFlag(DontSavePainterState, true);
-    this->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate); // http://doc.qt.io/archives/qt-4.8/qgraphicsview.html#ViewportUpdateMode-enum
+//    this->setCacheMode(QGraphicsView::CacheBackground);
+    this->setOptimizationFlag(DontAdjustForAntialiasing, true); // https://doc.qt.io/qt-5/qgraphicsview.html#OptimizationFlag-enum
+    this->setOptimizationFlag(DontSavePainterState, true); // restoring painter will handle in item paint event
+    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // http://doc.qt.io/gt-5/qgraphicsview.html#ViewportUpdateMode-enum
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     this->setBackgroundBrush(QColor(240,240,240));
 //    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
+
 
 
     m_scene = new CanvasScene();
     m_scene->setSceneRect(QRectF(-2000, -2000, 4000,4000));
     m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
-    this->setScene(m_scene);
 
     m_grid = 1;
     m_artboardList = QList<Artboard*>();
@@ -65,7 +65,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     gridLayout->addWidget(this->viewport(),1,1);
 
     this->setLayout(gridLayout);
-
+    this->setScene(m_scene);
 
     timer = new QTimer(this);
     this->connect(timer, &QTimer::timeout, this, &CanvasView::resetItemCache);
@@ -156,7 +156,7 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
 
     }
 
-    connect(this, &CanvasView::signalScaleFactor, item, &AbstractItemBase::setScaleFactor);
+   // connect(this, &CanvasView::signalScaleFactor, item, &AbstractItemBase::setScaleFactor);
 }
 
 AbstractItemBase *CanvasView::itemByName(const QString name)

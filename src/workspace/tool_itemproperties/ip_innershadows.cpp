@@ -71,6 +71,7 @@ void ipInnerShadows::loadProperties()
 
 void ipInnerShadows::resetItems()
 {
+    emit enabled(false);
 
     m_propertyItemList = new QList<PropertyShadow*>();
 
@@ -97,6 +98,7 @@ void ipInnerShadows::loadShadows()
         pf->setShadow(m_property);
         addShadow(pf);
     }
+    emit enabled(true);
 }
 
 void ipInnerShadows::addShadow(PropertyShadow *propertyItem)

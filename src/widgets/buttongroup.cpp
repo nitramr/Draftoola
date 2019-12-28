@@ -1,7 +1,7 @@
 #include "buttongroup.h"
-#include <QStyle>
-#include <QStyleOption>
+
 #include <QPainter>
+#include <QStyleOptionComboBox>
 
 /***************************************************
  *
@@ -11,13 +11,12 @@
 
 ButtonGroupButton::ButtonGroupButton(QWidget *parent) : QToolButton (parent)
 {
-    m_type = ButtonGroupButton::Type::normal;
+    setButtonType(ButtonGroupButton::Type::normal);
 }
 
 void ButtonGroupButton::setButtonType(ButtonGroupButton::Type type)
 {
     m_type = type;
-
 }
 
 ButtonGroupButton::Type ButtonGroupButton::buttonType()
@@ -33,7 +32,21 @@ void ButtonGroupButton::paintEvent(QPaintEvent *event)
         // Should be change look of button based on type
         QToolButton::paintEvent(event);
     }
+
+//    QStyleOptionButton option;
+//        option.initFrom(this);
+//        option.state = isDown() ? QStyle::State_Sunken : QStyle::State_Raised;
+//        //if (isDefault())
+//            option.features |= QStyleOptionButton::DefaultButton;
+//        option.text = text();
+//        option.icon = icon();
+
+//        QStylePainter painter(this);
+//        painter.drawControl(QStyle::CE_PushButton, &option, &painter, this);
+
+
 }
+
 
 
 /***************************************************

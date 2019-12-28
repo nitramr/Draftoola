@@ -5,6 +5,8 @@
 //#include <QtWidgets>
 #include "path/pathhandler.h"
 //#include <QGraphicsEffect>
+#include <QGraphicsSceneMouseEvent>
+#include <QStyleOptionGraphicsItem>
 
 QT_BEGIN_NAMESPACE
 // https://code.woboq.org/qt5/qtbase/src/widgets/effects/qpixmapfilter.cpp.html
@@ -19,23 +21,14 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     m_shadowList = QList<Shadow>();
     m_innerShadowList = QList<Shadow>();
     m_invaliateCache = false;
-    m_cache = QPixmapCache();
+ //   m_cache = QPixmapCache();
     //    m_cache.setCacheLimit(51200); // 50MB
 
+    this->setFlag(GraphicsItemFlag::ItemIsSelectable, true);
+    this->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+    this->setFlag(QGraphicsItem::ItemContainsChildrenInShape, true);
 
-    //    qShadow = new QGraphicsDropShadowEffect();
-    //    qShadow->setBlurRadius(10);
-    //    qShadow->setXOffset(2);
 
-    //       setGraphicsEffect(qShadow);
-
-    //        QGraphicsBlurEffect * blurEffect = new QGraphicsBlurEffect();
-    //        blurEffect->setBlurRadius(1);
-    //        setGraphicsEffect(blurEffect);
-
-    //    QGraphicsColorizeEffect *eColor = new QGraphicsColorizeEffect();
-    //    eColor->setColor(QColor(255,0,0));
-    //    setGraphicsEffect(eColor);
 }
 
 /***************************************************
@@ -233,7 +226,12 @@ qreal ItemBase::lod() const
 
 QRectF ItemBase::renderRect() const
 {
-    return m_boundingRect;
+    return m_renderRect;
+}
+
+void ItemBase::clipsChildrenToShape(bool doClip)
+{
+    setFlag(QGraphicsItem::ItemClipsChildrenToShape, doClip);
 }
 
 
@@ -682,14 +680,14 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     if (rect().width() <= 0 || rect().height() <= 0)
         return;
 
-    //qreal multiplier = scaleFactor(); //option->levelOfDetailFromTransform( painter->transform());
+    m_scaleFactor = option->levelOfDetailFromTransform( painter->transform());
 
     bool m_hasShadows = hasShadows();
     bool m_hasStrokes = hasStrokes();
     bool m_hasFills = hasFills();
     bool m_hasInnerShadows = hasInnerShadows();
 
-    m_boundingRect = rect();
+    m_renderRect = rect();
 
     // Drop Shadow
     if(m_hasShadows){
@@ -709,11 +707,11 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         }
 
         // Calculate shadow bounding rect
-        m_boundingRect = boundingRect().united(ShadowBound(shadowMapStroke()));
+        m_renderRect = renderRect().united(ShadowBound(shadowMapStroke()));
 
         // Draw Drop Shadows
         foreach(Shadow shadow, shadowList()) {
-            m_boundingRect = boundingRect().united(drawShadow(shadow, painter));
+            m_renderRect = renderRect().united(drawShadow(shadow, painter));
         }
     }
 
@@ -796,9 +794,32 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     // Draw Strokes
     if(m_hasStrokes){
         foreach(Stroke stroke, strokeList()) {
-            m_boundingRect = boundingRect().united(drawStrokes(stroke, painter));
+            m_renderRect = renderRect().united(drawStrokes(stroke, painter));
         }
     }
 
+
+}
+
+void ItemBase::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mouseReleaseEvent(event);
+
+    if(shape().contains(mapFromScene(event->scenePos())) ){
+       this->setSelected(true);
+    }else{
+       this->setSelected(false);
+    }
+}
+
+void ItemBase::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mousePressEvent(event);
+
+    if(shape().contains(mapFromScene(event->scenePos())) ){
+       this->setSelected(true);
+    }else{
+       this->setSelected(false);
+    }
 
 }

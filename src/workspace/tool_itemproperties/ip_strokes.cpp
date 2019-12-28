@@ -71,6 +71,7 @@ void ipStrokes::loadProperties()
 
 void ipStrokes::resetItems()
 {
+    emit enabled(false);
 
     m_propertyItemList = new QList<PropertyStroke*>();
 
@@ -79,6 +80,7 @@ void ipStrokes::resetItems()
     {
         widget->deleteLater();
     }
+
 }
 
 void ipStrokes::unloadItems()
@@ -97,6 +99,8 @@ void ipStrokes::loadStrokes()
         pf->setStroke(m_property);
         addStroke(pf);
     }
+
+    emit enabled(true);
 }
 
 void ipStrokes::addStroke(PropertyStroke *propertyItem)
