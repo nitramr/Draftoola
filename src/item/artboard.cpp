@@ -123,11 +123,6 @@ bool Artboard::useBackgroundColor() const
     return m_useBGColor;
 }
 
-void Artboard::setDoRender(bool doRender)
-{
-    m_doRender = doRender;
-}
-
 
 /***************************************************
  *
@@ -140,15 +135,13 @@ void Artboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    qreal offset = m_offset/scaleFactor();
-
-    setBoundingRect(rect().adjusted( -m_buffer, -offset - m_buffer, m_buffer, m_buffer));
-
-    m_label->setPos(this->rect().x(), this->rect().y() -offset);
-
-    if(m_useBGColor) painter->fillRect(canvas()->rect(), QBrush(m_backgroundColor));
+    if(m_useBGColor) painter->fillRect(renderRect(), QBrush(m_backgroundColor));
 
     if(!m_doRender){
+        qreal offset = m_offset/scaleFactor();
+        m_boundingRect = rect().adjusted( -m_buffer, -offset - m_buffer, m_buffer, m_buffer);
+        m_label->setPos(this->rect().x(), this->rect().y() -offset);
+
         QPen pen = QPen(QColor(200,200,200));
         pen.setCosmetic(true);
 
@@ -170,35 +163,3 @@ void Artboard::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mousePressEvent(event);
     this->setSelected(false);
 }
-
-void Artboard::render(QPainter *painter, qreal scale)
-{
-    setScaleFactor(scale);
-
-    painter->save();
-    painter->setBrush(Qt::NoBrush);
-    painter->setPen(Qt::NoPen);
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-
-    m_doRender = true;
-    paint(painter, nullptr);
-    m_doRender = false;
-
-    QList<QGraphicsItem*> list = canvas()->childItems();
-
-    foreach(QGraphicsItem *object, list){
-        AbstractItemBase *abItem = static_cast<AbstractItemBase*>(object);
-        if(abItem){
-            abItem->setHighRenderQuality(true);
-            painter->translate(abItem->pos());
-            abItem->render(painter, scale );
-            abItem->setHighRenderQuality(false);
-            painter->translate(-abItem->pos());
-        }
-    }
-
-    painter->restore();
-
-}
-

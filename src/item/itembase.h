@@ -61,7 +61,6 @@ public:
 
     // Events
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
-    void render(QPainter *painter, qreal scale = 1) override;
 
 private:
 	// Properties

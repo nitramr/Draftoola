@@ -8,6 +8,15 @@
  ***************************************************/
 
 ExportLevel::ExportLevel() : ExportLevel(-1.0, 1){}
+
+/*!
+ * \brief Exportlevel for item rendering.
+ * \param id
+ * \param level
+ * \param fileFormat
+ * \param path
+ * \param pathType
+ */
 ExportLevel::ExportLevel(int id, double level, ExportLevel::FileFormat fileFormat, QString path, ExportLevel::PathType pathType)
 {
     setID(id);

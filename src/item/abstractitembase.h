@@ -70,7 +70,7 @@ public:
 
     // Events
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) = 0;
-    virtual void render(QPainter *painter, qreal scale = 1) = 0;
+    virtual void render(QPainter *painter, qreal scale = 1);
 
 public slots:
     void setScaleFactor(qreal scaleFactor);
@@ -87,13 +87,13 @@ private:
     ItemType m_itemType;
     qreal m_scaleFactor;
     bool m_renderQuality;
+    bool m_doRender;
     QPainterPath m_shape;    
-    QList<AbstractItemBase*> m_children;
-
-    void setBoundingRect(QRectF boundingrect);
 
     // Members
     QList<ExportLevel>	m_exportFactorList;
+    QList<AbstractItemBase*> m_children;
+
 };
 
 #endif // ABSTRACTITEMBASE_H

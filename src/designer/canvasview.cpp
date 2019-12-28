@@ -8,7 +8,6 @@
 #include <QTimer>
 #include <QTransform>
 #include <QScrollBar>
-#include <QSvgGenerator>
 
 #include "src/item/itemstruct.h"
 #include "src/item/itembase.h"
@@ -131,9 +130,6 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
 
         emit itemsChanged();
 
-        qDebug() << "Canvas: Artboard added" << item->name();
-
-
     }else{ // Item is no Artboard
 
         qDebug() << "Canvas: Item is no Artboard";
@@ -147,22 +143,33 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
                 artboard->addItem(item);
                 item->setPos(x,y);
                 emit itemsChanged();
-                qDebug() << "Canvas: add Item to Artboard" << item->name();
             }
 
         }else if(parent){
 
             qDebug() << "Canvas: Item has Parent";
 
-            item->setParentItem(parent);
+            parent->addItem(item);
             item->setPos(x,y);
             emit itemsChanged();
-            qDebug() << "Canvas: add Item to Parent" << item->name();
         }
 
     }
 
     connect(this, &CanvasView::signalScaleFactor, item, &AbstractItemBase::setScaleFactor);
+}
+
+AbstractItemBase *CanvasView::itemByName(const QString name)
+{
+    foreach(QGraphicsItem *item, m_scene->items()) {
+        AbstractItemBase *ibItem = dynamic_cast<AbstractItemBase*>(item);
+
+        if(ibItem){
+            if(ibItem->name() == name) return ibItem;
+        }
+    }
+
+    return nullptr;
 }
 
 QList<Artboard *> CanvasView::artboardList()
@@ -338,7 +345,9 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 
     case Qt::Key_A:{
 
-        AbstractItemBase *item = m_scene->itemByName("Rect1");
+        m_scene->clearSelection();
+
+        AbstractItemBase *item = itemByName("Rect1");
 
 
         QPointF init = item->pos();
@@ -375,35 +384,9 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
     }
     case Qt::Key_V:{
 
-        //        m_scene->clearSelection();
-        //        qreal exFactor = 4;
-        //        QRectF targetRect = QRectF(10,10,60*exFactor,100*exFactor);
-        //        QRectF sourceRect = QRectF(10,10,60,100);
-        //        QImage image(QSize(targetRect.width(), targetRect.height()), QImage::Format_ARGB32_Premultiplied);
-        //        image.fill(Qt::transparent);
-
-        //        QPainter painter(&image);
-        //        //painter.setRenderHint(QPainter::HighQualityAntialiasing);
-        //        m_scene->render(&painter, targetRect, sourceRect);
-        //        painter.end();
-
-        //        image.save("file_name.png");
-
 
         m_scene->exportItems();
 
-
-        //        QSvgGenerator generator;        // Create a file generator object
-        //        generator.setFileName("file_name.svg");    // We set the path to the file where to save vector graphics
-        //        generator.setSize(targetRect.size().toSize());  // Set the dimensions of the working area of the document in millimeters
-        //        generator.setViewBox(targetRect); // Set the work area in the coordinates
-        //        generator.setTitle(trUtf8("SVG Example"));                          // The title document
-        //        generator.setDescription(trUtf8("File created by WhitePrint Studio"));
-
-        //        QPainter painterSVG;
-        //        painterSVG.begin(&generator);
-        //        m_scene->render(&painterSVG,targetRect, sourceRect);
-        //        painterSVG.end();
 
         break;
     }

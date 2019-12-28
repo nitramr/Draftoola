@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QtGlobal>
 #include <QGraphicsSceneMouseEvent>
+#include <QSvgGenerator>
 
 /***************************************************
  *
@@ -40,76 +41,8 @@ void CanvasScene::setScaleFactor(qreal factor)
 void CanvasScene::render(QPainter *painter, const QRectF &target, const QRectF &source,
                          Qt::AspectRatioMode aspectRatioMode)
 {
-
     QGraphicsScene::render(painter,target,source,aspectRatioMode);
 
-
-    //		// ### Switch to using the recursive rendering algorithm instead.
-
-    //		// Default source rect = scene rect
-    //		QRectF sourceRect = source;
-    //		if (sourceRect.isNull())
-    //			sourceRect = sceneRect();
-
-    //		// Default target rect = device rect
-    //		QRectF targetRect = target;
-    //		if (targetRect.isNull()) {
-    //			if (painter->device()->devType() == QInternal::Picture)
-    //				targetRect = sourceRect;
-    //			else
-    //				targetRect.setRect(0, 0, painter->device()->width(), painter->device()->height());
-    //		}
-
-    //		// Find the ideal x / y scaling ratio to fit \a source into \a target.
-    //		qreal xratio = targetRect.width() / sourceRect.width();
-    //		qreal yratio = targetRect.height() / sourceRect.height();
-
-    //		// Scale according to the aspect ratio mode.
-    //		switch (aspectRatioMode) {
-    //		case Qt::KeepAspectRatio:
-    //			xratio = yratio = qMin(xratio, yratio);
-    //			break;
-    //		case Qt::KeepAspectRatioByExpanding:
-    //			xratio = yratio = qMax(xratio, yratio);
-    //			break;
-    //		case Qt::IgnoreAspectRatio:
-    //			break;
-    //		}
-
-    //		// Find all items to draw, and reverse the list (we want to draw
-    //		// in reverse order).
-    //		QList<QGraphicsItem *> itemList = items(sourceRect, Qt::IntersectsItemBoundingRect);
-    //		QGraphicsItem **itemArray = new QGraphicsItem *[itemList.size()];
-    //		int numItems = itemList.size();
-    //		for (int i = 0; i < numItems; ++i)
-    //			itemArray[numItems - i - 1] = itemList.at(i);
-    //		itemList.clear();
-
-    //		painter->save();
-
-    //		// Transform the painter.
-    //		painter->setClipRect(targetRect, Qt::IntersectClip);
-    //		QTransform painterTransform;
-    //		painterTransform *= QTransform()
-    //							.translate(targetRect.left(), targetRect.top())
-    //							.scale(xratio, yratio)
-    //							.translate(-sourceRect.left(), -sourceRect.top());
-    //		painter->setWorldTransform(painterTransform, true);
-
-    //		// Generate the style options
-    //		QStyleOptionGraphicsItem *styleOptionArray = new QStyleOptionGraphicsItem[numItems];
-    ////		for (int i = 0; i < numItems; ++i)
-    ////			itemArray[i]->d_ptr->initStyleOption(&styleOptionArray[i], painterTransform, targetRect.toRect());
-
-    //		// Render the scene.
-    ////		drawBackground(painter, sourceRect);
-    //		drawItems(painter, numItems, itemArray, styleOptionArray);
-    ////		drawForeground(painter, sourceRect);
-
-    //		delete [] itemArray;
-    //		delete [] styleOptionArray;
-
-    //		painter->restore();
 }
 
 /**
@@ -123,8 +56,7 @@ void CanvasScene::exportItems()
 
         AbstractItemBase * aItem = dynamic_cast<AbstractItemBase*>(item);
         if(aItem){
-            if(aItem->exportLevels().count() > 0)
-                exportItem(aItem);
+            exportItem(aItem);
         }
 
     }
@@ -175,7 +107,6 @@ void CanvasScene::exportItem(AbstractItemBase *item)
  */
 void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath, QColor bgColor)
 {
-    qDebug() << "saveImage start";
 
     QImage image(QSizeF(bi->renderRect().width()*multiplier,bi->renderRect().height()*multiplier ).toSize(), QImage::Format_ARGB32_Premultiplied);
     image.fill(bgColor);
@@ -184,24 +115,9 @@ void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QStrin
     painter.scale(multiplier,multiplier);
     painter.translate(bi->renderRect().topLeft().x() * -1, bi->renderRect().topLeft().y() * -1);
 
-    Artboard *artboard = dynamic_cast<Artboard*>(bi);
-
-    if(artboard){
-        //renderHighQuality(artboard);
-        artboard->setDoRender(true);
-        artboard->setHighRenderQuality(true);
-        render(&painter,artboard->canvas()->rect(), artboard->canvas()->rect());
-        artboard->setDoRender(false);
-        artboard->setHighRenderQuality(false);
-        //renderHighQuality(artboard, false);
-
-    }else{
-        bi->setHighRenderQuality(true);
-        bi->render(&painter);
-        bi->setHighRenderQuality(false);
-
-    }
-
+    bi->setHighRenderQuality(true);
+    bi->render(&painter);
+    bi->setHighRenderQuality(false);
 
     painter.end();
 
@@ -218,7 +134,20 @@ void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QStrin
  */
 void CanvasScene::saveSVG(AbstractItemBase *bi, qreal multiplier, const QString outputPath)
 {
-    // Do SVG stuff
+//    QRectF targetRect = bi->renderRect();
+//    QRectF sourceRect(targetRect);
+
+//    QSvgGenerator generator;        // Create a file generator object
+//    generator.setFileName(outputPath);    // We set the path to the file where to save vector graphics
+//    generator.setSize(targetRect.size().toSize());  // Set the dimensions of the working area of the document in millimeters
+//    generator.setViewBox(targetRect); // Set the work area in the coordinates
+//    generator.setTitle(bi->name());                          // The title document
+//    generator.setDescription(trUtf8("File created by WhitePrint Studio"));
+
+//    QPainter painterSVG;
+//    painterSVG.begin(&generator);
+//    render(&painterSVG,targetRect, sourceRect);
+//    painterSVG.end();
 }
 
 /**
@@ -230,35 +159,6 @@ void CanvasScene::saveSVG(AbstractItemBase *bi, qreal multiplier, const QString 
 void CanvasScene::savePDF(AbstractItemBase *bi, qreal multiplier, const QString outputPath)
 {
     // Do PDF stuff
-}
-
-void CanvasScene::renderHighQuality(AbstractItemBase *item, bool enableQuality)
-{
-    if(item){
-        QList<QGraphicsItem*> list = item->childItems();
-        foreach(QGraphicsItem *object, list){
-            AbstractItemBase *abItem = dynamic_cast<AbstractItemBase*>(object);
-            if(abItem){
-                abItem->setHighRenderQuality(enableQuality);
-                qDebug() << "update Render Quality" << abItem->ID();
-            }
-        }
-
-    }
-}
-
-
-AbstractItemBase *CanvasScene::itemByName(const QString name)
-{
-    foreach(QGraphicsItem *item, this->items()) {
-        AbstractItemBase *ibItem = dynamic_cast<AbstractItemBase*>(item);
-
-        if(ibItem){
-            if(ibItem->name() == name) return ibItem;
-        }
-    }
-
-    return nullptr;
 }
 
 /***************************************************
@@ -289,7 +189,7 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
 
     // draw grid
     if (scaleFactor() > 10 ) {
-       // painter->setClipRect( rect);
+        // painter->setClipRect( rect);
 
         qreal left = int(rect.left()) - (int(rect.left()) % m_grid);
         qreal top = int(rect.top()) - (int(rect.top()) % m_grid);
@@ -307,20 +207,23 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
         painter->drawLines(lines.data(), lines.size());
     }
 
+
     // hover highlight
-    painter->save();
+    if(!m_hoverPath.isEmpty()){
 
-    QPen highlightPen(QColor(0, 128, 255));
-    highlightPen.setWidthF(2/scaleFactor());
+        painter->save();
 
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setPen(highlightPen);
-    painter->setBrush(Qt::NoBrush);
-    painter->translate(m_hoverPoint);
-    painter->drawPath(m_hoverPath);
+        QPen highlightPen(QColor(0, 128, 255));
+        highlightPen.setWidthF(2/scaleFactor());
 
-    painter->restore();
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->setPen(highlightPen);
+        painter->setBrush(Qt::NoBrush);
+        painter->translate(m_hoverPoint);
+        painter->drawPath(m_hoverPath);
 
+        painter->restore();
+    }
 
 
 }
@@ -329,16 +232,25 @@ void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mouseMoveEvent(event);
 
-    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( this->itemAt(event->scenePos().toPoint(), QTransform()) );
+    QPoint mousePos = event->scenePos().toPoint();
 
-    // get hover path from item under mouse
-    if(item){
+    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( this->itemAt(mousePos, QTransform()) );
 
-        QPainterPath shape = m_hoverPath;
-        m_hoverPath = item->shape();
-        m_hoverPoint = item->scenePos();
 
-        if(m_hoverPath != shape){
+
+    // get hover path from item under mouse and respect item shape
+    if(item ){
+
+        if(item->shape().contains(item->mapFromScene(mousePos)) ){
+            QPainterPath shape = m_hoverPath;
+            m_hoverPath = item->shape();
+            m_hoverPoint = item->scenePos();
+
+            if(m_hoverPath != shape){
+                update();
+            }
+        }else{
+            m_hoverPath = QPainterPath();
             update();
         }
 

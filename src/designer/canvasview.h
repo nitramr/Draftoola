@@ -19,6 +19,8 @@ public:
 
     void addItem(AbstractItemBase *item, qreal x = 0, qreal y = 0, AbstractItemBase *parent = nullptr);
 
+    AbstractItemBase *itemByName(const QString name);
+
     QList<Artboard *> artboardList();
 
 protected:

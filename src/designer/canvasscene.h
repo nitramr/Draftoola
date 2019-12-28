@@ -17,9 +17,6 @@ public:
 					const QRectF &target = QRectF(), const QRectF &source = QRectF(),
 						Qt::AspectRatioMode aspectRatioMode = Qt::KeepAspectRatio);
 
-
-    AbstractItemBase *itemByName(const QString name);
-
     qreal scaleFactor() const;
     void setScaleFactor(qreal factor);
 
@@ -36,9 +33,6 @@ private:
     void saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath, QColor bgColor = Qt::transparent);
     void saveSVG(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
     void savePDF(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
-
-    void renderHighQuality(AbstractItemBase * item, bool enableQuality = true);
-
 
 protected:
 	void keyPressEvent(QKeyEvent *e);

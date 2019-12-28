@@ -41,17 +41,12 @@ public:
     void setUseBackgroundColor(bool useBGColor);
     bool useBackgroundColor() const;
 
-    void setDoRender(bool doRender);
-
     void addItem(AbstractItemBase *item) override;
 
-signals:
- //   void itemAdded(AbstractItemBase *item);
 
 private:
     int m_offset;
-    int m_buffer;
-    bool m_doRender;
+    int m_buffer;    
     bool m_useBGColor;
     QColor m_backgroundColor;
     ArtboardLabel * m_label;
@@ -60,7 +55,6 @@ private:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void render(QPainter *painter, qreal scale = 1) override;
 };
 
 #endif // ARTBOARD_H

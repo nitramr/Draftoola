@@ -45,9 +45,7 @@ void ipExportLevels::setActiveItem(AbstractItemBase *item)
  ***************************************************/
 
 void ipExportLevels::loadProperties()
-{
-
-    this->setEnabled(true);
+{   
     emit sendCollapse(false);
 
     resetItems();
@@ -61,6 +59,7 @@ void ipExportLevels::loadProperties()
     case ItemType::Instance:
     case ItemType::Line:
     case ItemType::Text:
+    case ItemType::Artboard:
         loadExportLevels();
         break;
     default:
@@ -74,6 +73,8 @@ void ipExportLevels::resetItems()
 {
 
     m_exportLevelItemList = new QList<PropertyExportLevel*>();
+
+    this->setEnabled(false);
 
     QLayout *lyt = ui->lytItems;
     while(!lyt->isEmpty()) {
@@ -99,6 +100,8 @@ void ipExportLevels::loadExportLevels()
         pf->setExportLevel(m_exportLevel);
         addExportLevel(pf);
     }
+
+    if(m_item->exportLevels().count() > 0) this->setEnabled(true);
 }
 
 void ipExportLevels::addExportLevel(PropertyExportLevel *propertyItem)
@@ -108,7 +111,6 @@ void ipExportLevels::addExportLevel(PropertyExportLevel *propertyItem)
 
     m_exportLevelItemList->append(propertyItem);
     ui->lytItems->addWidget(propertyItem);
-
 
 }
 

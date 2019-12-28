@@ -677,45 +677,12 @@ QRectF ItemBase::ShadowBound(QPainterPath shape) const
 void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {    
     Q_UNUSED(widget);
+    Q_UNUSED(option);
 
     if (rect().width() <= 0 || rect().height() <= 0)
         return;
 
-    qreal multiplier = scaleFactor(); //option->levelOfDetailFromTransform( painter->transform());
-
-    // reset bounding box to minimum shape
-
-
-    //    QPixmap cache(qRound(rect().width() * m_scale), qRound(rect().height() * m_scale));
-    //    cache.fill(Qt::transparent);
-
-    //    QPainter cachePainter(&cache);
-    //    painter->scale(m_scale,m_scale);
-
-    render(painter, multiplier );
-
-    //    painter->drawPixmap(rect(),cache, cache.rect());
-
-
-    // BoundingBox
-    //    painter->save();
-    //    QPen pen = QPen(QColor(0,0,0));
-    //    pen.setCosmetic(true);
-    //    pen.setStyle(Qt::PenStyle::DotLine);
-    //    painter->setPen(pen);
-    //    painter->drawRect(this->boundingRect());
-    //    painter->restore();
-
-}
-
-/**
- * @brief Render all layers of an object. Scalefactor set size multiplier of render output, renderHighQuality() set render quality level.
- * @param painter
- * @param scale
- */
-void ItemBase::render(QPainter *painter, qreal scale)
-{
-    setScaleFactor(scale);
+    //qreal multiplier = scaleFactor(); //option->levelOfDetailFromTransform( painter->transform());
 
     bool m_hasShadows = hasShadows();
     bool m_hasStrokes = hasStrokes();
@@ -742,11 +709,11 @@ void ItemBase::render(QPainter *painter, qreal scale)
         }
 
         // Calculate shadow bounding rect
-        setBoundingRect(boundingRect().united(ShadowBound(shadowMapStroke())));
+        m_boundingRect = boundingRect().united(ShadowBound(shadowMapStroke()));
 
         // Draw Drop Shadows
         foreach(Shadow shadow, shadowList()) {
-            setBoundingRect(boundingRect().united(drawShadow(shadow, painter)));
+            m_boundingRect = boundingRect().united(drawShadow(shadow, painter));
         }
     }
 
@@ -810,14 +777,6 @@ void ItemBase::render(QPainter *painter, qreal scale)
     //    }
 
 
-    // Draw Shadows
-    //    if(shadowList().count() > 0){
-    //        foreach(Shadow shadow, shadowList()) {
-    //            setBoundingRect(boundingRect().united(drawShadow(shadow, painter)));
-    //        }
-    //    }
-
-
     // Draw Fills
     if(m_hasFills){
         foreach(Fills fills,this->fillsList()) {
@@ -837,16 +796,9 @@ void ItemBase::render(QPainter *painter, qreal scale)
     // Draw Strokes
     if(m_hasStrokes){
         foreach(Stroke stroke, strokeList()) {
-            setBoundingRect(boundingRect().united(drawStrokes(stroke, painter)));
+            m_boundingRect = boundingRect().united(drawStrokes(stroke, painter));
         }
     }
 
-    //    QImage *target = nullptr;
-    //       if (painter->paintEngine()->paintDevice()->devType() == QInternal::Image) {
-    //           target = static_cast<QImage *>(painter->paintEngine()->paintDevice());
-
-    //           target->save("item.png");
-    //       }
 
 }
-

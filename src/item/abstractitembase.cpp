@@ -13,7 +13,7 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
     m_boundingRect = rect;
     m_exportFactorList = QList<ExportLevel>();
 
-    setAcceptHoverEvents(true);
+//    setAcceptHoverEvents(true);
 
     QPainterPath path;
     path.addRect(rect);
@@ -92,6 +92,7 @@ qreal AbstractItemBase::scaleFactor() const
     return m_scaleFactor;
 }
 
+
 void AbstractItemBase::setShape(QPainterPath itemShape)
 {
     m_shape = itemShape;
@@ -105,21 +106,28 @@ void AbstractItemBase::setShape(QPainterPath itemShape)
     update();
 }
 
+/*!
+ * \brief Return path shape of the object.
+ * \return
+ */
 QPainterPath AbstractItemBase::shape() const
 {
     return m_shape;
 }
 
+/*!
+ * \brief Return a rectangle that covers only the base shape of the object.
+ * \return
+ */
 QRectF AbstractItemBase::rect() const
 {
     return m_rect;
 }
 
-void AbstractItemBase::setBoundingRect(QRectF boundingrect)
-{
-    m_boundingRect = boundingrect;
-}
-
+/*!
+ * \brief Return a rectangle that covers all rendered areas of the object.
+ * \return
+ */
 QRectF AbstractItemBase::boundingRect() const
 {
     return m_boundingRect;
@@ -245,5 +253,43 @@ ExportLevel AbstractItemBase::exportLevel(int index)
 QList<AbstractItemBase *> AbstractItemBase::children()
 {
     return m_children;
+}
+
+
+/**
+ * @brief Render all layers of an object. Scalefactor set size multiplier of render output, renderHighQuality() set render quality level.
+ * @param painter
+ * @param scale
+ */
+void AbstractItemBase::render(QPainter *painter, qreal scale)
+{
+    setScaleFactor(scale);
+
+    painter->save();
+    painter->setBrush(Qt::NoBrush);
+    painter->setPen(Qt::NoPen);
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+
+    setHighRenderQuality(true);
+
+    m_doRender = true;
+    paint(painter, nullptr);
+    m_doRender = false;
+
+    QList<AbstractItemBase*> list = this->children();
+
+    foreach(AbstractItemBase *abItem, list){
+
+        if(abItem){
+            painter->translate(abItem->pos());
+            abItem->render(painter, scale );
+            painter->translate(-abItem->pos());
+        }
+    }
+
+    setHighRenderQuality(false);
+
+    painter->restore();
 }
 
