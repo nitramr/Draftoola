@@ -137,8 +137,10 @@ void Artboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     if(m_useBGColor) painter->fillRect(renderRect(), QBrush(m_backgroundColor));
 
+    m_scaleFactor = option->levelOfDetailFromTransform( painter->transform());
+
     if(!m_doRender){
-        qreal offset = m_offset/scaleFactor();
+        qreal offset = m_offset/m_scaleFactor;
         m_boundingRect = rect().adjusted( -m_buffer, -offset - m_buffer, m_buffer, m_buffer);
         m_label->setPos(this->rect().x(), this->rect().y() -offset);
 

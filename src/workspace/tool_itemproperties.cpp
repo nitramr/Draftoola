@@ -110,7 +110,7 @@ void ItemProperties::setupShadows()
     this->connect(itemShadows, &ipShadows::sendCollapse, m_section, &LayoutSection::setCollapsedState);
     this->connect(itemShadows, &ipShadows::enabled, btn_Addnew, &QToolButton::setEnabled);
 
-    ui->layout->addWidget(itemShadows);
+    ui->layout->addWidget(m_section);
 }
 
 void ItemProperties::setupInnerShadows()

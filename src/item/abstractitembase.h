@@ -32,10 +32,10 @@ public:
     ItemType itemType() const;
 
     virtual void setShape(QPainterPath itemShape);
-    virtual QPainterPath shape() const;
+    virtual QPainterPath shape() const override;
 
     virtual QRectF rect() const;
-    virtual QRectF boundingRect() const;
+    virtual QRectF boundingRect() const override;
     virtual QRectF renderRect() const = 0;
 
     bool highRenderQuality() const;

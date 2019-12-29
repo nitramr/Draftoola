@@ -3,24 +3,25 @@
 #include <QTextDocument>
 #include <QDebug>
 #include <QTextFrame>
+#include <QStyleOptionGraphicsItem>
 
 
 
 ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF(), parent)
 {
     QFont f;
-    f.setPixelSize(20);
+    f.setPixelSize(16);
     f.setBold(false);
-    f.setFamily("Helvetica");
+    f.setFamily("Roboto");
 
     m_frameFitText = true;
-    m_color = QColor(0,0,0);
+    m_lineHeight = f.pixelSize() * 1.2;
 
-    m_text = new QGraphicsTextItem(text, this);
+    m_text = new QGraphicsTextItem(text);
     setFont(f);
-    setTextColor(m_color);
-
-
+    setTextColor(QColor(0,0,0));
+    setAlignment(Qt::AlignLeft);
+    setText(text);
     setRect(m_text->boundingRect());
 
     this->setItemType(ItemType::Text);
@@ -39,14 +40,12 @@ void ItemText::setRect(QRectF rect)
     QPainterPath path;
     path.addRect(rect);
     setShape(path);
-
-    setLineHeight(100);
 }
 
 void ItemText::setText(const QString text)
 {    
 
-    m_text->document()->setPlainText(text);
+    m_text->document()->setHtml("<p style='line-height:"+ QString::number(m_lineHeight) +"px;'>"+text+"</p>");
 
 }
 
@@ -77,13 +76,12 @@ int ItemText::fontSize() const
 
 void ItemText::setTextColor(const QColor color)
 {
-    m_color = color;
-    m_text->setDefaultTextColor(m_color);
+    m_text->setDefaultTextColor(color);
 }
 
 QColor ItemText::textColor() const
 {
-    return m_color;
+    return m_text->defaultTextColor();
 }
 
 void ItemText::setFrameFitText(bool doFit)
@@ -96,7 +94,7 @@ bool ItemText::frameFitText()
     return m_frameFitText;
 }
 
-void ItemText::setAligmnet(Qt::Alignment alignment)
+void ItemText::setAlignment(Qt::Alignment alignment)
 {
     QTextOption option(alignment);
     m_text->document()->setDefaultTextOption(option);
@@ -110,6 +108,8 @@ Qt::Alignment ItemText::alignment() const
 void ItemText::setLineHeight(qreal lineHeight)
 {
 
+    m_lineHeight = lineHeight;
+
 //    QTextDocument* doc = m_text->document();
 //    QTextFrame * root = doc->rootFrame();
 //    QTextFrame::iterator it;
@@ -117,7 +117,8 @@ void ItemText::setLineHeight(qreal lineHeight)
 //    {
 //        QTextBlock block = it.currentBlock();
 //        qDebug() << "setLineheight" << block.blockFormat().lineHeight();
-//        block.blockFormat().setLineHeight(lineHeight, QTextBlockFormat::FixedHeight);
+//        block.blockFormat().setLineHeight(100, QTextBlockFormat::LineDistanceHeight); //https://doc.qt.io/qt-5/qtextblockformat.html#LineHeightTypes-enum
+//        //block.blockFormat().setLineHeight(lineHeight, QTextBlockFormat::FixedHeight);
 //        qDebug() << "setLineheight";
 //    }
 
@@ -125,7 +126,7 @@ void ItemText::setLineHeight(qreal lineHeight)
 
 qreal ItemText::lineHeight() const
 {
-    return 0;
+    return m_lineHeight;
 }
 
 //void WAText::SetTextInteraction(bool on, bool selectAll)
@@ -204,20 +205,12 @@ qreal ItemText::lineHeight() const
 
 void ItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-//    //	painter->setCompositionMode( QPainter::CompositionMode_SourceAtop );
-
     ItemBase::paint(painter, option, widget);
 
- //   m_text->paint(painter, option, widget);
+    // reset painter state, like select, edit etc.
+    QStyleOptionGraphicsItem *opt = new QStyleOptionGraphicsItem();
 
+    m_text->paint(painter, opt, widget);
 
-
-
-//    // Bounding Box
-////    QPen pen(Qt::black);
-////    pen.setCosmetic(true);
-////    pen.setStyle(Qt::PenStyle::DotLine);
-////    painter->setPen(pen);
-////    painter->drawRect(boundingRect());
 
 }

@@ -155,8 +155,6 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
         }
 
     }
-
-   // connect(this, &CanvasView::signalScaleFactor, item, &AbstractItemBase::setScaleFactor);
 }
 
 AbstractItemBase *CanvasView::itemByName(const QString name)
@@ -185,8 +183,6 @@ void CanvasView::applyScaleFactor()
     m_scene->setScaleFactor(scaleFactor);
     m_VRuler->setScaleFactor(scaleFactor);
     m_HRuler->setScaleFactor(scaleFactor);
-
-    emit signalScaleFactor(scaleFactor);
 }
 
 qreal CanvasView::scaleFactor() const
@@ -228,8 +224,8 @@ void CanvasView::wheelEvent(QWheelEvent *event)
         foreach(QGraphicsItem *item, m_scene->items()){
             ItemBase * b_item = dynamic_cast<ItemBase*>(item);
             if(b_item){
+                // keep the rendered item in cache while zooming. No redraw = better performance.
                 b_item->setCacheMode(QGraphicsItem::ItemCoordinateCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
-               // b_item->setInvalidateCache(false);
             }
         }
 

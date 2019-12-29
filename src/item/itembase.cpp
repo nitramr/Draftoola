@@ -27,6 +27,7 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     this->setFlag(GraphicsItemFlag::ItemIsSelectable, true);
     this->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
     this->setFlag(QGraphicsItem::ItemContainsChildrenInShape, true);
+    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 
 
 }

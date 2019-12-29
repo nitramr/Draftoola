@@ -33,7 +33,7 @@ public:
     void setFrameFitText(bool doFit );
     bool frameFitText();
 
-    void setAligmnet(Qt::Alignment alignment);
+    void setAlignment(Qt::Alignment alignment);
     Qt::Alignment alignment() const;
 
     void setLineHeight(qreal lineHeight);
@@ -46,6 +46,7 @@ private:
     QGraphicsTextItem *m_text;
     bool m_frameFitText;
     QColor m_color;
+    int m_lineHeight;
 
 protected:
 //	virtual void focusOutEvent (QFocusEvent * event);

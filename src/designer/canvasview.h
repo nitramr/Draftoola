@@ -48,7 +48,6 @@ private:
 signals:
     void signalViewIsDragged(bool);
     void itemsChanged();
-    void signalScaleFactor(qreal);
 
 private slots:
     void resetItemCache();

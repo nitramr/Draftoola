@@ -145,7 +145,7 @@ void MainWindow::tmpSetup()
 
 
     // Object Text
-    ItemText *text = new ItemText("Hello World");
+    ItemText *text = new ItemText("Hello World\nsecond line");
     text->setName("Text");
     m_canvas->addItem(text, 100, 10);
 

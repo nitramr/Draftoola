@@ -80,6 +80,7 @@ void ipShadows::resetItems()
     {
         widget->deleteLater();
     }
+
 }
 
 void ipShadows::unloadItems()

@@ -17,7 +17,7 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
     path.addRect(rect);
     setShape(path);
 
-    this->setAcceptHoverEvents(true);
+ //   this->setAcceptHoverEvents(true);
 
 }
 
@@ -102,8 +102,8 @@ void AbstractItemBase::setShape(QPainterPath itemShape)
     setInvalidateCache(true);
     setTransformOriginPoint(m_rect.center());
 
-    emit this->widthChanged();
-    emit this->heightChanged();
+//    emit this->widthChanged();
+//    emit this->heightChanged();
 
     update();
 }
@@ -258,7 +258,7 @@ void AbstractItemBase::render(QPainter *painter, qreal scale)
     setHighRenderQuality(true);
 
     m_doRender = true;
-    paint(painter, nullptr);
+    paint(painter, new QStyleOptionGraphicsItem());
     m_doRender = false;
 
     QList<AbstractItemBase*> list = this->children();

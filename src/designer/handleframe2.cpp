@@ -226,10 +226,10 @@ QRectF HandleFrame2::selectionBoundingRect(qreal &angle)
 			selectionBoundingRect = QRectF(artboard->scenePos().x(), artboard->scenePos().y(), artboard->rect().width(), artboard->rect().height());
 			m_isTextOnly = false;
 		}
-		if(watext){
-			selectionBoundingRect = selectionBoundingRect.united(QRectF(watext->scenePos().x(), watext->scenePos().y(), watext->rect().width(), watext->rect().height()));
-			m_isTextOnly = true;
-		}
+        if(watext){
+            selectionBoundingRect = selectionBoundingRect.united(QRectF(watext->scenePos().x(), watext->scenePos().y(), watext->rect().width(), watext->rect().height()));
+            m_isTextOnly = true;
+        }
 		if(warect){
 			selectionBoundingRect = selectionBoundingRect.united(QRectF(warect->scenePos().x(), warect->scenePos().y(), warect->rect().width(), warect->rect().height()));
 			m_isTextOnly = false;
@@ -503,7 +503,7 @@ void HandleFrame2::updateItemsSelection(int x, int y)
 		ItemText * itemText = dynamic_cast<ItemText*>(item);
 		if(itemText){
 			itemText->setRect(updateItemSize(itemText->rect()));
-			itemText->setPos(updateItemsPosition(itemText));
+            itemText->setPos(updateItemsPosition(itemText));
 
 		}
 

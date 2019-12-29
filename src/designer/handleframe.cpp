@@ -510,10 +510,8 @@ QPointF HandleFrame::updateItemsPosition(QGraphicsItem *item)
     //    qDebug() << "diffRatioX" << diffRatioX<< "diffRatioY" << diffRatioY;
     //    qDebug() << "ratioX" << ratioX << "ratioY" << ratioY;
 
-    //    return item->pos();
 
-//    qDebug() << "End Pos Raw" << ratioX <<  ratioY;
-//    qDebug() << "End Pos Rounded" << static_cast<int>(round(ratioX)) <<  static_cast<int>(round(ratioY));
+
 
     return QPointF(ratioX, ratioY);
 
@@ -539,6 +537,7 @@ void HandleFrame::updateItemsSelection(qreal x, qreal y)
     //	  t.rotate(angle);
     //	  t.translate(-center.x(), -center.y());
     foreach(QGraphicsItem* item, m_scene->selectedItems()) {
+
 
         // Scale
         Artboard * itemArtboard = dynamic_cast<Artboard*>(item);
