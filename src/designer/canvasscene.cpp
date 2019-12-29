@@ -86,7 +86,7 @@ void CanvasScene::exportItem(AbstractItemBase *item)
                 saveImage(item, multiplier, output + ".jpg", Qt::white);
                 break;
             case ExportLevel::FileFormat::SVG:
-                saveSVG(item, multiplier, output + ".svg");
+                saveSVG(item, output + ".svg");
                 break;
             case ExportLevel::FileFormat::PDF:
                 savePDF(item, output + ".pdf");
@@ -133,22 +133,26 @@ void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QStrin
  * @param multiplier
  * @param outputPath
  */
-void CanvasScene::saveSVG(AbstractItemBase *bi, qreal multiplier, const QString outputPath)
+void CanvasScene::saveSVG(AbstractItemBase *bi, const QString outputPath)
 {
-//    QRectF targetRect = bi->renderRect();
-//    QRectF sourceRect(targetRect);
+    QRectF targetRect = bi->renderRect();
 
-//    QSvgGenerator generator;        // Create a file generator object
-//    generator.setFileName(outputPath);    // We set the path to the file where to save vector graphics
-//    generator.setSize(targetRect.size().toSize());  // Set the dimensions of the working area of the document in millimeters
-//    generator.setViewBox(targetRect); // Set the work area in the coordinates
-//    generator.setTitle(bi->name());                          // The title document
-//    generator.setDescription(trUtf8("File created by WhitePrint Studio"));
+    QSvgGenerator generator;
+    generator.setFileName(outputPath);
+    generator.setSize(targetRect.size().toSize());  // Set the dimensions of the working area of the document in millimeters
+    generator.setViewBox(targetRect);
+    generator.setTitle(bi->name());
+    generator.setDescription(trUtf8("File created by WhitePrint Studio"));
 
-//    QPainter painterSVG;
-//    painterSVG.begin(&generator);
-//    render(&painterSVG,targetRect, sourceRect);
-//    painterSVG.end();
+    QPainter painter(&generator);
+
+    bi->setHighRenderQuality(true);
+    bi->render(&painter);
+    bi->setHighRenderQuality(false);
+
+    painter.end();
+
+
 }
 
 /**
@@ -166,6 +170,7 @@ void CanvasScene::savePDF(AbstractItemBase *bi, const QString outputPath)
     pdfWriter.setTitle(bi->name());
     pdfWriter.setPageMargins(QMargins(0, 0, 0, 0));
     pdfWriter.setResolution(72);
+    pdfWriter.setCreator(trUtf8("File created by WhitePrint Studio"));
 
     QPainter painter(&pdfWriter);
     painter.translate(bi->renderRect().topLeft().x() * -1, bi->renderRect().topLeft().y() * -1);
