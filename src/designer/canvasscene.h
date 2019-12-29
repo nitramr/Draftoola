@@ -32,7 +32,7 @@ private:
 
     void saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath, QColor bgColor = Qt::transparent);
     void saveSVG(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
-    void savePDF(AbstractItemBase *bi, qreal multiplier, const QString outputPath);
+    void savePDF(AbstractItemBase *bi, const QString outputPath);
 
 protected:
 	void keyPressEvent(QKeyEvent *e);

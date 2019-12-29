@@ -3,6 +3,7 @@
 #include <QtGlobal>
 #include <QGraphicsSceneMouseEvent>
 #include <QSvgGenerator>
+#include <QPdfWriter>
 
 /***************************************************
  *
@@ -88,7 +89,7 @@ void CanvasScene::exportItem(AbstractItemBase *item)
                 saveSVG(item, multiplier, output + ".svg");
                 break;
             case ExportLevel::FileFormat::PDF:
-                savePDF(item, multiplier, output + ".pdf");
+                savePDF(item, output + ".pdf");
                 break;
             default:
             case ExportLevel::FileFormat::PNG:
@@ -156,9 +157,25 @@ void CanvasScene::saveSVG(AbstractItemBase *bi, qreal multiplier, const QString 
  * @param multiplier
  * @param outputPath
  */
-void CanvasScene::savePDF(AbstractItemBase *bi, qreal multiplier, const QString outputPath)
+void CanvasScene::savePDF(AbstractItemBase *bi, const QString outputPath)
 {
-    // Do PDF stuff
+    QPageSize pSize(QSizeF(bi->renderRect().size()).toSize());
+
+    QPdfWriter pdfWriter(outputPath);
+    pdfWriter.setPageSize(pSize);
+    pdfWriter.setTitle(bi->name());
+    pdfWriter.setPageMargins(QMargins(0, 0, 0, 0));
+    pdfWriter.setResolution(72);
+
+    QPainter painter(&pdfWriter);
+    painter.translate(bi->renderRect().topLeft().x() * -1, bi->renderRect().topLeft().y() * -1);
+
+    bi->setHighRenderQuality(true);
+    bi->render(&painter);
+    bi->setHighRenderQuality(false);
+
+    painter.end();
+
 }
 
 /***************************************************
