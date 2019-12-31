@@ -74,7 +74,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     this->connect(this->verticalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateVRuler);
     this->connect(this->horizontalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateHRuler);
 
-    this->connect(m_scene, SIGNAL(selectionChanged()), m_handleFrame,SLOT(slotFrameToSelection()));
+    this->connect(m_scene, SIGNAL(selectionChanged()), m_handleFrame,SLOT(frameToSelection()));
 
 }
 

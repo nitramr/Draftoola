@@ -80,11 +80,11 @@ private:
 	virtual QRectF boundingRect() const;
 	virtual void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-	virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
-	virtual void mouseMoveEvent(QGraphicsSceneDragDropEvent *event);
-	virtual void mousePressEvent (QGraphicsSceneMouseEvent * event );
-	virtual void mousePressEvent(QGraphicsSceneDragDropEvent *event);
-	virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event );
+//    virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
+//	virtual void mouseMoveEvent(QGraphicsSceneDragDropEvent *event);
+//    virtual void mousePressEvent (QGraphicsSceneMouseEvent * event );
+//	virtual void mousePressEvent(QGraphicsSceneDragDropEvent *event);
+//	virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event );
 	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent * event);
 
 	QPen    m_Pen;
@@ -149,6 +149,7 @@ public:
 
 	bool isHovered();
     bool canRotate();
+    bool canHeightChange();
 
 	// Members
 	void updateHandleFrame();
@@ -173,7 +174,7 @@ private:
 	qreal       m_scaleFactor;
 	QRectF		m_rect;
 	qreal		m_ratio;
-	bool		m_isTextOnly;
+    bool		m_canHeightChange;
 	bool		m_isHovered;
     QColor      m_color;
     bool        m_canRotate;
@@ -201,7 +202,7 @@ private:
 	virtual bool sceneEventFilter ( QGraphicsItem * watched, QEvent * event ) ;
 
 public slots:
-	void slotFrameToSelection();
+    void frameToSelection();
 
 signals:
     void sendActiveItem(AbstractItemBase * item);

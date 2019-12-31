@@ -14,8 +14,6 @@ ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int handleSize, QC
     m_style(style),
     m_mouseButtonState(kMouseReleased)
 {
-    //    setParentItem(parent);
-
     m_handleSize = handleSize;
     m_width = m_handleSize;
     m_height = m_handleSize;
@@ -43,15 +41,18 @@ void ItemHandle::setMouseState(int s)
     m_mouseButtonState = s;
 }
 
+
 int ItemHandle::getMouseState()
 {
     return m_mouseButtonState;
 }
 
+
 QRectF ItemHandle::rect() const
 {
     return QRectF(0, 0, m_width, m_height);
 }
+
 
 void ItemHandle::setRect(qreal width)
 {    
@@ -63,6 +64,7 @@ void ItemHandle::setRect(qreal width)
     }
 }
 
+
 void ItemHandle::setColor(const QColor color)
 {
     if (m_color != color)
@@ -73,15 +75,18 @@ void ItemHandle::setColor(const QColor color)
     }
 }
 
+
 QColor ItemHandle::color() const
 {
     return m_color;
 }
 
+
 QRectF ItemHandle::boundingRect() const
 {
     return rect();
 }
+
 
 ItemHandle::Handle ItemHandle::getCorner()
 {
@@ -94,23 +99,23 @@ ItemHandle::Handle ItemHandle::getCorner()
  *
  ***************************************************/
 
-// we have to implement the mouse events to keep the linker happy,
-// but just set accepted to false since are not actually handling them
+//void ItemHandle::mouseMoveEvent(QGraphicsSceneDragDropEvent *event)
+//{
+//    event->setAccepted(false);
+//}
 
-void ItemHandle::mouseMoveEvent(QGraphicsSceneDragDropEvent *event)
-{
-    event->setAccepted(false);
-}
 
-void ItemHandle::mousePressEvent(QGraphicsSceneDragDropEvent *event)
-{
-    event->setAccepted(false);
-}
+//void ItemHandle::mousePressEvent(QGraphicsSceneDragDropEvent *event)
+//{
+//    event->setAccepted(false);
+//}
 
-void ItemHandle::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
-{
-    event->setAccepted(true);
-}
+
+//void ItemHandle::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
+//{
+//    event->setAccepted(true);
+//}
+
 
 void ItemHandle::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
@@ -141,15 +146,17 @@ void ItemHandle::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     }
 }
 
-void ItemHandle::mousePressEvent ( QGraphicsSceneMouseEvent * event )
-{
-    event->setAccepted(false);
-}
 
-void ItemHandle::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
-{
-    event->setAccepted(false);
-}
+//void ItemHandle::mousePressEvent ( QGraphicsSceneMouseEvent * event )
+//{
+//    event->setAccepted(false);
+//}
+
+
+//void ItemHandle::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
+//{
+//    event->setAccepted(false);
+//}
 
 
 void ItemHandle::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
@@ -191,8 +198,9 @@ HandleFrame::HandleFrame(CanvasScene *scene, qreal grid, int handleSize): QObjec
     m_scaleFactor(1.0),
     m_rect(QRectF(0,0,10,10)),
     m_ratio(1.0),
-    m_isTextOnly(false),
-    m_color(QColor(0, 128, 255))
+    m_canHeightChange(true),
+    m_color(QColor(0, 128, 255)),
+    m_canRotate(true)
 {
 
     m_handles[0] = new ItemHandle(this,ItemHandle::TopLeft, m_handleSize, m_color);
@@ -211,7 +219,10 @@ HandleFrame::HandleFrame(CanvasScene *scene, qreal grid, int handleSize): QObjec
     this->setPen(QPen(m_color));
     this->setVisible(false);
     this->setAcceptHoverEvents(true);
-    this->setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren);
+    this->setFlag(QGraphicsItem::ItemDoesntPropagateOpacityToChildren, true);
+//    this->setFlag(QGraphicsItem::ItemStacksBehindParent, true);
+//    this->setFlag(QGraphicsItem::ItemNegativeZStacksBehindParent, true);
+
     this->setZValue(99999999);
 
 }
@@ -245,10 +256,15 @@ QRectF HandleFrame::boundingRect() const
                             );
 }
 
+/*!
+ * \brief Return an adjusted rect that fix rect position on half pixels
+ * \return
+ */
 QRectF HandleFrame::adjustedRect() const
 {
     return QRectF(rect().x() + 0.5, rect().y() + 0.5, rect().width() - 1, rect().height() - 1);
 }
+
 
 /*!
  * \brief Calculate BoundingRect of selected items
@@ -274,14 +290,7 @@ void HandleFrame::moveBy(qreal dx, qreal dy)
 
     QGraphicsItem::moveBy(dx,dy);
 
-//    QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
-
     foreach(AbstractItemBase* item, m_items) {
-
-//        AbstractItemBase * item = dynamic_cast<AbstractItemBase*>(current);
-
-//        if(!item) continue;
-
         item->moveBy(dx,dy);
     }
 
@@ -289,75 +298,90 @@ void HandleFrame::moveBy(qreal dx, qreal dy)
 
 }
 
+
 void HandleFrame::setRect(QRectF rect)
 {
     m_rect = rect;
 }
+
 
 void HandleFrame::setRect(qreal x, qreal y, qreal width, qreal height)
 {
     setRect(QRectF(x,y,width, height));
 }
 
+
 QRectF HandleFrame::rect() const
 {
     return m_rect;
 }
+
 
 qreal HandleFrame::width() const
 {
     return this->rect().width();
 }
 
+
 qreal HandleFrame::height() const
 {
     return this->rect().height();
 }
+
 
 QPointF HandleFrame::anchorTopLeft() const
 {
     return this->scenePos();
 }
 
+
 QPointF HandleFrame::anchorTop() const
 {
     return QPointF(this->scenePos().x() + width() / 2, this->scenePos().y());
 }
+
 
 QPointF HandleFrame::anchorTopRight() const
 {
     return QPointF(this->scenePos().x() + width(), this->scenePos().y());
 }
 
+
 QPointF HandleFrame::anchorRight() const
 {
     return QPointF(this->scenePos().x() + width(), this->scenePos().y() + height() / 2);
 }
+
 
 QPointF HandleFrame::anchorBottomRight() const
 {
     return QPointF(this->scenePos().x() + width(), this->scenePos().y() + height());
 }
 
+
 QPointF HandleFrame::anchorBottom() const
 {
     return QPointF(this->scenePos().x() + width() / 2, this->scenePos().y() + height());
 }
+
 
 QPointF HandleFrame::anchorBottomLeft() const
 {
     return QPointF(this->scenePos().x(), this->scenePos().y() + height());
 }
 
+
 QPointF HandleFrame::anchorLeft() const
 {
     return QPointF(this->scenePos().x(), this->scenePos().y() + height() / 2);
 }
 
+
 QPointF HandleFrame::anchorCenter() const
 {
     return QPointF(this->scenePos().x() + width() / 2, this->scenePos().y() + height() / 2);
 }
+
 
 void HandleFrame::setPen(QPen pen)
 {
@@ -365,9 +389,11 @@ void HandleFrame::setPen(QPen pen)
     m_pen.setCosmetic(true);
 }
 
+
 QPen HandleFrame::pen() const{
     return m_pen;
 }
+
 
 void HandleFrame::setScaleFactor(qreal factor)
 {
@@ -387,10 +413,12 @@ void HandleFrame::setScaleFactor(qreal factor)
 
 }
 
+
 qreal HandleFrame::scaleFactor() const
 {
     return m_scaleFactor;
 }
+
 
 void HandleFrame::setColor(const QColor color)
 {
@@ -410,16 +438,19 @@ void HandleFrame::setColor(const QColor color)
     }
 }
 
+
 QColor HandleFrame::color() const
 {
     return m_color;
 }
 
+
 void HandleFrame::setItems(QList<AbstractItemBase *> list)
 {
     m_items = list;
-    slotFrameToSelection();
+    frameToSelection();
 }
+
 
 int HandleFrame::handleSize() const
 {
@@ -432,14 +463,22 @@ void HandleFrame::setShiftModifier(bool modifier)
     m_shiftModifier = modifier;
 }
 
+
 bool HandleFrame::isHovered()
 {
     return m_isHovered;
 }
 
+
 bool HandleFrame::canRotate()
 {
     return m_canRotate;
+}
+
+
+bool HandleFrame::canHeightChange()
+{
+    return m_canHeightChange;
 }
 
 /***************************************************
@@ -479,6 +518,7 @@ void HandleFrame::adjustSize(qreal x, qreal y)
                   m_height
                   );
 }
+
 
 QPointF HandleFrame::updateItemsPosition(QGraphicsItem *item)
 {
@@ -526,6 +566,7 @@ QPointF HandleFrame::updateItemsPosition(QGraphicsItem *item)
 
 }
 
+
 QRectF HandleFrame::updateItemSize(QRectF frame)
 {
     qreal ratioWidth = m_oldRect.width() / frame.width();
@@ -535,6 +576,7 @@ QRectF HandleFrame::updateItemSize(QRectF frame)
     //	newRect.translate(rect().topLeft() - newRect.topLeft());
     //	return newRect;
 }
+
 
 void HandleFrame::updateItemsSelection(qreal x, qreal y)
 {
@@ -585,12 +627,14 @@ void HandleFrame::updateItemsSelection(qreal x, qreal y)
     sendActiveItems();
 }
 
+
 void HandleFrame::reset()
 {
     this->setVisible(false);
     this->setRotation(0);
     emit sendActiveItem(nullptr);
 }
+
 
 /*!
  * \brief Return true if at least one artboard is fully covered in selection region
@@ -622,7 +666,7 @@ bool HandleFrame::selectionContainsArtboards()
         }
     }
 
-return containsArtboard;
+    return containsArtboard;
 
 }
 
@@ -644,6 +688,7 @@ void HandleFrame::updateHandleFrame()
     qreal offX = handleSize() / 2 / m_scaleFactor;
     qreal offY = handleSize() / 2 / m_scaleFactor;
 
+    // set position of handles
     m_handles[0]->setPos(rect().left() - offX, rect().top() - offY); // TopLeft
     m_handles[1]->setPos(rect().center().x() - offX, rect().top() - offY); // Top
     m_handles[2]->setPos(rect().right() - offX,  rect().top() - offY); // TopRight
@@ -656,54 +701,39 @@ void HandleFrame::updateHandleFrame()
 
     qreal tollerance = m_handleSize * 6 / m_scaleFactor;
 
-    // is Textfield
-    if(m_isTextOnly){
-        m_handles[0]->setVisible(false); // TopLeft
+    // set visibility of handles
+    m_handles[0]->setVisible(true); // TopLeft
+    m_handles[2]->setVisible(true); // TopRight
+    m_handles[4]->setVisible(true); // BottomRight
+    m_handles[6]->setVisible(true); // BottomLeft
+
+    // hide middle handles if rect is to small
+    if(this->width() < tollerance){
         m_handles[1]->setVisible(false); // Top
-        m_handles[2]->setVisible(false); // TopRight
-        m_handles[3]->setVisible(true);  // Right
-        m_handles[4]->setVisible(false); // BottomRight
         m_handles[5]->setVisible(false); // Bottom
-        m_handles[6]->setVisible(false); // BottomLeft
-        m_handles[7]->setVisible(true);  // Left
-        m_handles[8]->setVisible(m_canRotate);  // Rotate
-    }else{
-        m_handles[0]->setVisible(true); // TopLeft
-        m_handles[1]->setVisible(true); // Top
-        m_handles[2]->setVisible(true); // TopRight
-        m_handles[3]->setVisible(true);  // Right
-        m_handles[4]->setVisible(true); // BottomRight
-        m_handles[5]->setVisible(true); // Bottom
-        m_handles[6]->setVisible(true); // BottomLeft
-        m_handles[7]->setVisible(true);  // Left
-        m_handles[8]->setVisible(m_canRotate);  // Rotate
-
-        // hide middle handles if rect is to small
-        if(this->width() < tollerance){
-            m_handles[1]->setVisible(false);
-            m_handles[5]->setVisible(false);
-            m_handles[8]->setVisible(false);
-        }else if(this->width() > tollerance){
-            m_handles[1]->setVisible(true);
-            m_handles[5]->setVisible(true);
-            m_handles[8]->setVisible(m_canRotate);
-        }
-
-        if(this->height() < tollerance){
-            m_handles[3]->setVisible(false);
-            m_handles[7]->setVisible(false);
-        }else if(this->height() > tollerance){
-            m_handles[3]->setVisible(true);
-            m_handles[7]->setVisible(true);
-        }
-
+        m_handles[8]->setVisible(false); // Rotate
+    }else/* if(this->width() > tollerance)*/{
+        m_handles[1]->setVisible(m_canHeightChange); // Top
+        m_handles[5]->setVisible(m_canHeightChange); // Bottom
+        m_handles[8]->setVisible(m_canRotate); // Rotate
     }
+
+    if(this->height() < tollerance){
+        m_handles[3]->setVisible(false); // Right
+        m_handles[7]->setVisible(false); // Left
+    }else/* if(this->height() > tollerance)*/{
+        m_handles[3]->setVisible(true); // Right
+        m_handles[7]->setVisible(true); // Left
+    }
+
 }
 
 
 void HandleFrame::rotateSelection(qreal angle)
 {
     //   qDebug() << "HandleFrame::rotateSelection";
+
+    if(!canRotate()) return;
 
     QPointF center = this->rect().center();
     QTransform t;
@@ -722,13 +752,15 @@ void HandleFrame::rotateSelection(qreal angle)
 }
 
 
-void HandleFrame::slotFrameToSelection()
+/*!
+ * \brief [SLOT] Update frame size to item selection.
+ */
+void HandleFrame::frameToSelection()
 {
 
-    if(m_scene->selectedItems().size() == 0){
+    if(m_scene->selectedItems().isEmpty()){
 
         reset();
-
         return;
 
         //Multiple Selection
@@ -742,7 +774,7 @@ void HandleFrame::slotFrameToSelection()
         this->setRect(QRectF(0,0, selectionBox.width(), selectionBox.height()));
         this->setPos(selectionBox.topLeft());
         this->updateHandleFrame();
-        //        this->setRotation(angle);
+//        this->setRotation(angle);
         this->setVisible(true);
 
         sendActiveItems();
@@ -991,7 +1023,9 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
 
-    //const qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
+//    const qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
+
+    // fix the line on half pixels
     if (scaleFactor() > 2 ) {
         painter->drawRect(rect());
     }else{
@@ -1005,15 +1039,6 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *opti
     }
 
     painter->restore();
-
-    // BoundingBox
-    //    QPen pen2 = QPen(QColor(0,0,0));
-    //    pen2.setCosmetic(true);
-    //    pen2.setStyle(Qt::PenStyle::DotLine);
-    //    painter->setPen(pen2);
-    //    painter->drawRect(this->boundingRect());
-
-
 
 }
 
