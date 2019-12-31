@@ -437,6 +437,11 @@ bool HandleFrame::isHovered()
     return m_isHovered;
 }
 
+bool HandleFrame::canRotate()
+{
+    return m_canRotate;
+}
+
 /***************************************************
  *
  * Members
@@ -661,7 +666,7 @@ void HandleFrame::updateHandleFrame()
         m_handles[5]->setVisible(false); // Bottom
         m_handles[6]->setVisible(false); // BottomLeft
         m_handles[7]->setVisible(true);  // Left
-        m_handles[8]->setVisible(true);  // Rotate
+        m_handles[8]->setVisible(m_canRotate);  // Rotate
     }else{
         m_handles[0]->setVisible(true); // TopLeft
         m_handles[1]->setVisible(true); // Top
@@ -671,7 +676,7 @@ void HandleFrame::updateHandleFrame()
         m_handles[5]->setVisible(true); // Bottom
         m_handles[6]->setVisible(true); // BottomLeft
         m_handles[7]->setVisible(true);  // Left
-        m_handles[8]->setVisible(true);  // Rotate
+        m_handles[8]->setVisible(m_canRotate);  // Rotate
 
         // hide middle handles if rect is to small
         if(this->width() < tollerance){
@@ -681,7 +686,7 @@ void HandleFrame::updateHandleFrame()
         }else if(this->width() > tollerance){
             m_handles[1]->setVisible(true);
             m_handles[5]->setVisible(true);
-            m_handles[8]->setVisible(true);
+            m_handles[8]->setVisible(m_canRotate);
         }
 
         if(this->height() < tollerance){
@@ -730,7 +735,7 @@ void HandleFrame::slotFrameToSelection()
     }else if(m_scene->selectedItems().size() >0){
 
         // filter Selection
-        selectionContainsArtboards();
+        m_canRotate = !selectionContainsArtboards();
 
         QRectF selectionBox = selectionRect();
 

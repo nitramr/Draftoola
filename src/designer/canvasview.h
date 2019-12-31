@@ -14,7 +14,7 @@ class CanvasView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    CanvasView(/*WAScene *scene, */QWidget * parent = nullptr);
+    CanvasView(QWidget * parent = nullptr);
 	HandleFrame *handleFrame() const;
 
     void addItem(AbstractItemBase *item, qreal x = 0, qreal y = 0, AbstractItemBase *parent = nullptr);
@@ -37,8 +37,6 @@ private:
     int          m_handleBuffer;
     qreal        m_grid;
     QTimer      *timer;
-    QPointF m_SelectionStart;
-    QPointF m_SelectionEnd;
 
     QList<Artboard*> m_artboardList;
     QDRuler                 *m_HRuler;

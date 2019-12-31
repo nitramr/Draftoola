@@ -106,7 +106,7 @@ void MainWindow::tmpSetup()
     artboard->addExportLevel(expLevel);
     artboard->addExportLevel(expLevel2);
     //	artboard->setPos(20,20);
-    m_canvas->addItem(artboard, -2, -2);
+    m_canvas->addItem(artboard, 0, 0);
 //    m_outliner->addNode(artboard);
 
     // Object Ovals

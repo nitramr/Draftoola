@@ -146,7 +146,9 @@ public:
     int handleSize() const;
 	void setGridSpace(int space);
 	void setShiftModifier(bool modifier);
+
 	bool isHovered();
+    bool canRotate();
 
 	// Members
 	void updateHandleFrame();
@@ -174,6 +176,7 @@ private:
 	bool		m_isTextOnly;
 	bool		m_isHovered;
     QColor      m_color;
+    bool        m_canRotate;
     QList<AbstractItemBase*> m_items;
 
     void adjustSize(qreal x, qreal y);
