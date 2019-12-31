@@ -13,6 +13,7 @@ ItemRect::ItemRect(QRectF rect, QGraphicsItem *parent) : ItemBase(rect, parent){
     m_radiusBL = 0;
 
     this->setRect(rect);
+    this->setName(tr("Rect"));
 
     this->setItemType(ItemType::Rect);
    }

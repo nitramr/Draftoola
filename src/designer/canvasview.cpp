@@ -18,16 +18,16 @@
 CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 {
 
-//    this->setRenderHint(QPainter::Antialiasing, true);
-//    this->setRenderHint( QPainter::SmoothPixmapTransform, true );
+    //    this->setRenderHint(QPainter::Antialiasing, true);
+    //    this->setRenderHint( QPainter::SmoothPixmapTransform, true );
     this->setDragMode(QGraphicsView::RubberBandDrag);
-//    this->setCacheMode(QGraphicsView::CacheBackground);
+    //    this->setCacheMode(QGraphicsView::CacheBackground);
     this->setOptimizationFlag(DontAdjustForAntialiasing, true); // https://doc.qt.io/qt-5/qgraphicsview.html#OptimizationFlag-enum
     this->setOptimizationFlag(DontSavePainterState, true); // restoring painter will handle in item paint event
     this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // http://doc.qt.io/gt-5/qgraphicsview.html#ViewportUpdateMode-enum
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     this->setBackgroundBrush(QColor(240,240,240));
-//    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
+    //    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
 
 
 
@@ -69,9 +69,12 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
     timer = new QTimer(this);
     this->connect(timer, &QTimer::timeout, this, &CanvasView::resetItemCache);
+    this->connect(this, &CanvasView::rubberBandChanged, this, &CanvasView::filterSelection);
 
     this->connect(this->verticalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateVRuler);
     this->connect(this->horizontalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateHRuler);
+
+    this->connect(m_scene, SIGNAL(selectionChanged()), m_handleFrame,SLOT(slotFrameToSelection()));
 
 }
 
@@ -93,7 +96,7 @@ void CanvasView::resetItemCache()
         ItemBase * b_item = dynamic_cast<ItemBase*>(item);
         if(b_item){
             b_item->setCacheMode(QGraphicsItem::NoCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
-           // b_item->setInvalidateCache(true);
+            // b_item->setInvalidateCache(true);
         }
     }
 
@@ -101,12 +104,60 @@ void CanvasView::resetItemCache()
 
 void CanvasView::updateVRuler()
 {
-     m_VRuler->setOrigin(-mapToScene(this->rect().topLeft()).y());
+    m_VRuler->setOrigin(-mapToScene(this->rect().topLeft()).y());
 }
 
 void CanvasView::updateHRuler()
 {
-     m_HRuler->setOrigin(-mapToScene(this->rect().topLeft()).x());
+    m_HRuler->setOrigin(-mapToScene(this->rect().topLeft()).x());
+}
+
+/*!
+ * \brief If an Artboard is fully covered it will remove all other items from selection.
+ * \param viewportRect
+ * \param fromScenePoint
+ * \param toScenePoint
+ */
+void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPointF toScenePoint )
+{
+
+    if(this->rubberBandRect().isNull()) return;
+
+    QPointF posRubberband;
+
+    // Based on from which direction the rubberband have been created we have to move it differently.
+    posRubberband.setX( (fromScenePoint.x() <= toScenePoint.x()) ? fromScenePoint.x() : toScenePoint.x() );
+    posRubberband.setY( (fromScenePoint.y() <= toScenePoint.y()) ? fromScenePoint.y() : toScenePoint.y() );
+
+
+    QRect rubberBand = this->rubberBandRect();
+    rubberBand.moveTo(posRubberband.toPoint());
+
+
+    QList<QGraphicsItem *> selectedItems = m_scene->items(rubberBand, Qt::IntersectsItemShape, Qt::AscendingOrder, this->transform());
+
+    bool exit = false;
+
+    foreach(QGraphicsItem *selectedItem, selectedItems) {
+
+        Artboard * abItem = dynamic_cast<Artboard*>(selectedItem);
+
+        if(abItem && !exit){
+
+            QRect itemRect = abItem->rect().toRect();
+            itemRect.moveTo(abItem->scenePos().toPoint() );
+
+            //                qDebug() << abItem->name() << itemRect << rubberBand << rubberBand.contains(itemRect);
+
+            if(rubberBand.contains(itemRect) ){
+                abItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
+                exit = true;
+            }else abItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
+
+        }
+
+    }
+
 }
 
 /***************************************************
@@ -139,7 +190,7 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
             qDebug() << "Canvas: Item has no Parent";
             Artboard * artboard = m_artboardList.first();
 
-            if(artboard){                
+            if(artboard){
                 artboard->addItem(item);
                 item->setPos(x,y);
                 emit itemsChanged();
@@ -403,6 +454,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
+
     QGraphicsView::mousePressEvent(event);
 
 }
@@ -410,6 +462,8 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
     QGraphicsView::mouseReleaseEvent(event);
+
+
 
 }
 

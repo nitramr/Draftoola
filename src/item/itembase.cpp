@@ -24,7 +24,7 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
  //   m_cache = QPixmapCache();
     //    m_cache.setCacheLimit(51200); // 50MB
 
-    this->setFlag(GraphicsItemFlag::ItemIsSelectable, true);
+    this->setFlag(QGraphicsItem::ItemIsSelectable, true);
     this->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
     this->setFlag(QGraphicsItem::ItemContainsChildrenInShape, true);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);

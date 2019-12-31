@@ -14,7 +14,7 @@ ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int handleSize, QC
     m_style(style),
     m_mouseButtonState(kMouseReleased)
 {
-//    setParentItem(parent);
+    //    setParentItem(parent);
 
     m_handleSize = handleSize;
     m_width = m_handleSize;
@@ -214,8 +214,6 @@ HandleFrame::HandleFrame(CanvasScene *scene, qreal grid, int handleSize): QObjec
     this->setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren);
     this->setZValue(99999999);
 
-    connect(m_scene, SIGNAL(selectionChanged()), this,SLOT(slotFrameToSelection()));
-
 }
 
 void HandleFrame::setup(){
@@ -252,17 +250,16 @@ QRectF HandleFrame::adjustedRect() const
     return QRectF(rect().x() + 0.5, rect().y() + 0.5, rect().width() - 1, rect().height() - 1);
 }
 
+/*!
+ * \brief Calculate BoundingRect of selected items
+ * \return
+ */
 QRectF HandleFrame::selectionRect() const
 {
 
     QRectF selectionRect;
-    bool onlyArtboards = selectionContainsArtboards();
 
-    QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
-    foreach(QGraphicsItem *current, selectedItems) {
-
-        AbstractItemBase * item = dynamic_cast<AbstractItemBase*>(current);
-        if(!item) continue;
+    foreach(AbstractItemBase *item, m_items) {
         selectionRect = selectionRect.united(item->mapRectToScene(item->rect()));
     }
 
@@ -277,13 +274,13 @@ void HandleFrame::moveBy(qreal dx, qreal dy)
 
     QGraphicsItem::moveBy(dx,dy);
 
-    QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
+//    QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
 
-    foreach(QGraphicsItem *current, selectedItems) {
+    foreach(AbstractItemBase* item, m_items) {
 
-        AbstractItemBase * item = dynamic_cast<AbstractItemBase*>(current);
+//        AbstractItemBase * item = dynamic_cast<AbstractItemBase*>(current);
 
-        if(!item) continue;
+//        if(!item) continue;
 
         item->moveBy(dx,dy);
     }
@@ -418,6 +415,12 @@ QColor HandleFrame::color() const
     return m_color;
 }
 
+void HandleFrame::setItems(QList<AbstractItemBase *> list)
+{
+    m_items = list;
+    slotFrameToSelection();
+}
+
 int HandleFrame::handleSize() const
 {
     return m_handleSize;
@@ -482,8 +485,8 @@ QPointF HandleFrame::updateItemsPosition(QGraphicsItem *item)
 
     //	return posItem;
 
-//    qDebug() << "HandlePos" << this->pos() << "HandleRect" << this->rect() << "HandleRectToScene" << this->mapRectToScene(this->rect());
-//    qDebug() << "ItemPos" << item->pos();
+    //    qDebug() << "HandlePos" << this->pos() << "HandleRect" << this->rect() << "HandleRectToScene" << this->mapRectToScene(this->rect());
+    //    qDebug() << "ItemPos" << item->pos();
 
 
     QPointF posHandle = m_oldPos;
@@ -536,8 +539,7 @@ void HandleFrame::updateItemsSelection(qreal x, qreal y)
     //	  t.translate(center.x(), center.y());
     //	  t.rotate(angle);
     //	  t.translate(-center.x(), -center.y());
-    foreach(QGraphicsItem* item, m_scene->selectedItems()) {
-
+    foreach(AbstractItemBase* item, m_items) {
 
         // Scale
         Artboard * itemArtboard = dynamic_cast<Artboard*>(item);
@@ -585,28 +587,45 @@ void HandleFrame::reset()
     emit sendActiveItem(nullptr);
 }
 
-
-bool HandleFrame::selectionContainsArtboards() const
+/*!
+ * \brief Return true if at least one artboard is fully covered in selection region
+ * \return
+ */
+bool HandleFrame::selectionContainsArtboards()
 {
-    if(m_scene->selectedItems().count() <= 0) return false;
+    if(m_scene->selectedItems().isEmpty()) return false;
 
-    QList<QGraphicsItem *> selectedItems = m_scene->selectedItems();
+    bool containsArtboard = false;
 
-    foreach(QGraphicsItem *current, selectedItems) {
-        Artboard * item = dynamic_cast<Artboard*>(current);
-        if(item){
-            return true;
+    m_items.clear();
+
+    foreach(QGraphicsItem * item, m_scene->selectedItems()){
+        AbstractItemBase* abItem = dynamic_cast<AbstractItemBase*>(item);
+
+        if(abItem && !containsArtboard){
+            switch(abItem->itemType()){
+            case ItemType::Artboard:
+                m_items.clear();
+                m_items.append(abItem);
+                containsArtboard = true;
+                break;
+            default:
+                m_items.append(abItem);
+                break;
+            }
+
         }
     }
 
-    return false;
+return containsArtboard;
+
 }
 
 
 void HandleFrame::sendActiveItems()
 {
-    if(m_scene->selectedItems().size() == 1){
-        AbstractItemBase* m_itemBase = dynamic_cast<AbstractItemBase*>(m_scene->selectedItems()[0]);
+    if(m_items.size() == 1){
+        AbstractItemBase* m_itemBase = m_items.first();
         if(m_itemBase){
             emit sendActiveItem(m_itemBase);
         }else emit sendActiveItem(nullptr);
@@ -679,7 +698,7 @@ void HandleFrame::updateHandleFrame()
 
 void HandleFrame::rotateSelection(qreal angle)
 {
- //   qDebug() << "HandleFrame::rotateSelection";
+    //   qDebug() << "HandleFrame::rotateSelection";
 
     QPointF center = this->rect().center();
     QTransform t;
@@ -687,7 +706,7 @@ void HandleFrame::rotateSelection(qreal angle)
     t.rotate(angle);
     t.translate(-center.x(), -center.y());
 
-    foreach(QGraphicsItem* item, m_scene->selectedItems()) {
+    foreach(AbstractItemBase* item, m_items) {
 
         // set position
         item->setPos(t.map(item->pos()));
@@ -710,9 +729,9 @@ void HandleFrame::slotFrameToSelection()
         //Multiple Selection
     }else if(m_scene->selectedItems().size() >0){
 
- //       qDebug() << "Selected Items" << m_scene->selectedItems().size();
+        // filter Selection
+        selectionContainsArtboards();
 
-        //       qreal angle;
         QRectF selectionBox = selectionRect();
 
         this->setRect(QRectF(0,0, selectionBox.width(), selectionBox.height()));
@@ -829,14 +848,14 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
         qreal deltaH =   newHeight - this->rect().height() ;
 
 
- //       qDebug() << "deltaW:" << deltaW << "deltaH:" << deltaH;
+        //       qDebug() << "deltaW:" << deltaW << "deltaH:" << deltaH;
 
         adjustSize(  deltaW ,   deltaH);
 
         qreal deltaWidth = deltaW * (-1);
         qreal deltaHeight = deltaH * (-1);
 
- //       qDebug() << "deltaWidth:" << deltaWidth << "deltaHeight:" << deltaHeight;
+        //       qDebug() << "deltaWidth:" << deltaWidth << "deltaHeight:" << deltaHeight;
 
         qreal newX;
         qreal newY;
@@ -983,11 +1002,11 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->restore();
 
     // BoundingBox
-//    QPen pen2 = QPen(QColor(0,0,0));
-//    pen2.setCosmetic(true);
-//    pen2.setStyle(Qt::PenStyle::DotLine);
-//    painter->setPen(pen2);
-//    painter->drawRect(this->boundingRect());
+    //    QPen pen2 = QPen(QColor(0,0,0));
+    //    pen2.setCosmetic(true);
+    //    pen2.setStyle(Qt::PenStyle::DotLine);
+    //    painter->setPen(pen2);
+    //    painter->drawRect(this->boundingRect());
 
 
 

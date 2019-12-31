@@ -143,6 +143,7 @@ void CanvasScene::saveSVG(AbstractItemBase *bi, const QString outputPath)
     generator.setViewBox(targetRect);
     generator.setTitle(bi->name());
     generator.setDescription(trUtf8("File created by WhitePrint Studio"));
+    generator.setResolution(72);
 
     QPainter painter(&generator);
 

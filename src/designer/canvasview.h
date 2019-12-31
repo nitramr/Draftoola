@@ -37,6 +37,8 @@ private:
     int          m_handleBuffer;
     qreal        m_grid;
     QTimer      *timer;
+    QPointF m_SelectionStart;
+    QPointF m_SelectionEnd;
 
     QList<Artboard*> m_artboardList;
     QDRuler                 *m_HRuler;
@@ -53,6 +55,7 @@ private slots:
     void resetItemCache();
     void updateVRuler();
     void updateHRuler();
+    void filterSelection(QRect viewportRect, QPointF fromScenePoint, QPointF toScenePoint);
 
 };
 

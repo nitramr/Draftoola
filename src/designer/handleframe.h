@@ -141,6 +141,8 @@ public:
     void setColor(const QColor color);
     QColor color() const;
 
+    void setItems(QList<AbstractItemBase*> list);
+
     int handleSize() const;
 	void setGridSpace(int space);
 	void setShiftModifier(bool modifier);
@@ -172,13 +174,14 @@ private:
 	bool		m_isTextOnly;
 	bool		m_isHovered;
     QColor      m_color;
+    QList<AbstractItemBase*> m_items;
 
     void adjustSize(qreal x, qreal y);
 	QPointF updateItemsPosition(QGraphicsItem *item);
 	QRectF updateItemSize(QRectF frame);
     void updateItemsSelection(qreal x, qreal y);
 	void reset();
-    bool selectionContainsArtboards() const;
+    bool selectionContainsArtboards();
 
 	void sendActiveItems();
 

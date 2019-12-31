@@ -106,7 +106,7 @@ void MainWindow::tmpSetup()
     artboard->addExportLevel(expLevel);
     artboard->addExportLevel(expLevel2);
     //	artboard->setPos(20,20);
-    m_canvas->addItem(artboard);
+    m_canvas->addItem(artboard, -2, -2);
 //    m_outliner->addNode(artboard);
 
     // Object Ovals
@@ -145,31 +145,30 @@ void MainWindow::tmpSetup()
 
 
     // Object Text
-    ItemText *text = new ItemText("Hello World\nsecond line");
-    text->setName("Text");
+    ItemText *text = new ItemText("Hello World<br>second line");
     m_canvas->addItem(text, 100, 10);
 
 //	stroke.setStrokePosition(StrokePosition::Outer);
-//	WAOval * ovalG = new WAOval(50,50);
+//	ItemOval * ovalG = new ItemOval(50,50);
 //	ovalG->addFills(Fills("oval", QColor(Qt::green)));
 //	ovalG->addStroke(stroke);
 //	ovalG->setParentItem(rect);
 
 
-    //	WARect * rectG = new WARect(50,60);
-    //	rectG->addFills(Fills("rect", QColor(Qt::blue)));
-    //	m_canvas->addItem(rectG, 60,0);
+//        ItemRect * rectG = new ItemRect(50,60);
+//        rectG->addFills(Fills("rect", QColor(Qt::blue)));
+//        m_canvas->addItem(rectG, 60,0);
 
-    //	stroke.setStrokePosition(StrokePosition::Outer);
-    //	WAOval * ovalG = new WAOval(50,50);
-    //	ovalG->addFills(Fills("oval", QColor(Qt::green)));
-    //	ovalG->addStroke(stroke);
-    //	m_canvas->addItem(ovalG, 0,0);
+//        stroke.setStrokePosition(StrokePosition::Outer);
+//        ItemOval * ovalG = new ItemOval(50,50);
+//        ovalG->addFills(Fills("oval", QColor(Qt::green)));
+//        ovalG->addStroke(stroke);
+//        m_canvas->addItem(ovalG, 0,0);
 
-    //	WAGroup * group = new WAGroup();
-    //	group->addToGroup(rectG);
-    //	group->addToGroup(ovalG);
-    //	m_canvas->addItem(group, 20,280);
+//    	ItemGroup * group = new ItemGroup();
+//    	group->addToGroup(rectG);
+//    	group->addToGroup(ovalG);
+//    	m_canvas->addItem(group, 20,280);
 }
 
 /***************************************************

@@ -6,6 +6,7 @@ ItemOval::ItemOval(qreal width, qreal height, QGraphicsItem *parent) : ItemOval(
 ItemOval::ItemOval(QRectF rect, QGraphicsItem *parent) : ItemBase(rect, parent){
 
     this->setRect(rect);
+    this->setName(tr("Oval"));
     this->setItemType(ItemType::Oval);
 
 }

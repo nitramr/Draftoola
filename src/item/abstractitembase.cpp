@@ -266,9 +266,6 @@ void AbstractItemBase::render(QPainter *painter, qreal scale)
     foreach(AbstractItemBase *abItem, list){
 
         if(abItem){
-
-            qDebug() << abItem->name() << abItem;
-
             painter->translate(abItem->pos());
             abItem->render(painter, scale );
             painter->translate(-abItem->pos());

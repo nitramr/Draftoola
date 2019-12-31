@@ -12,7 +12,7 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
     QFont f;
     f.setPixelSize(16);
     f.setBold(false);
-    f.setFamily("Roboto");
+    f.setFamily("Helvetica");
 
     m_frameFitText = true;
     m_lineHeight = f.pixelSize() * 1.2;
@@ -23,6 +23,7 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
     setAlignment(Qt::AlignLeft);
     setText(text);
     setRect(m_text->boundingRect());
+    this->setName(tr("Text"));
 
     this->setItemType(ItemType::Text);
 
