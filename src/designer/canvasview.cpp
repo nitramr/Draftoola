@@ -136,13 +136,11 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
 
     QList<QGraphicsItem *> selectedItems = m_scene->items(rubberBand, Qt::IntersectsItemShape, Qt::AscendingOrder, this->transform());
 
-    bool exit = false;
-
     foreach(QGraphicsItem *selectedItem, selectedItems) {
 
         Artboard * abItem = dynamic_cast<Artboard*>(selectedItem);
 
-        if(abItem && !exit){
+        if(abItem){
 
             QRect itemRect = abItem->rect().toRect();
             itemRect.moveTo(abItem->scenePos().toPoint() );
@@ -151,7 +149,6 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
 
             if(rubberBand.contains(itemRect) ){
                 abItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
-                exit = true;
             }else abItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
 
         }

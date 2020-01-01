@@ -148,6 +148,20 @@ void MainWindow::tmpSetup()
     ItemText *text = new ItemText("Hello World<br>second line");
     m_canvas->addItem(text, 100, 10);
 
+    // Artboard
+    Artboard *artboard2 = new Artboard("Artboard2");
+    artboard2->addExportLevel(expLevel);
+    //	artboard->setPos(20,20);
+    m_canvas->addItem(artboard2, 400, 0);
+
+
+    // Object Ovals
+    ItemOval *oval2 = new ItemOval(60,60);
+    oval2->setName("Oval2");
+    oval2->addFills(fill2);
+    m_canvas->addItem(oval2, 50,120, artboard2);
+
+
 //	stroke.setStrokePosition(StrokePosition::Outer);
 //	ItemOval * ovalG = new ItemOval(50,50);
 //	ovalG->addFills(Fills("oval", QColor(Qt::green)));

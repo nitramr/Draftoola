@@ -637,7 +637,7 @@ void HandleFrame::reset()
 
 
 /*!
- * \brief Return true if at least one artboard is fully covered in selection region
+ * \brief Return true if at least one artboard is fully covered in selection region. In addition m_items will contain only artboards or other items.
  * \return
  */
 bool HandleFrame::selectionContainsArtboards()
@@ -647,24 +647,26 @@ bool HandleFrame::selectionContainsArtboards()
     bool containsArtboard = false;
 
     m_items.clear();
+    QList<AbstractItemBase*> artboardList;
 
     foreach(QGraphicsItem * item, m_scene->selectedItems()){
         AbstractItemBase* abItem = dynamic_cast<AbstractItemBase*>(item);
 
-        if(abItem && !containsArtboard){
+        if(abItem){
             switch(abItem->itemType()){
             case ItemType::Artboard:
-                m_items.clear();
-                m_items.append(abItem);
+                artboardList.append(abItem);
                 containsArtboard = true;
                 break;
             default:
                 m_items.append(abItem);
                 break;
             }
-
         }
     }
+
+    // if there is at least 1 artboard override all items
+    if(containsArtboard) m_items = artboardList;
 
     return containsArtboard;
 
@@ -712,7 +714,7 @@ void HandleFrame::updateHandleFrame()
         m_handles[1]->setVisible(false); // Top
         m_handles[5]->setVisible(false); // Bottom
         m_handles[8]->setVisible(false); // Rotate
-    }else/* if(this->width() > tollerance)*/{
+    }else{
         m_handles[1]->setVisible(m_canHeightChange); // Top
         m_handles[5]->setVisible(m_canHeightChange); // Bottom
         m_handles[8]->setVisible(m_canRotate); // Rotate
@@ -721,7 +723,7 @@ void HandleFrame::updateHandleFrame()
     if(this->height() < tollerance){
         m_handles[3]->setVisible(false); // Right
         m_handles[7]->setVisible(false); // Left
-    }else/* if(this->height() > tollerance)*/{
+    }else{
         m_handles[3]->setVisible(true); // Right
         m_handles[7]->setVisible(true); // Left
     }
