@@ -52,6 +52,7 @@ public:
 	QList<Shadow> innerShadowList() const;
     bool hasInnerShadows() const;
 
+    virtual void setRect(QRectF rect) override = 0;
     QRectF renderRect() const override;
 
     void clipsChildrenToShape(bool doClip);

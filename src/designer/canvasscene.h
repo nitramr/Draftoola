@@ -13,10 +13,6 @@ class CanvasScene : public QGraphicsScene
 public:
     CanvasScene(QObject *parent = nullptr);
 
-	void render(QPainter *painter,
-					const QRectF &target = QRectF(), const QRectF &source = QRectF(),
-						Qt::AspectRatioMode aspectRatioMode = Qt::KeepAspectRatio);
-
     qreal scaleFactor() const;
     void setScaleFactor(qreal factor);
 
@@ -40,8 +36,6 @@ protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
 	void drawForeground(QPainter *painter, const QRectF &rect);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-
-
 
 };
 

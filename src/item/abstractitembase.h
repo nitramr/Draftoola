@@ -46,6 +46,7 @@ public:
     virtual void setShape(QPainterPath itemShape);
     virtual QPainterPath shape() const override;
 
+    virtual void setRect(QRectF rect) = 0;
     virtual QRectF rect() const;
     virtual QRectF boundingRect() const override;
     virtual QRectF renderRect() const = 0;

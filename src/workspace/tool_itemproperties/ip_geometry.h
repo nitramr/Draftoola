@@ -33,6 +33,8 @@ private:
     void loadGeometry();
     void resetItems();
     void unloadItems();
+    void connectSlots();
+    void disconnectSlots();
 
 private slots:
     void updateItem();

@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	this->addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
 
 
-    connect(m_canvas->handleFrame(), &HandleFrame::sendActiveItem, this, &MainWindow::setActiveItem);
+    connect(m_canvas->handleFrame(), &HandleFrame::sendActiveItems, this, &MainWindow::setActiveItems);
     connect(m_canvas, &CanvasView::itemsChanged, m_outliner, &Outliner::updateList);
 
     // signal to signal connection
@@ -191,7 +191,7 @@ void MainWindow::tmpSetup()
  *
  ***************************************************/
 
-void MainWindow::setActiveItem(AbstractItemBase *item)
+void MainWindow::setActiveItems(QList<AbstractItemBase *> items)
 {
-    m_properties->setActiveItem(item);
+    m_properties->setActiveItems(items);
 }

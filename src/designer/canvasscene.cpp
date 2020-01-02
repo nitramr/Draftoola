@@ -41,13 +41,6 @@ void CanvasScene::setScaleFactor(qreal factor)
  *
  ***************************************************/
 
-void CanvasScene::render(QPainter *painter, const QRectF &target, const QRectF &source,
-                         Qt::AspectRatioMode aspectRatioMode)
-{
-    QGraphicsScene::render(painter,target,source,aspectRatioMode);
-
-}
-
 /**
  * @brief [SLOT] Export all items on canvas into all provided output formats.
  */

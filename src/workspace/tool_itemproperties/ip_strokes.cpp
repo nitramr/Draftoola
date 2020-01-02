@@ -45,12 +45,6 @@ void ipStrokes::setActiveItem(AbstractItemBase *item)
 
 void ipStrokes::loadProperties()
 {
-
-    this->setEnabled(true);
-    emit sendCollapse(false);
-
-    resetItems();
-
     switch(m_item->type()){
     case AbstractItemBase::Oval:
     case AbstractItemBase::Path:
@@ -94,6 +88,11 @@ void ipStrokes::unloadItems()
 
 void ipStrokes::loadStrokes()
 {
+    this->setEnabled(true);
+    emit sendCollapse(false);
+
+    resetItems();
+
     foreach(Stroke m_property, m_item->strokeList()){
         PropertyStroke * pf = new PropertyStroke();
         pf->setStroke(m_property);

@@ -157,8 +157,12 @@ void ItemProperties::setupExportLevel()
  *
  ***************************************************/
 
-void ItemProperties::setActiveItem(AbstractItemBase *item)
+void ItemProperties::setActiveItems(QList<AbstractItemBase *> items)
 {
+    // TODO: add support for multiple items
+    AbstractItemBase * fItem = (items.isEmpty()) ? nullptr : items.first();
+    AbstractItemBase * item = (items.size() > 1) ? nullptr : fItem;
+
     itemGeometry->setActiveItem(item);
     itemFills->setActiveItem(item);
     itemStrokes->setActiveItem(item);

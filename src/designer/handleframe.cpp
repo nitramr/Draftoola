@@ -193,7 +193,7 @@ HandleFrame::HandleFrame(CanvasScene *scene, qreal grid, int handleSize): QObjec
     m_gridSpace(grid),
     m_cornerDragStart(0,0),
     m_handleSize(handleSize),
-    m_shiftModifier(false),
+    m_keepAspectRatio(false),
     m_pen(QPen()),
     m_scaleFactor(1.0),
     m_rect(QRectF(0,0,10,10)),
@@ -296,7 +296,7 @@ void HandleFrame::moveBy(qreal dx, qreal dy)
         item->moveBy(dx,dy);
     }
 
-    sendActiveItems();
+    emit sendActiveItems(m_items);
 
 }
 
@@ -411,7 +411,7 @@ void HandleFrame::setScaleFactor(qreal factor)
     m_handles[7]->setRect(m_handleSize / m_scaleFactor); // Left
     m_handles[8]->setRect(m_handleSize / m_scaleFactor); // Rotate
 
-    updateHandleFrame();
+    updateHandles();
 
 }
 
@@ -447,6 +447,10 @@ QColor HandleFrame::color() const
 }
 
 
+/*!
+ * \brief Set list of items that can modifiy by handle frame
+ * \param list
+ */
 void HandleFrame::setItems(QList<AbstractItemBase *> list)
 {
     m_items = list;
@@ -460,9 +464,9 @@ int HandleFrame::handleSize() const
 }
 
 
-void HandleFrame::setShiftModifier(bool modifier)
+void HandleFrame::setKeepAspectRatio(bool modifier)
 {
-    m_shiftModifier = modifier;
+    m_keepAspectRatio = modifier;
 }
 
 
@@ -472,12 +476,19 @@ bool HandleFrame::isHovered()
 }
 
 
+/*!
+ * \brief Return true or false if frame has rotation handle
+ * \return
+ */
 bool HandleFrame::canRotate()
 {
     return m_canRotate;
 }
 
-
+/*!
+ * \brief Return true or false if frame has handles to change the height
+ * \return
+ */
 bool HandleFrame::canHeightChange()
 {
     return m_canHeightChange;
@@ -497,7 +508,7 @@ void HandleFrame::adjustSize(qreal x, qreal y)
     qreal m_width = this->width();
     qreal m_height = this->height();
 
-    if(m_shiftModifier){
+    if(m_keepAspectRatio){
 
         if(m_height > m_width){
             m_width =  m_width + x;
@@ -522,15 +533,15 @@ void HandleFrame::adjustSize(qreal x, qreal y)
 }
 
 
-QPointF HandleFrame::updateItemsPosition(QGraphicsItem *item)
+void HandleFrame::updateItemsPosition(QGraphicsItem *item)
 {
 
-    //	QPointF posItem(item->pos());
-    //	QPointF relItem = this->mapFromItem(item, QPointF());
+//        QPointF posItem(item->pos());
+//        QPointF relItem = item->mapFromParent(this->pos());
 
-    //	qDebug() << "relItem Pos:" << relItem;
+//        qDebug() << "relItem Pos:" << relItem << this->pos();
 
-    //	return posItem;
+//        return relItem;
 
     //    qDebug() << "HandlePos" << this->pos() << "HandleRect" << this->rect() << "HandleRectToScene" << this->mapRectToScene(this->rect());
     //    qDebug() << "ItemPos" << item->pos();
@@ -560,81 +571,54 @@ QPointF HandleFrame::updateItemsPosition(QGraphicsItem *item)
     //    qDebug() << "diffRatioX" << diffRatioX<< "diffRatioY" << diffRatioY;
     //    qDebug() << "ratioX" << ratioX << "ratioY" << ratioY;
 
-
-
-
-    return QPointF(ratioX, ratioY);
-
-
+    item->setPos( QPointF(ratioX, ratioY) );
 }
 
 
-QRectF HandleFrame::updateItemSize(QRectF frame)
+/*!
+ * \brief Calculate new size for item.
+ * \param item
+ */
+void HandleFrame::updateItemSize(AbstractItemBase* item)
 {
+    QRectF frame = item->rect();
+
     qreal ratioWidth = m_oldRect.width() / frame.width();
     qreal ratioHeight = m_oldRect.height() / frame.height();
 
-    return QRectF(frame.x(),frame.y(), this->rect().width() / ratioWidth, this->rect().height() / ratioHeight);
-    //	newRect.translate(rect().topLeft() - newRect.topLeft());
-    //	return newRect;
+    item->setRect( QRectF(frame.x(),frame.y(), this->rect().width() / ratioWidth, this->rect().height() / ratioHeight) );
 }
 
 
+/*!
+ * \brief Update position and rect of all selected items.
+ * \param x
+ * \param y
+ */
 void HandleFrame::updateItemsSelection(qreal x, qreal y)
 {
-
-    //	  QPointF center = this->rect().center();
-    //	  QTransform t;
-    //	  t.translate(center.x(), center.y());
-    //	  t.rotate(angle);
-    //	  t.translate(-center.x(), -center.y());
     foreach(AbstractItemBase* item, m_items) {
 
-        // Scale
-        Artboard * itemArtboard = dynamic_cast<Artboard*>(item);
-        if(itemArtboard){
-            qDebug() << "update Artboard";
-            itemArtboard->setRect(updateItemSize(itemArtboard->rect()));
-            itemArtboard->setPos(updateItemsPosition(itemArtboard));
-        }
-
-        ItemText * itemText = dynamic_cast<ItemText*>(item);
-        if(itemText){
-            itemText->setRect(updateItemSize(itemText->rect()));
-            itemText->setPos(updateItemsPosition(itemText));
-
-        }
-
-        ItemRect * itemRect = dynamic_cast<ItemRect*>(item);
-        if(itemRect){
-            itemRect->setRect(updateItemSize(itemRect->rect()));
-            //			itemRect->moveBy(x,y);
-            itemRect->setPos(updateItemsPosition(itemRect));
-
-        }
-
-        ItemOval * itemOval = dynamic_cast<ItemOval*>(item);
-        if(itemOval){
-            itemOval->setRect(updateItemSize(itemOval->rect()));
-            //			itemOval->moveBy(x,y);
-            itemOval->setPos(updateItemsPosition(itemOval));
-
-        }
-
-        // set position
-        //		item->setPos(t.map(item->pos()));
-
+        updateItemSize(item);
+        updateItemsPosition(item);
     }
 
-    sendActiveItems();
+    emit sendActiveItems(m_items);
 }
 
 
+/*!
+ * \brief Reset HandleFrame to default values.
+ */
 void HandleFrame::reset()
 {
     this->setVisible(false);
     this->setRotation(0);
-    emit sendActiveItem(nullptr);
+    m_items.clear();
+
+    qDebug() << "HandleFrame::reset()" << m_items.count();
+
+    emit sendActiveItems(m_items);
 }
 
 
@@ -644,11 +628,11 @@ void HandleFrame::reset()
  */
 bool HandleFrame::selectionContainsArtboards()
 {
-    if(m_scene->selectedItems().isEmpty()) return false;
-
     bool containsArtboard = false;
-
     m_items.clear();
+
+    if(m_scene->selectedItems().isEmpty()) return containsArtboard;
+
     QList<AbstractItemBase*> artboardList = QList<AbstractItemBase*>();
 
     foreach(QGraphicsItem * item, m_scene->selectedItems()){
@@ -667,7 +651,7 @@ bool HandleFrame::selectionContainsArtboards()
         }
     }
 
-    // if there is at least 1 artboard override all items
+    // if there is at least 1 artboard override all other items
     if(containsArtboard) m_items = artboardList;
 
     return containsArtboard;
@@ -675,19 +659,10 @@ bool HandleFrame::selectionContainsArtboards()
 }
 
 
-void HandleFrame::sendActiveItems()
-{
-    if(m_items.size() == 1){
-        AbstractItemBase* m_itemBase = m_items.first();
-        if(m_itemBase){
-            emit sendActiveItem(m_itemBase);
-        }else emit sendActiveItem(nullptr);
-
-    }else emit sendActiveItem(nullptr);
-}
-
-
-void HandleFrame::updateHandleFrame()
+/*!
+ * \brief Update handles position and visibility
+ */
+void HandleFrame::updateHandles()
 {
     qreal offX = handleSize() / 2 / m_scaleFactor;
     qreal offY = handleSize() / 2 / m_scaleFactor;
@@ -703,7 +678,7 @@ void HandleFrame::updateHandleFrame()
     m_handles[7]->setPos(rect().left() - offX, rect().center().y() - offY); // Left
     m_handles[8]->setPos(rect().center().x() - offX, rect().top() - offY - handleSize() * 3 / scaleFactor()); // Rotate
 
-    qreal tollerance = m_handleSize * 6 / m_scaleFactor;
+    qreal tollerance = handleSize() * 6 / scaleFactor();
 
     // set visibility of handles
     m_handles[0]->setVisible(true); // TopLeft
@@ -777,11 +752,11 @@ void HandleFrame::frameToSelection()
 
         this->setRect(QRectF(0,0, selectionBox.width(), selectionBox.height()));
         this->setPos(selectionBox.topLeft());
-        this->updateHandleFrame();
+        this->updateHandles();
 //        this->setRotation(angle);
         this->setVisible(true);
 
-        sendActiveItems();
+        emit sendActiveItems(m_items);
     }
 
 }
@@ -903,7 +878,7 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
 
         switch( corner->getCorner() ){
         case ItemHandle::TopLeft:{
-            if(m_shiftModifier){
+            if(m_keepAspectRatio){
                 if(height() > width()){
                     newX = anchorBottomRight().x() - width() + deltaWidth;
                     newY = anchorBottomRight().y() - height() + deltaWidth * m_ratio;
@@ -923,7 +898,7 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
         }
         case ItemHandle::Top:
         case ItemHandle::TopRight:{
-            if(m_shiftModifier){
+            if(m_keepAspectRatio){
 
                 if(height() > width()){
                     newY = anchorBottomRight().y() - height() + deltaWidth * m_ratio;
@@ -942,7 +917,7 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
         }
         case ItemHandle::Left:
         case ItemHandle::BottomLeft:{
-            if(m_shiftModifier){
+            if(m_keepAspectRatio){
                 if(height() > width()){
                     newX = anchorBottomRight().x() - width() + deltaWidth;
                 }else {
@@ -965,7 +940,7 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
 
 
         // Set corner positions
-        updateHandleFrame();
+        updateHandles();
 
         // Update selected item sizes and positions
         updateItemsSelection(deltaW, deltaH);
@@ -1019,7 +994,6 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *opti
 {
 
     painter->save();
-    painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
 
     QPen pen = this->pen();
     pen.setCosmetic(true);

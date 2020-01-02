@@ -149,14 +149,14 @@ public:
 
     int handleSize() const;
     void setGridSpace(int space);
-    void setShiftModifier(bool modifier);
+    void setKeepAspectRatio(bool modifier);
 
     bool isHovered();
     bool canRotate();
     bool canHeightChange();
 
     // Members
-    void updateHandleFrame();
+    void updateHandles();
     void setup();
     void rotateSelection(qreal angle);
 
@@ -174,7 +174,7 @@ private:
     QPointF		m_oldPos;
     ItemHandle* m_handles[9];
     int         m_handleSize;
-    bool		m_shiftModifier;
+    bool		m_keepAspectRatio;
     QPen        m_pen;
     qreal       m_scaleFactor;
     QRectF		m_rect;
@@ -186,18 +186,17 @@ private:
     QList<AbstractItemBase*> m_items;
 
     void adjustSize(qreal x, qreal y);
-    QPointF updateItemsPosition(QGraphicsItem *item);
-    QRectF updateItemSize(QRectF frame);
+    void updateItemsPosition(QGraphicsItem *item);
+    void updateItemSize(AbstractItemBase *item);
     void updateItemsSelection(qreal x, qreal y);
     void reset();
     bool selectionContainsArtboards();
 
-    void sendActiveItems();
-
+protected:
     // Events
-    virtual void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget); ///< must be re-implemented here to pain the box on the paint-event
+    virtual void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-    virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );///< allows the main object to be moved in the scene by capturing the mouse move events
+    virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );// < allows the main object to be moved in the scene by capturing the mouse move events
     virtual void mousePressEvent (QGraphicsSceneMouseEvent * event );
     virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event );
 
@@ -210,7 +209,7 @@ public slots:
     void frameToSelection();
 
 signals:
-    void sendActiveItem(AbstractItemBase * item);
+    void sendActiveItems(QList<AbstractItemBase *> items);
 
 };
 

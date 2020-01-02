@@ -26,7 +26,7 @@ public:
     ~ItemProperties();
 
 public slots:
-    void setActiveItem(AbstractItemBase *item);
+    void setActiveItems(QList<AbstractItemBase *> items);
 
 signals:
     void exportItem(AbstractItemBase *item);

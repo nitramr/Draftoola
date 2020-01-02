@@ -45,12 +45,6 @@ void ipInnerShadows::setActiveItem(AbstractItemBase *item)
 
 void ipInnerShadows::loadProperties()
 {
-
-    this->setEnabled(true);
-    emit sendCollapse(false);
-
-    resetItems();
-
     switch(m_item->type()){
     case AbstractItemBase::Oval:
     case AbstractItemBase::Path:
@@ -93,6 +87,11 @@ void ipInnerShadows::unloadItems()
 
 void ipInnerShadows::loadShadows()
 {
+    this->setEnabled(true);
+    emit sendCollapse(false);
+
+    resetItems();
+
     foreach(Shadow m_property, m_item->innerShadowList()){
         PropertyShadow * pf = new PropertyShadow();
         pf->setShadow(m_property);

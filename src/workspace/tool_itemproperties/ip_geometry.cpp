@@ -39,68 +39,51 @@ void ipGeometry::setActiveItem(AbstractItemBase *item)
 
 void ipGeometry::loadProperties()
 {
-    this->setEnabled(true);
-    resetItems();
-
-    loadGeometry();
-
-//    switch(m_item->itemType()){
-
-//    case ItemType::Artboard:{
-//        Artboard * item = dynamic_cast<Artboard*>(m_item);
-
-//        if(item){
-//           // Artboard
-//        }
-
-//    }
-//        break;
-//    case ItemType::Instance:
-
-//        break;
-//    case ItemType::Line:
-
-//        break;
-//    case ItemType::Oval:
-
-//        break;
-//    case ItemType::Polygon:
-
-//        break;
-//    case ItemType::Rect:
-
-//        break;
-//    case ItemType::Star:
-
-//        break;
-//    case ItemType::Text:
-
-//        break;
-//    case ItemType::Triangle:
-
-//        break;
-//    default:
-//        resetItems();
-//        break;
-//    }
+    switch(m_item->type()){
+    case AbstractItemBase::Artboard:
+    case AbstractItemBase::Oval:
+    case AbstractItemBase::Path:
+    case AbstractItemBase::Rect:
+    case AbstractItemBase::Star:
+    case AbstractItemBase::Triangle:
+    case AbstractItemBase::Instance:
+    case AbstractItemBase::Line:
+    case AbstractItemBase::Text:
+        loadGeometry();
+        break;
+    default:
+        resetItems();
+        break;
+    }
 
 }
 
 void ipGeometry::loadGeometry()
 {
+    this->setEnabled(true);
+    resetItems();
+
+    disconnectSlots();
+
     ui->spinboxXPos->setValue(m_item->pos().x());
     ui->spinboxYPos->setValue(m_item->pos().y());
     ui->spinboxWidth->setValue(m_item->rect().width());
     ui->spinboxHeight->setValue(m_item->rect().height());
+
+    connectSlots();
 }
 
 
 void ipGeometry::resetItems()
 {
+    disconnectSlots();
+
     ui->spinboxYPos->setValue(0);
     ui->spinboxXPos->setValue(0);
     ui->spinboxWidth->setValue(0);
     ui->spinboxHeight->setValue(0);
+
+    connectSlots();
 }
 
 void ipGeometry::unloadItems()
@@ -110,7 +93,29 @@ void ipGeometry::unloadItems()
     resetItems();
 }
 
+void ipGeometry::connectSlots()
+{
+    connect(ui->spinboxXPos, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
+    connect(ui->spinboxYPos, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
+    connect(ui->spinboxWidth, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
+    connect(ui->spinboxHeight, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
+
+}
+
+void ipGeometry::disconnectSlots()
+{
+    disconnect(ui->spinboxXPos, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
+    disconnect(ui->spinboxYPos, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
+    disconnect(ui->spinboxWidth, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
+    disconnect(ui->spinboxHeight, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
+}
+
 void ipGeometry::updateItem()
 {
+ if(m_item){
 
+      m_item->setRect(QRectF(0,0,ui->spinboxWidth->value(), ui->spinboxHeight->value()));
+      m_item->setPos(QPointF(ui->spinboxXPos->value(), ui->spinboxYPos->value()));
+
+    }
 }

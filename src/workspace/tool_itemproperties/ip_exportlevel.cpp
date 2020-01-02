@@ -45,12 +45,9 @@ void ipExportLevels::setActiveItem(AbstractItemBase *item)
  ***************************************************/
 
 void ipExportLevels::loadProperties()
-{   
-    emit sendCollapse(false);
-
-    resetItems();
-
+{
     switch(m_item->type()){
+    case AbstractItemBase::Artboard:
     case AbstractItemBase::Oval:
     case AbstractItemBase::Path:
     case AbstractItemBase::Rect:
@@ -59,7 +56,6 @@ void ipExportLevels::loadProperties()
     case AbstractItemBase::Instance:
     case AbstractItemBase::Line:
     case AbstractItemBase::Text:
-    case AbstractItemBase::Artboard:
         loadExportLevels();
         break;
     default:
@@ -95,6 +91,10 @@ void ipExportLevels::unloadItems()
 
 void ipExportLevels::loadExportLevels()
 {
+    emit sendCollapse(false);
+
+    resetItems();
+
     foreach(ExportLevel m_exportLevel, m_item->exportLevels()){
         PropertyExportLevel * pf = new PropertyExportLevel();
         pf->setExportLevel(m_exportLevel);

@@ -40,7 +40,7 @@ private:
 
 
 public slots:
-    void setActiveItem(AbstractItemBase *item);
+    void setActiveItems(QList<AbstractItemBase *> items);
 
 };
 

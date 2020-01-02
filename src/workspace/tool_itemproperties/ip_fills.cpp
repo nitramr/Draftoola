@@ -45,12 +45,6 @@ void ipFills::setActiveItem(AbstractItemBase *item)
 
 void ipFills::loadProperties()
 {
-
-    this->setEnabled(true);
-    emit sendCollapse(false);
-
-    resetItems();
-
     switch(m_item->type()){
     case AbstractItemBase::Oval:
     case AbstractItemBase::Path:
@@ -93,11 +87,16 @@ void ipFills::unloadItems()
 
 void ipFills::loadFills()
 {
+    resetItems();
+
     foreach(Fills m_property, m_item->fillsList()){
         PropertyFill * pf = new PropertyFill();
         pf->setFill(m_property);
         addFill(pf);
     }
+
+    this->setEnabled(true);
+    emit sendCollapse(false);
 
     emit enabled(true);
 }

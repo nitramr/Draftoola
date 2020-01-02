@@ -365,7 +365,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 
         break;
     case Qt::Key_Shift :
-        m_handleFrame->setShiftModifier(true);
+        m_handleFrame->setKeepAspectRatio(true);
         break;
 
     case Qt::Key_Space:
@@ -390,7 +390,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
         break;
 
     case Qt::Key_Shift :
-        m_handleFrame->setShiftModifier(false);
+        m_handleFrame->setKeepAspectRatio(false);
         break;
 
     case Qt::Key_A:{
