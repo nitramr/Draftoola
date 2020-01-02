@@ -647,7 +647,7 @@ bool HandleFrame::selectionContainsArtboards()
     bool containsArtboard = false;
 
     m_items.clear();
-    QList<AbstractItemBase*> artboardList;
+    QList<AbstractItemBase*> artboardList = QList<AbstractItemBase*>();
 
     foreach(QGraphicsItem * item, m_scene->selectedItems()){
         AbstractItemBase* abItem = dynamic_cast<AbstractItemBase*>(item);

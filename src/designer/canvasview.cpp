@@ -123,16 +123,19 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
 
     if(this->rubberBandRect().isNull()) return;
 
-    QPointF posRubberband;
+    // Based on from which direction the rubberband have been created we have to calculate TL pos differently.
+    QPointF posRubberbandTL(
+                (fromScenePoint.x() <= toScenePoint.x()) ? fromScenePoint.x() : toScenePoint.x(),
+                (fromScenePoint.y() <= toScenePoint.y()) ? fromScenePoint.y() : toScenePoint.y()
+                                                           );
 
-    // Based on from which direction the rubberband have been created we have to move it differently.
-    posRubberband.setX( (fromScenePoint.x() <= toScenePoint.x()) ? fromScenePoint.x() : toScenePoint.x() );
-    posRubberband.setY( (fromScenePoint.y() <= toScenePoint.y()) ? fromScenePoint.y() : toScenePoint.y() );
+    // Based on from which direction the rubberband have been created we have to calculate BR pos differently.
+    QPointF posRubberbandBR(
+                (toScenePoint.x() <= fromScenePoint.x()) ? fromScenePoint.x() : toScenePoint.x(),
+                (toScenePoint.y() <= fromScenePoint.y()) ? fromScenePoint.y() : toScenePoint.y()
+                                                           );
 
-
-    QRect rubberBand = this->rubberBandRect();
-    rubberBand.moveTo(posRubberband.toPoint());
-
+    QRectF rubberBand(posRubberbandTL, posRubberbandBR);
 
     QList<QGraphicsItem *> selectedItems = m_scene->items(rubberBand, Qt::IntersectsItemShape, Qt::AscendingOrder, this->transform());
 
@@ -145,7 +148,7 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
             QRect itemRect = abItem->rect().toRect();
             itemRect.moveTo(abItem->scenePos().toPoint() );
 
-            //                qDebug() << abItem->name() << itemRect << rubberBand << rubberBand.contains(itemRect);
+            // qDebug() << abItem->name() << itemRect << rubberBand << rubberBand.contains(itemRect);
 
             if(rubberBand.contains(itemRect) ){
                 abItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
