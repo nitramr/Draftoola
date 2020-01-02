@@ -15,7 +15,7 @@ ItemRect::ItemRect(QRectF rect, QGraphicsItem *parent) : ItemBase(rect, parent){
     this->setRect(rect);
     this->setName(tr("Rect"));
 
-    this->setItemType(ItemType::Rect);
+    //this->setItemType(ItemType::Rect);
    }
 
 /***************************************************

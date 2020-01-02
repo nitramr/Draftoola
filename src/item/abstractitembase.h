@@ -21,6 +21,18 @@ public:
     AbstractItemBase(const QRectF rect, QGraphicsItem *parent = nullptr);
     AbstractItemBase(const AbstractItemBase &other);
 
+    // Enums
+    enum Type { Artboard = UserType + 2,
+           Rect = UserType + 3,
+           Oval = UserType + 4,
+           Triangle = UserType + 5,
+           Star = UserType + 6,
+           Path = UserType + 7,
+           Line = UserType + 8,
+           Text = UserType + 9,
+           Instance = UserType + 10,
+         };
+
     // Properties
     void setID(int id);
     int ID() const;
@@ -28,8 +40,8 @@ public:
     void setName(QString name);
     QString name() const;
 
-    void setItemType(ItemType type);
-    ItemType itemType() const;
+//    void setItemType(ItemType type);
+//    ItemType itemType() const;
 
     virtual void setShape(QPainterPath itemShape);
     virtual QPainterPath shape() const override;
@@ -69,7 +81,7 @@ public:
     virtual void addItem(AbstractItemBase * children) = 0;
 
     // Events
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) = 0;
+//    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) = 0;
     virtual void render(QPainter *painter, qreal scale = 1);
 
 public slots:
@@ -84,11 +96,11 @@ private:
     QRectF m_boundingRect;
     QString m_name;
     bool m_invaliateCache;
-    ItemType m_itemType;
+//    ItemType m_itemType;
     qreal m_scaleFactor;
     bool m_renderQuality;
     bool m_doRender;
-    QPainterPath m_shape;    
+    QPainterPath m_shape;
 
     // Members
     QList<ExportLevel>	m_exportFactorList;

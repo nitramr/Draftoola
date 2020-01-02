@@ -18,6 +18,7 @@ public:
     ItemRect(QGraphicsItem * parent = nullptr);
 
 	// Properties
+    int type() const override { return Type::Rect; }
 	void setRadius(qreal radius);
 	void setRadius(qreal topleft, qreal topright, qreal bottomright, qreal bottomleft);
 	qreal radius() const;

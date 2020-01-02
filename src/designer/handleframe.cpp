@@ -225,6 +225,8 @@ HandleFrame::HandleFrame(CanvasScene *scene, qreal grid, int handleSize): QObjec
 
     this->setZValue(99999999);
 
+
+
 }
 
 void HandleFrame::setup(){
@@ -653,8 +655,8 @@ bool HandleFrame::selectionContainsArtboards()
         AbstractItemBase* abItem = dynamic_cast<AbstractItemBase*>(item);
 
         if(abItem){
-            switch(abItem->itemType()){
-            case ItemType::Artboard:
+            switch(abItem->type()){
+            case AbstractItemBase::Artboard:
                 artboardList.append(abItem);
                 containsArtboard = true;
                 break;

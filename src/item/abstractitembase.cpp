@@ -5,7 +5,7 @@
 
 AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : QGraphicsObject(parent)
 {
-    m_itemType = ItemType::Rect;
+//    m_itemType = ItemType::Rect;
     m_name = "";
     m_id = -1;
     m_scaleFactor = 1;
@@ -23,7 +23,7 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
 
 AbstractItemBase::AbstractItemBase(const AbstractItemBase &other) : QGraphicsObject(other.parentItem())
 {
-    m_itemType = other.m_itemType;
+//    m_itemType = other.m_itemType;
     m_name = other.m_name;
     m_id = other.m_id;
     m_scaleFactor = other.m_scaleFactor;
@@ -64,15 +64,15 @@ QString AbstractItemBase::name() const
     return m_name;
 }
 
-void AbstractItemBase::setItemType(ItemType type)
-{
-    m_itemType = type;
-}
+//void AbstractItemBase::setItemType(ItemType type)
+//{
+//    m_itemType = type;
+//}
 
-ItemType AbstractItemBase::itemType() const
-{
-    return m_itemType;
-}
+//ItemType AbstractItemBase::itemType() const
+//{
+//    return m_itemType;
+//}
 
 void AbstractItemBase::setInvalidateCache(bool invalidate)
 {

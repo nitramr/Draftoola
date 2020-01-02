@@ -154,7 +154,10 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
                 abItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
             }else abItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
 
+            continue;
+
         }
+
 
     }
 
@@ -408,13 +411,11 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 
         animation->start();
 
-        switch(item->itemType()){
-        case ItemType::Rect:{
+        switch(item->type()){
+        case AbstractItemBase::Rect:{
             ItemRect *rect = static_cast<ItemRect*>(item);
 
             if(rect){
-
-
 
             }
         }

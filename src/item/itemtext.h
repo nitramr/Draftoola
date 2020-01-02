@@ -16,6 +16,8 @@ public:
 
 
 	// Properties
+    int type() const override { return Type::Text; }
+
     void setRect(QRectF rect);
 
 	void setText(const QString text);

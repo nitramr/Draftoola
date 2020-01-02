@@ -31,6 +31,8 @@ public:
     Artboard(QString name, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = nullptr);
 
     // Properties
+    int type() const override { return Type::Artboard; }
+
 	QGraphicsRectItem *canvas() const;
     void setRect(QRectF rect);
     QRectF renderRect() const override;

@@ -4,6 +4,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QSvgGenerator>
 #include <QPdfWriter>
+#include "src/designer/handleframe.h"
 
 /***************************************************
  *
@@ -255,11 +256,21 @@ void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mouseMoveEvent(event);
 
+    m_hoverPath = QPainterPath();
+    update(); // not sure if that is a performance killer
+
     QPoint mousePos = event->scenePos().toPoint();
 
-    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( this->itemAt(mousePos, QTransform()) );
+    QList<QGraphicsItem*> list = this->items(mousePos,Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform() );
+    if(list.isEmpty()) return;
 
+    QGraphicsItem * cgItem = list.first();
 
+    if(cgItem->type() == HandleFrame::Type::Handle && list.count() >1){
+        cgItem = list[1];
+    }
+
+    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( cgItem );
 
     // get hover path from item under mouse and respect item shape
     if(item ){
@@ -272,12 +283,8 @@ void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             if(m_hoverPath != shape){
                 update();
             }
-        }else{
-            m_hoverPath = QPainterPath();
-            update();
         }
-
-    }else m_hoverPath = QPainterPath();
+    }
 
 
 }

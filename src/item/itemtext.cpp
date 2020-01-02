@@ -25,7 +25,7 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
     setRect(m_text->boundingRect());
     this->setName(tr("Text"));
 
-    this->setItemType(ItemType::Text);
+    //this->setItemType(ItemType::Text);
 
     //	setTextInteractionFlags(Qt::NoTextInteraction);
 

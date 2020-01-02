@@ -17,6 +17,7 @@ public:
     ItemOval(QGraphicsItem * parent = nullptr);
 
 	// Properties
+    int type() const override { return Type::Oval; }
     void setRect(QRectF rect);
 
 };

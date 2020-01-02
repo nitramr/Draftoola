@@ -51,17 +51,17 @@ void ipInnerShadows::loadProperties()
 
     resetItems();
 
-    switch(m_item->itemType()){
-    case ItemType::Oval:
-    case ItemType::Polygon:
-    case ItemType::Rect:
-    case ItemType::Star:
-    case ItemType::Triangle:
+    switch(m_item->type()){
+    case AbstractItemBase::Oval:
+    case AbstractItemBase::Path:
+    case AbstractItemBase::Rect:
+    case AbstractItemBase::Star:
+    case AbstractItemBase::Triangle:
         loadShadows();
         break;
-    case ItemType::Instance:
-    case ItemType::Line:
-    case ItemType::Text:
+    case AbstractItemBase::Instance:
+    case AbstractItemBase::Line:
+    case AbstractItemBase::Text:
     default:
         resetItems();
         break;

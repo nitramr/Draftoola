@@ -66,7 +66,7 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
 
     this->setAcceptHoverEvents(true);
     this->setName(name);
-    this->setItemType(ItemType::Artboard);
+    //this->setItemType(ItemType::Artboard);
 
 }
 

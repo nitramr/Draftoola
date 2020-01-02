@@ -50,16 +50,16 @@ void ipExportLevels::loadProperties()
 
     resetItems();
 
-    switch(m_item->itemType()){
-    case ItemType::Oval:
-    case ItemType::Polygon:
-    case ItemType::Rect:
-    case ItemType::Star:
-    case ItemType::Triangle:
-    case ItemType::Instance:
-    case ItemType::Line:
-    case ItemType::Text:
-    case ItemType::Artboard:
+    switch(m_item->type()){
+    case AbstractItemBase::Oval:
+    case AbstractItemBase::Path:
+    case AbstractItemBase::Rect:
+    case AbstractItemBase::Star:
+    case AbstractItemBase::Triangle:
+    case AbstractItemBase::Instance:
+    case AbstractItemBase::Line:
+    case AbstractItemBase::Text:
+    case AbstractItemBase::Artboard:
         loadExportLevels();
         break;
     default:
