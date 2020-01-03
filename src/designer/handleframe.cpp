@@ -682,7 +682,7 @@ void HandleFrame::rotateSelection(qreal angle)
 
     if(!canRotate()) return;
 
-    QPointF center = this->rect().center();
+    QPointF center = this->anchorCenter();
     QTransform t;
     t.translate(center.x(), center.y());
     t.rotate(angle);
@@ -721,7 +721,7 @@ void HandleFrame::frameToSelection()
         this->setRect(QRectF(0,0, selectionBox.width(), selectionBox.height()));
         this->setPos(selectionBox.topLeft());
         this->updateHandles();
-//        this->setRotation(angle);
+        this->setRotation(m_items.first()->rotation());
         this->setVisible(true);
 
         emit sendActiveItems(m_items);

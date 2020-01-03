@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>284</width>
+    <width>288</width>
     <height>48</height>
    </rect>
   </property>
@@ -71,7 +71,7 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="QToolButton" name="btn_color">
+      <widget class="ColorButton" name="btn_color">
        <property name="text">
         <string/>
        </property>
@@ -293,6 +293,11 @@
    <class>IntelligentSpinBox</class>
    <extends>QDoubleSpinBox</extends>
    <header>src/widgets/intelligentspinbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ColorButton</class>
+   <extends>QToolButton</extends>
+   <header>src/widgets/colorbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

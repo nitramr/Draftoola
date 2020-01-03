@@ -125,10 +125,10 @@ void MainWindow::tmpSetup()
 
     // Object Rects
     ItemRect *rect = new ItemRect(60,100);
-//	rect->setTransform(QTransform().rotate(70, Qt::YAxis));
+//    rect->setTransform(QTransform().rotate(70, Qt::YAxis));
     rect->setName("Rect1");
     rect->setRadius(5,0,15,20);
-//	rect->setRotation(50);
+//    rect->setRotation(45);
     rect->addStroke(strokeR);
     //	rect->addStroke(stroke);
     rect->addShadow(shadow);

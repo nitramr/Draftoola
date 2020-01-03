@@ -12,9 +12,9 @@ ui(new Ui::propertyFill)
 {
     ui->setupUi(this);
 
-    m_colorPreview = QPixmap(ui->btn_color->iconSize());
-    m_colorPreview.fill(Qt::black);
-    ui->btn_color->setIcon(QIcon(m_colorPreview));
+    QPixmap pixmap(ui->btn_color->iconSize());
+    pixmap.fill(Qt::black);
+    ui->btn_color->setIcon(pixmap);
 
     // https://doc.qt.io/qt-5/qpainter.html#CompositionMode-enum
     ui->combo_blending->addItem(tr("Normal"), QVariant(QPainter::CompositionMode_SourceOver)); //0
@@ -74,19 +74,21 @@ Fills PropertyFill::fill() const
 
 void PropertyFill::drawFill(Fills fill)
 {
-    QPainter painter(&m_colorPreview);
+    QPixmap pixmap(ui->btn_color->iconSize());
+    pixmap.fill(Qt::transparent);
 
-    m_colorPreview.fill(Qt::white);
+    QPainter painter(&pixmap);
     painter.setOpacity(fill.opacity()/100.0);
 
     switch (fill.fillType()) {
-    case FillType::Color:        
-        painter.fillRect(m_colorPreview.rect(), QBrush(fill.color()));
+    case FillType::Color:{
+        painter.fillRect(pixmap.rect(), QBrush(fill.color()));
         break;
+    }
     case FillType::Gradient:
         break;
     case FillType::Image:
-        painter.drawPixmap(m_colorPreview.rect(), fill.pixmap(), fill.pixmap().rect());
+        painter.drawPixmap(pixmap.rect(), fill.pixmap(), fill.pixmap().rect());
         break;
     case FillType::Pattern:
         break;
@@ -94,7 +96,7 @@ void PropertyFill::drawFill(Fills fill)
         break;
     }
 
-    ui->btn_color->setIcon(QIcon(m_colorPreview));
+    ui->btn_color->setIcon(pixmap);
 }
 
 void PropertyFill::connectSlots()

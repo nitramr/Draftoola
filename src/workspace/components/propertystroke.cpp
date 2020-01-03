@@ -13,9 +13,9 @@ PropertyStroke::PropertyStroke(Stroke stroke, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_colorPreview = QPixmap(ui->btn_color->iconSize());
-    m_colorPreview.fill(Qt::black);
-    ui->btn_color->setIcon(QIcon(m_colorPreview));
+    QPixmap pixmap(ui->btn_color->iconSize());
+    pixmap.fill(Qt::black);
+    ui->btn_color->setIcon(pixmap);
 
     btn_center = new ButtonGroupButton();
     btn_center->setText("C");
@@ -76,10 +76,13 @@ Stroke PropertyStroke::stroke() const
 
 void PropertyStroke::drawStroke(Stroke stroke)
 {
-    QPainter painter(&m_colorPreview);
-    painter.fillRect(m_colorPreview.rect(), QBrush(Qt::white));
-    painter.fillRect(m_colorPreview.rect(), stroke.brush());
-    ui->btn_color->setIcon(QIcon(m_colorPreview));
+    QPixmap pixmap(ui->btn_color->iconSize());
+    pixmap.fill(Qt::white);
+
+    QPainter painter(&pixmap);
+    painter.fillRect(pixmap.rect(), stroke.brush());
+    ui->btn_color->setIcon(QIcon(pixmap));
+
 }
 
 void PropertyStroke::connectSlots()

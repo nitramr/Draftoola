@@ -25,6 +25,8 @@ private:
     int m_grid;
     QPainterPath m_hoverPath;
     QPointF m_hoverPoint;
+    QTransform m_hoverTransform;
+    qreal m_hoverRotation;
 
     void saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath, QColor bgColor = Qt::transparent);
     void saveSVG(AbstractItemBase *bi, const QString outputPath);

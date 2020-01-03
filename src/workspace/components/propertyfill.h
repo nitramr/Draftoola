@@ -25,7 +25,6 @@ private:
     Ui::propertyFill *ui;
 
     Fills m_fill;
-    QPixmap m_colorPreview;
 
     void drawFill(Fills fill);
     void connectSlots();

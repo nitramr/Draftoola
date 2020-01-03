@@ -26,7 +26,6 @@ private:
     Ui::propertyStroke *ui;
 
     Stroke m_stroke;
-    QPixmap m_colorPreview;
     ButtonGroup *m_position;
     ButtonGroupButton * btn_center;
     ButtonGroupButton * btn_outer;

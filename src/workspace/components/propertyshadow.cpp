@@ -9,9 +9,9 @@ PropertyShadow::PropertyShadow(Shadow shadow, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_colorPreview = QPixmap(ui->btn_color->iconSize());
-    m_colorPreview.fill(Qt::black);
-    ui->btn_color->setIcon(QIcon(m_colorPreview));
+    QPixmap pixmap(ui->btn_color->iconSize());
+    pixmap.fill(Qt::black);
+    ui->btn_color->setIcon(pixmap);
 
     setShadow(shadow);
 }
@@ -47,10 +47,13 @@ Shadow PropertyShadow::shadow() const
 
 void PropertyShadow::drawShadow(Shadow shadow)
 {
-    QPainter painter(&m_colorPreview);
-    painter.fillRect(m_colorPreview.rect(), QBrush(Qt::white));
-    painter.fillRect(m_colorPreview.rect(), QBrush(shadow.color()));
-    ui->btn_color->setIcon(QIcon(m_colorPreview));
+    QPixmap pixmap(ui->btn_color->iconSize());
+    pixmap.fill(Qt::white);
+
+    QPainter painter(&pixmap);
+    painter.fillRect(pixmap.rect(), QBrush(shadow.color()));
+    ui->btn_color->setIcon(QIcon(pixmap));
+
 }
 
 void PropertyShadow::connectSlots()

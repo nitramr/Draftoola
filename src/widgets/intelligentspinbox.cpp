@@ -2,11 +2,8 @@
 #include <QDebug>
 #include <QScriptEngine>
 
-IntelligentSpinBox::IntelligentSpinBox(QWidget *parent) : QDoubleSpinBox ()
+IntelligentSpinBox::IntelligentSpinBox(QWidget *parent) : QDoubleSpinBox (parent)
 {
-    this->setParent(parent);
-
-
     QRegExp rx("(\\d+\\s*|[+\\-*\\/^%,]\\s*)*");
 //    QRegExp rx("(\\d+[+\\-*\\/^%,])*(\\d+)");
 //    QRegExp rx("((\\d+,?)\\s*(px\\s*)?([+\\-*\\/^%,]\\s*)?(px\\s*)?)");

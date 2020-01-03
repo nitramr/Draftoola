@@ -25,7 +25,6 @@ private:
     Ui::propertyShadow *ui;
 
     Shadow m_shadow;
-    QPixmap m_colorPreview;
 
     void drawShadow(Shadow shadow);
     void connectSlots();

@@ -38,6 +38,7 @@ SOURCES += src/main.cpp\
     src/item/path/roundedpolygon.cpp \
     src/manager/stylefactory.cpp \
     src/widgets/buttongroup.cpp \
+    src/widgets/colorbutton.cpp \
     src/widgets/flowlayout.cpp \
     src/widgets/intelligentspinbox.cpp \
     src/widgets/layoutsection.cpp \
@@ -80,6 +81,7 @@ HEADERS  +=     src/mainwindow.h \
     src/item/path/roundedpolygon.h \
     src/manager/stylefactory.h \
     src/widgets/buttongroup.h \
+    src/widgets/colorbutton.h \
     src/widgets/flowlayout.h \
     src/widgets/intelligentspinbox.h \
     src/widgets/layoutsection.h \
