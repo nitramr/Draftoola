@@ -533,60 +533,32 @@ void HandleFrame::adjustSize(qreal x, qreal y)
 }
 
 
-void HandleFrame::updateItemsPosition(QGraphicsItem *item)
-{
-
-//        QPointF posItem(item->pos());
-//        QPointF relItem = item->mapFromParent(this->pos());
-
-//        qDebug() << "relItem Pos:" << relItem << this->pos();
-
-//        return relItem;
-
-    //    qDebug() << "HandlePos" << this->pos() << "HandleRect" << this->rect() << "HandleRectToScene" << this->mapRectToScene(this->rect());
-    //    qDebug() << "ItemPos" << item->pos();
-
-
-    QPointF posHandle = m_oldPos;
-    QPointF posItem = item->pos();
-    qreal diffAX = posItem.x() - posHandle.x();
-    qreal diffAY = posItem.y() - posHandle.y();
-    qreal diffZX = m_oldRect.width() - diffAX;
-    qreal diffZY = m_oldRect.height() - diffAY;
-
-    qreal diffRatioX = qMax(diffAX / diffZX, diffZX / diffAX);
-    qreal diffRatioY = qMax(diffAY / diffZY, diffZY / diffAY);
-
-    qreal diffAXnew = posItem.x() - this->pos().x();
-    qreal diffAYnew = posItem.y() - this->pos().y();
-
-    qreal ratioX = this->pos().x() + (diffAXnew / diffRatioX);
-    qreal ratioY = this->pos().y() + (diffAYnew / diffRatioY);
-
-    //    qDebug() << "*************************************";
-    //    qDebug() << "posHandle" << posHandle;
-    //    qDebug() << "posItem" << posItem;
-    //    qDebug() << "diffAX" << diffAX<< "diffAY" << diffAY;
-    //    qDebug() << "diffZX" << diffZX<< "diffZY" << diffZY;
-    //    qDebug() << "diffRatioX" << diffRatioX<< "diffRatioY" << diffRatioY;
-    //    qDebug() << "ratioX" << ratioX << "ratioY" << ratioY;
-
-    item->setPos( QPointF(ratioX, ratioY) );
-}
-
-
 /*!
  * \brief Calculate new size for item.
  * \param item
  */
-void HandleFrame::updateItemSize(AbstractItemBase* item)
+void HandleFrame::updateItemGeometry(AbstractItemBase* item)
 {
+    // Calculate Size =================================================================================
+
     QRectF frame = item->rect();
 
-    qreal ratioWidth = m_oldRect.width() / frame.width();
-    qreal ratioHeight = m_oldRect.height() / frame.height();
+    qreal sizeRatioX = m_oldRect.width() / frame.width();
+    qreal sizeRatioY = m_oldRect.height() / frame.height();
 
-    item->setRect( QRectF(frame.x(),frame.y(), this->rect().width() / ratioWidth, this->rect().height() / ratioHeight) );
+    item->setRect( QRectF(frame.x(), frame.y(), this->rect().width() / sizeRatioX, this->rect().height() / sizeRatioY) );
+
+
+    // Calculate Position =============================================================================
+
+    qreal itemDistOldX = item->scenePos().x() - m_oldPos.x();
+    qreal itemDistOldY = item->scenePos().y() - m_oldPos.y();
+    qreal posRatioX = m_oldRect.width() / itemDistOldX;
+    qreal posRatioY = m_oldRect.height() / itemDistOldY;
+    qreal itemDistNewX = width() / posRatioX;
+    qreal itemDistNewY = height() / posRatioY;
+
+    item->setPos( this->mapToItem(item, item->pos() + QPointF(itemDistNewX, itemDistNewY)) );
 }
 
 
@@ -595,12 +567,10 @@ void HandleFrame::updateItemSize(AbstractItemBase* item)
  * \param x
  * \param y
  */
-void HandleFrame::updateItemsSelection(qreal x, qreal y)
+void HandleFrame::updateItemsSelection()
 {
     foreach(AbstractItemBase* item, m_items) {
-
-        updateItemSize(item);
-        updateItemsPosition(item);
+        updateItemGeometry(item);
     }
 
     emit sendActiveItems(m_items);
@@ -615,8 +585,6 @@ void HandleFrame::reset()
     this->setVisible(false);
     this->setRotation(0);
     m_items.clear();
-
-    qDebug() << "HandleFrame::reset()" << m_items.count();
 
     emit sendActiveItems(m_items);
 }
@@ -848,9 +816,6 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
         // if the mouse is being dragged, calculate a new size and also re-position
         // the box to give the appearance of dragging the corner out/in to resize the box
 
-
-
-
         qreal xMoved = corner->mouseDownX - x;
         qreal yMoved = corner->mouseDownY - y;
 
@@ -863,15 +828,11 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
         qreal deltaW  =   newWidth - this->rect().width() ;
         qreal deltaH =   newHeight - this->rect().height() ;
 
-
-        //       qDebug() << "deltaW:" << deltaW << "deltaH:" << deltaH;
-
-        adjustSize(  deltaW ,   deltaH);
+        // adjust frame size
+        this->adjustSize(  deltaW ,   deltaH);
 
         qreal deltaWidth = deltaW * (-1);
         qreal deltaHeight = deltaH * (-1);
-
-        //       qDebug() << "deltaWidth:" << deltaWidth << "deltaHeight:" << deltaHeight;
 
         qreal newX;
         qreal newY;
@@ -943,7 +904,7 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
         updateHandles();
 
         // Update selected item sizes and positions
-        updateItemsSelection(deltaW, deltaH);
+        updateItemsSelection();
 
         this->update();
 

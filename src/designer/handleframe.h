@@ -186,9 +186,8 @@ private:
     QList<AbstractItemBase*> m_items;
 
     void adjustSize(qreal x, qreal y);
-    void updateItemsPosition(QGraphicsItem *item);
-    void updateItemSize(AbstractItemBase *item);
-    void updateItemsSelection(qreal x, qreal y);
+    void updateItemGeometry(AbstractItemBase *item);
+    void updateItemsSelection();
     void reset();
     bool selectionContainsArtboards();
 
