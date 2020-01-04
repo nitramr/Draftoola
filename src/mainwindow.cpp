@@ -84,6 +84,7 @@ void MainWindow::setupToolbar()
     m_toolRectangle->setIcon( QIcon(":/icons/dark/tools/rectangle.svg") );
     m_toolRectangle->setText(tr("Rectangle"));
     ui->mainToolBar->addWidget(m_toolRectangle);
+    connect(m_toolRectangle, &QToolButton::clicked, this, &MainWindow::addNewItem);
 
     m_toolOval = new QToolButton();
     m_toolOval->setIcon( QIcon(":/icons/dark/tools/ellipse.svg") );
@@ -272,4 +273,14 @@ void MainWindow::tmpSetup()
 void MainWindow::setActiveItems(QList<AbstractItemBase *> items)
 {
     m_properties->setActiveItems(items);
+}
+
+void MainWindow::addNewItem()
+{
+    // Object Rects
+    ItemRect *rect = new ItemRect(100,100);
+    rect->setName("Rect");
+    rect->addStroke(Stroke("tmpStroke", Qt::darkGray));
+    rect->addFills(Fills("tmpFills", Qt::lightGray));
+    m_canvas->addItem(rect, 0,0);
 }

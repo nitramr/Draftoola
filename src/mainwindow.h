@@ -25,6 +25,7 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+
 private:
     Ui::MainWindow *ui;
 
@@ -57,6 +58,7 @@ private:
 
 public slots:
     void setActiveItems(QList<AbstractItemBase *> items);
+    void addNewItem();
 
 };
 

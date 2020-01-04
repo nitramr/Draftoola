@@ -17,10 +17,10 @@ class Stroke : public QPen, public AbstractItemProperty
 public:
 
     Stroke();
-    Stroke(const QString name, Qt::PenStyle style, const StrokePosition strokePosition = StrokePosition::Inner);
-    Stroke(const QString name, const QColor & color, const StrokePosition strokePosition = StrokePosition::Inner);
-    Stroke(const QString name, const QBrush & brush, qreal width, const StrokePosition strokePosition = StrokePosition::Inner, Qt::PenStyle style = Qt::SolidLine, Qt::PenCapStyle cap = Qt::SquareCap, Qt::PenJoinStyle join = Qt::MiterJoin);
-    Stroke(const QString name, const QPen & pen, const StrokePosition strokePosition = StrokePosition::Inner);
+    Stroke(const QString name, Qt::PenStyle style, const StrokePosition strokePosition = StrokePosition::Center);
+    Stroke(const QString name, const QColor & color, const StrokePosition strokePosition = StrokePosition::Center);
+    Stroke(const QString name, const QBrush & brush, qreal width, const StrokePosition strokePosition = StrokePosition::Center, Qt::PenStyle style = Qt::SolidLine, Qt::PenCapStyle cap = Qt::SquareCap, Qt::PenJoinStyle join = Qt::MiterJoin);
+    Stroke(const QString name, const QPen & pen, const StrokePosition strokePosition = StrokePosition::Center);
 
     Stroke(const Stroke &other);
     ~Stroke(){}

@@ -375,11 +375,19 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_Shift :
         m_handleFrame->setKeepAspectRatio(true);
-        break;
 
+        break;
     case Qt::Key_Space:
         this->setDragMode(QGraphicsView::ScrollHandDrag);
         this->setInteractive(false);
+
+        break;
+    case Qt::Key_Delete:
+
+        foreach(QGraphicsItem *graphicItem, m_scene->selectedItems() ){
+            m_scene->removeItem(graphicItem);
+            delete graphicItem;
+        }
 
         break;
 
