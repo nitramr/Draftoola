@@ -12,5 +12,16 @@
         <file>dark/frame-free.svg</file>
         <file>dark/frame-horizontal-lock.svg</file>
         <file>dark/frame-vertical-lock.svg</file>
+        <file>dark/tools/ellipse.svg</file>
+        <file>dark/tools/fountain-pen-tip.svg</file>
+        <file>dark/tools/image.svg</file>
+        <file>dark/tools/line.svg</file>
+        <file>dark/tools/pentagon.svg</file>
+        <file>dark/tools/presentation.svg</file>
+        <file>dark/tools/rectangle.svg</file>
+        <file>dark/tools/star.svg</file>
+        <file>dark/tools/triangle.svg</file>
+        <file>dark/tools/format-textbox.svg</file>
+        <file>dark/tools/format-text-variant.svg</file>
     </qresource>
 </RCC>

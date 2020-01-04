@@ -22,37 +22,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->setupUi(this);
 
-	this->showMaximized();
-    QScrollArea * scrollProp = new QScrollArea();
+    showMaximized();
 
-    m_properties = new ItemProperties(scrollProp);
-    m_outliner = new Outliner();
-
-    m_canvas = new CanvasView();
-	this->setCentralWidget(m_canvas);
-
-	m_outlinerDock = new QDockWidget(tr("Outliner"));
-    m_outlinerDock->setWidget(m_outliner);
-    m_outlinerDock->setAllowedAreas(Qt::DockWidgetArea::RightDockWidgetArea | Qt::DockWidgetArea::LeftDockWidgetArea);
-	this->addDockWidget(Qt::LeftDockWidgetArea, m_outlinerDock);
+    // inizialize widgets
+    setupWorkspace();
+    setupToolbar();
 
 
-	m_propertiesDock = new QDockWidget("Properties");
-    m_propertiesDock->setWidget(scrollProp);
-    m_propertiesDock->setAllowedAreas(Qt::DockWidgetArea::RightDockWidgetArea | Qt::DockWidgetArea::LeftDockWidgetArea);
-    m_propertiesDock->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::MinimumExpanding);
-//    m_propertiesDock->setFixedWidth(300);
-	this->addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
-
-
-    connect(m_canvas->handleFrame(), &HandleFrame::sendActiveItems, this, &MainWindow::setActiveItems);
-    connect(m_canvas, &CanvasView::itemsChanged, m_outliner, &Outliner::updateList);
-    connect(m_properties, &ItemProperties::itemsChanged, m_canvas->handleFrame(), &HandleFrame::frameToSelection);
-
-    // signal to signal connection
-    connect(m_properties, &ItemProperties::exportItem, [this](AbstractItemBase *item){
-        emit m_scene->exportItem(item);
-    });
+    // connect widgets
+    connectSlots();
 
 
     // TODO: delete function for release
@@ -64,6 +42,103 @@ MainWindow::~MainWindow()
 {
 	delete ui;
 
+}
+
+void MainWindow::setupWorkspace()
+{
+    QScrollArea * scrollProp = new QScrollArea();
+
+    m_properties = new ItemProperties(scrollProp);
+    m_outliner = new Outliner();
+
+    m_canvas = new CanvasView();
+    this->setCentralWidget(m_canvas);
+
+    m_outlinerDock = new QDockWidget(tr("Outliner"));
+    m_outlinerDock->setWidget(m_outliner);
+    m_outlinerDock->setAllowedAreas(Qt::DockWidgetArea::RightDockWidgetArea | Qt::DockWidgetArea::LeftDockWidgetArea);
+    this->addDockWidget(Qt::LeftDockWidgetArea, m_outlinerDock);
+
+
+    m_propertiesDock = new QDockWidget("Properties");
+    m_propertiesDock->setWidget(scrollProp);
+    m_propertiesDock->setAllowedAreas(Qt::DockWidgetArea::RightDockWidgetArea | Qt::DockWidgetArea::LeftDockWidgetArea);
+    m_propertiesDock->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::MinimumExpanding);
+//    m_propertiesDock->setFixedWidth(300);
+    this->addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
+}
+
+void MainWindow::setupToolbar()
+{
+
+//    ui->mainToolBar->setFloatable(false);
+//    ui->mainToolBar->setMovable(false);
+//    ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
+    m_toolArtboard = new QToolButton();
+    m_toolArtboard->setIcon( QIcon(":/icons/dark/tools/presentation.svg") );
+    m_toolArtboard->setText(tr("Artboard"));
+    ui->mainToolBar->addWidget(m_toolArtboard);
+
+    m_toolRectangle = new QToolButton();
+    m_toolRectangle->setIcon( QIcon(":/icons/dark/tools/rectangle.svg") );
+    m_toolRectangle->setText(tr("Rectangle"));
+    ui->mainToolBar->addWidget(m_toolRectangle);
+
+    m_toolOval = new QToolButton();
+    m_toolOval->setIcon( QIcon(":/icons/dark/tools/ellipse.svg") );
+    m_toolOval->setText(tr("Oval"));
+    ui->mainToolBar->addWidget(m_toolOval);
+
+    m_toolLine = new QToolButton();
+    m_toolLine->setIcon( QIcon(":/icons/dark/tools/line.svg") );
+    m_toolLine->setText(tr("Line"));
+    ui->mainToolBar->addWidget(m_toolLine);
+
+    m_toolTriangle = new QToolButton();
+    m_toolTriangle->setIcon( QIcon(":/icons/dark/tools/triangle.svg") );
+    m_toolTriangle->setText(tr("Triangle"));
+    ui->mainToolBar->addWidget(m_toolTriangle);
+
+    m_toolStar = new QToolButton();
+    m_toolStar->setIcon( QIcon(":/icons/dark/tools/star.svg") );
+    m_toolStar->setText(tr("Star"));
+    ui->mainToolBar->addWidget(m_toolStar);
+
+    m_toolPolygon = new QToolButton();
+    m_toolPolygon->setIcon( QIcon(":/icons/dark/tools/pentagon.svg") );
+    m_toolPolygon->setText(tr("Polygon"));
+    ui->mainToolBar->addWidget(m_toolPolygon);
+
+    m_toolPath = new QToolButton();
+    m_toolPath->setIcon( QIcon(":/icons/dark/tools/fountain-pen-tip.svg") );
+    m_toolPath->setText(tr("Vector"));
+    ui->mainToolBar->addWidget(m_toolPath);
+
+    m_toolText = new QToolButton();
+    m_toolText->setIcon( QIcon(":/icons/dark/tools/format-textbox.svg") );
+    m_toolText->setText(tr("Text"));
+    ui->mainToolBar->addWidget(m_toolText);
+
+    m_toolImage = new QToolButton();
+    m_toolImage->setIcon( QIcon(":/icons/dark/tools/image.svg") );
+    m_toolImage->setText(tr("Image"));
+    ui->mainToolBar->addWidget(m_toolImage);
+
+
+
+}
+
+void MainWindow::connectSlots()
+{
+    connect(m_canvas->handleFrame(), &HandleFrame::sendActiveItems, this, &MainWindow::setActiveItems);
+    connect(m_canvas, &CanvasView::itemsChanged, m_outliner, &Outliner::updateList);
+    connect(m_properties, &ItemProperties::itemsChanged, m_canvas->handleFrame(), &HandleFrame::frameToSelection);
+
+    // signal to signal connection
+    connect(m_properties, &ItemProperties::exportItem, [this](AbstractItemBase *item){
+        emit m_scene->exportItem(item);
+    });
 }
 
 void MainWindow::tmpSetup()

@@ -32,9 +32,25 @@ private:
     ItemProperties * m_properties;
     CanvasView * m_canvas;
     CanvasScene * m_scene;
-
     QDockWidget * m_outlinerDock;
     QDockWidget * m_propertiesDock;
+
+    // Tools
+    QToolButton *m_toolRectangle;
+    QToolButton *m_toolOval;
+    QToolButton *m_toolText;
+    QToolButton *m_toolLine;
+    QToolButton *m_toolTriangle;
+    QToolButton *m_toolStar;
+    QToolButton *m_toolPolygon;
+    QToolButton *m_toolPath;
+    QToolButton *m_toolImage;
+    QToolButton *m_toolArtboard;
+
+    void setupWorkspace();
+    void setupToolbar();
+
+    void connectSlots();
 
     void tmpSetup();
 
