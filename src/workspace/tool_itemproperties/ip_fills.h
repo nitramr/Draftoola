@@ -41,6 +41,7 @@ private:
 signals:
     void sendCollapse(bool);
     void enabled(bool);
+    void itemsChanged();
 
 public slots:
     void newFill();

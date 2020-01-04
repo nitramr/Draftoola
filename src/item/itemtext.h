@@ -14,11 +14,10 @@ class ItemText: public ItemBase
 public:
     ItemText(const QString &text, QGraphicsItem * parent = nullptr);
 
-
-	// Properties
+    // Properties
     int type() const override { return Type::Text; }
 
-    void setRect(QRectF rect);
+    void setRect(QRectF rect) override;
 
 	void setText(const QString text);
 	QString text() const;
@@ -32,9 +31,6 @@ public:
     void setTextColor(const QColor color);
     QColor textColor() const;
 
-    void setFrameFitText(bool doFit );
-    bool frameFitText();
-
     void setAlignment(Qt::Alignment alignment);
     Qt::Alignment alignment() const;
 
@@ -46,7 +42,7 @@ public:
 
 private:
     QGraphicsTextItem *m_text;
-    bool m_frameFitText;
+//    bool m_frameFitText;
     QColor m_color;
     int m_lineHeight;
 

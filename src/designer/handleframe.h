@@ -180,6 +180,7 @@ private:
     QRectF		m_rect;
     qreal		m_ratio;
     bool		m_canHeightChange;
+    bool        m_canWidthChange;
     bool		m_isHovered;
     QColor      m_color;
     bool        m_canRotate;

@@ -12,6 +12,7 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
     m_renderQuality = false;
     m_boundingRect = rect;
     m_exportFactorList = QList<ExportLevel>();
+    m_frameType = FrameType::Free;
 
     QPainterPath path;
     path.addRect(rect);
@@ -134,6 +135,19 @@ QRectF AbstractItemBase::boundingRect() const
 {
     return m_rect; //m_boundingRect;
 }
+
+
+void AbstractItemBase::setFrameType(FrameType frameType)
+{
+    m_frameType = frameType;
+}
+
+
+AbstractItemBase::FrameType AbstractItemBase::frameType()
+{
+    return m_frameType;
+}
+
 
 void AbstractItemBase::setHighRenderQuality(bool isHighResolution)
 {

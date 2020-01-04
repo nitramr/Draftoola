@@ -40,7 +40,21 @@ void ItemRect::setRadius(qreal topleft, qreal topright, qreal bottomright, qreal
 }
 
 void ItemRect::setRect(QRectF rect)
-{
+{ 
+    switch(frameType()){
+    case AbstractItemBase::FixedWidth:
+        rect.setWidth(this->rect().width());
+        break;
+    case AbstractItemBase::FixedHeight:
+        rect.setHeight(this->rect().height());
+        break;
+    case AbstractItemBase::FixedSize:
+        rect = this->rect();
+        break;
+     case AbstractItemBase::Free:
+        break;
+    }
+
     ItemBase::setShape(shapeScaled(rect)); // setRect() will set by setShape()
 }
 

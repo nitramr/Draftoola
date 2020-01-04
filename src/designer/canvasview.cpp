@@ -32,7 +32,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
 
     m_scene = new CanvasScene();
-    m_scene->setSceneRect(QRectF(-2000, -2000, 4000,4000));
+    m_scene->setSceneRect(QRectF(-4000, -4000, 8000,8000));
     m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
 
@@ -104,12 +104,14 @@ void CanvasView::resetItemCache()
 
 void CanvasView::updateVRuler()
 {
-    m_VRuler->setOrigin(-mapToScene(this->rect().topLeft()).y());
+    qreal vPos = -mapToScene(this->rect().topLeft()).y();
+    m_VRuler->setOrigin(vPos);
 }
 
 void CanvasView::updateHRuler()
 {
-    m_HRuler->setOrigin(-mapToScene(this->rect().topLeft()).x());
+    qreal hPos = -mapToScene(this->rect().topLeft()).x();
+    m_HRuler->setOrigin(hPos);
 }
 
 /*!
@@ -138,6 +140,13 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
     QRectF rubberBand(posRubberbandTL, posRubberbandBR);
 
     QList<QGraphicsItem *> selectedItems = m_scene->items(rubberBand, Qt::IntersectsItemShape, Qt::AscendingOrder, this->transform());
+
+
+    if(selectedItems.size() >0){
+        qreal vPos = -mapToScene(selectedItems.first()->pos().toPoint()).y();
+        m_VRuler->setOrigin(vPos);
+    }
+
 
     foreach(QGraphicsItem *selectedItem, selectedItems) {
 

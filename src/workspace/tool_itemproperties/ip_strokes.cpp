@@ -134,7 +134,8 @@ void ipStrokes::updateItem()
 
     if(m_changedProperty && m_item){
 
-       m_item->updateStroke(m_changedProperty->stroke());
-
+        m_item->updateStroke(m_changedProperty->stroke());
+        emit itemsChanged();
     }
+
 }

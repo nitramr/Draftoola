@@ -14,7 +14,6 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
     f.setBold(false);
     f.setFamily("Helvetica");
 
-    m_frameFitText = true;
     m_lineHeight = f.pixelSize() * 1.2;
 
     m_text = new QGraphicsTextItem(text);
@@ -24,6 +23,8 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
     setText(text);
     setRect(m_text->boundingRect());
     this->setName(tr("Text"));
+
+
 
     //this->setItemType(ItemType::Text);
 
@@ -36,7 +37,20 @@ void ItemText::setRect(QRectF rect)
 {
 
     m_text->setTextWidth(rect.width());
-    if(frameFitText()) rect = m_text->boundingRect();
+
+    switch(frameType()){
+    case AbstractItemBase::FixedWidth:
+        rect = m_text->boundingRect();
+        break;
+    case AbstractItemBase::FixedHeight:
+
+        break;
+    case AbstractItemBase::FixedSize:
+        rect = this->rect();
+        break;
+     case AbstractItemBase::Free:
+        break;
+    }
 
     QPainterPath path;
     path.addRect(rect);
@@ -83,16 +97,6 @@ void ItemText::setTextColor(const QColor color)
 QColor ItemText::textColor() const
 {
     return m_text->defaultTextColor();
-}
-
-void ItemText::setFrameFitText(bool doFit)
-{
-    m_frameFitText = doFit;
-}
-
-bool ItemText::frameFitText()
-{
-    return m_frameFitText;
 }
 
 void ItemText::setAlignment(Qt::Alignment alignment)
@@ -211,7 +215,12 @@ void ItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     // reset painter state, like select, edit etc.
     QStyleOptionGraphicsItem *opt = new QStyleOptionGraphicsItem();
 
+    painter->save();
+    painter->setClipRect(this->rect());
+
     m_text->paint(painter, opt, widget);
+
+    painter->restore();
 
 
 }

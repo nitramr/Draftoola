@@ -9,6 +9,7 @@
 #include "src/item/itemrect.h"
 #include "src/item/itemoval.h"
 #include "src/item/itemtext.h"
+#include "src/widgets/buttongroup.h"
 
 namespace Ui {
 class ip_geometry;
@@ -28,6 +29,11 @@ private:
     Ui::ip_geometry *ui;
 
     AbstractItemBase *m_item;
+    ButtonGroup *btnGroup;
+    ButtonGroupButton *btnFree;
+    ButtonGroupButton *btnFixedHeight;
+    ButtonGroupButton *btnFixedWidth;
+    ButtonGroupButton *btnFixedSize;
 
     void loadProperties();
     void loadGeometry();
@@ -35,12 +41,14 @@ private:
     void unloadItems();
     void connectSlots();
     void disconnectSlots();
+    void updateFrameState(AbstractItemBase::FrameType frameType);
 
 private slots:
     void updateItem();
 
 signals:
     void hasChanged(bool);
+    void itemsChanged();
 };
 
 #endif // IP_GEOMETRY_H

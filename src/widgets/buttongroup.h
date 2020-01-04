@@ -1,4 +1,4 @@
-#ifndef BUTTONGROUP_H
+﻿#ifndef BUTTONGROUP_H
 #define BUTTONGROUP_H
 
 #include <QWidget>
@@ -27,6 +27,9 @@ public:
     void setButtonType(ButtonGroupButton::Type type);
     ButtonGroupButton::Type buttonType();
 
+    void setData(QVariant data);
+    QVariant data();
+
     void paintEvent(QPaintEvent *event);
 
 protected:
@@ -34,6 +37,7 @@ protected:
 
 private:
     ButtonGroupButton::Type m_type;
+    QVariant m_data;
 
 };
 
@@ -47,6 +51,13 @@ public:
     QToolButton *createButton(QString const& name,bool checked,QString const& sheet = QString());
 
     void addButton(ButtonGroupButton *button, bool checked);
+
+    QAbstractButton * checkedButton() const;
+    QList<QAbstractButton *> buttons() const;
+
+signals:
+    void buttonClicked(QAbstractButton * button);
+    void buttonPressed(QAbstractButton * button);
 
 private:
     QButtonGroup *bg;

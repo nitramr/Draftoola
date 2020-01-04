@@ -24,6 +24,16 @@ ButtonGroupButton::Type ButtonGroupButton::buttonType()
     return m_type;
 }
 
+void ButtonGroupButton::setData(QVariant data)
+{
+    m_data = data;
+}
+
+QVariant ButtonGroupButton::data()
+{
+    return m_data;
+}
+
 void ButtonGroupButton::paintEvent(QPaintEvent *event)
 {
     if(buttonType() == ButtonGroupButton::Type::normal){
@@ -65,6 +75,11 @@ ButtonGroup::ButtonGroup(QWidget *parent): QWidget(parent)
     hl->setSpacing(0);
 
     setLayout(hl);
+
+    connect(bg, static_cast<void(QButtonGroup::*)(QAbstractButton *)>(&QButtonGroup::buttonPressed),
+        [=](QAbstractButton *button){ emit buttonPressed(button); });
+    connect(bg, static_cast<void(QButtonGroup::*)(QAbstractButton *)>(&QButtonGroup::buttonClicked),
+        [=](QAbstractButton *button){ emit buttonClicked(button); });
 }
 
 void ButtonGroup::addButton(ButtonGroupButton *button, bool checked)
@@ -73,5 +88,15 @@ void ButtonGroup::addButton(ButtonGroupButton *button, bool checked)
     button->setChecked(checked);
     bg->addButton(button);
     hl->addWidget(button);
+}
+
+QAbstractButton *ButtonGroup::checkedButton() const
+{
+    return bg->checkedButton();
+}
+
+QList<QAbstractButton *> ButtonGroup::buttons() const
+{
+    return bg->buttons();
 }
 

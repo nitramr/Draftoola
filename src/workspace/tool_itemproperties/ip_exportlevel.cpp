@@ -156,8 +156,8 @@ void ipExportLevels::updateItem()
 
     if(m_changedProperty && m_item){
 
-       m_item->updateExportLevel(m_changedProperty->exportLevel());
-
+        m_item->updateExportLevel(m_changedProperty->exportLevel());
+        emit itemsChanged();
     }
 
 }

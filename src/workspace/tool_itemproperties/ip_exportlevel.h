@@ -43,6 +43,7 @@ private:
 signals:
     void sendCollapse(bool);
     void exportItem(AbstractItemBase *item);
+    void itemsChanged();
 
 public slots:
         void newExportLevel();

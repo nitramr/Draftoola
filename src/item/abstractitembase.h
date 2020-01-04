@@ -33,6 +33,13 @@ public:
            Instance = UserType + 10,
          };
 
+    enum FrameType {
+        Free = 0,
+        FixedWidth = 1,
+        FixedHeight = 2,
+        FixedSize = 3
+    };
+
     // Properties
     void setID(int id);
     int ID() const;
@@ -50,6 +57,9 @@ public:
     virtual QRectF rect() const;
     virtual QRectF boundingRect() const override;
     virtual QRectF renderRect() const = 0;
+
+    void setFrameType(FrameType frameType );
+    FrameType frameType();
 
     bool highRenderQuality() const;
 
@@ -95,6 +105,7 @@ private:
     int m_id;
     QRectF m_rect;
     QRectF m_boundingRect;
+    FrameType m_frameType;
     QString m_name;
     bool m_invaliateCache;
 //    ItemType m_itemType;

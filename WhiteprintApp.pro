@@ -19,7 +19,6 @@ SOURCES += src/main.cpp\
     src/designer/canvasscene.cpp \
     src/designer/canvasview.cpp \
     src/designer/handleframe.cpp \
-    src/designer/handleframe2.cpp \
     src/designer/ruler.cpp \
     src/item/abstractitembase.cpp \
     src/item/artboard.cpp \
@@ -61,7 +60,6 @@ HEADERS  +=     src/mainwindow.h \
     src/designer/canvasscene.h \
     src/designer/canvasview.h \
     src/designer/handleframe.h \
-    src/designer/handleframe2.h \
     src/designer/ruler.h \
     src/item/abstractitembase.h \
     src/item/artboard.h \

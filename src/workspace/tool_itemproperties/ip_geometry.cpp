@@ -1,11 +1,43 @@
 #include "ip_geometry.h"
 #include "ui_ip_geometry.h"
+#include "src/item/abstractitembase.h"
 
 ipGeometry::ipGeometry(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ip_geometry)
 {
     ui->setupUi(this);
+
+    btnFree = new ButtonGroupButton();
+    btnFree->setButtonType(ButtonGroupButton::left);
+    btnFree->setIcon(QIcon(":/icons/dark/frame-free.svg"));
+    btnFree->setData(AbstractItemBase::Free);
+
+    btnFixedWidth = new ButtonGroupButton();
+    btnFixedWidth->setButtonType(ButtonGroupButton::middle);
+    btnFixedWidth->setIcon(QIcon(":/icons/dark/frame-horizontal-lock.svg"));
+    btnFixedWidth->setData(AbstractItemBase::FixedWidth);
+
+    btnFixedHeight = new ButtonGroupButton();
+    btnFixedHeight->setButtonType(ButtonGroupButton::middle);
+    btnFixedHeight->setIcon(QIcon(":/icons/dark/frame-vertical-lock.svg"));
+    btnFixedHeight->setData(AbstractItemBase::FixedHeight);
+
+    btnFixedSize = new ButtonGroupButton();
+    btnFixedSize->setButtonType(ButtonGroupButton::right);
+    btnFixedSize->setIcon(QIcon(":/icons/dark/frame-all-lock.svg"));
+    btnFixedSize->setData(AbstractItemBase::FixedSize);
+
+    btnGroup = new ButtonGroup();
+    btnGroup->addButton(btnFree, true);
+    btnGroup->addButton(btnFixedHeight, false);
+    btnGroup->addButton(btnFixedWidth, false);
+    btnGroup->addButton(btnFixedSize, false);
+
+    ui->frameLayout->addWidget(btnGroup);
+    ui->frameLayout->addStretch();
+
+    unloadItems();
 
 }
 
@@ -70,6 +102,8 @@ void ipGeometry::loadGeometry()
     ui->spinboxWidth->setValue(m_item->rect().width());
     ui->spinboxHeight->setValue(m_item->rect().height());
 
+    updateFrameState( m_item->frameType() );
+
     connectSlots();
 }
 
@@ -82,6 +116,9 @@ void ipGeometry::resetItems()
     ui->spinboxXPos->setValue(0);
     ui->spinboxWidth->setValue(0);
     ui->spinboxHeight->setValue(0);
+    btnFree->setChecked(true);
+    ui->spinboxWidth->setEnabled(true);
+    ui->spinboxHeight->setEnabled(true);
 
     connectSlots();
 }
@@ -99,7 +136,7 @@ void ipGeometry::connectSlots()
     connect(ui->spinboxYPos, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
     connect(ui->spinboxWidth, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
     connect(ui->spinboxHeight, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
-
+    connect(btnGroup, &ButtonGroup::buttonClicked, this, &ipGeometry::updateItem);
 }
 
 void ipGeometry::disconnectSlots()
@@ -108,6 +145,33 @@ void ipGeometry::disconnectSlots()
     disconnect(ui->spinboxYPos, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
     disconnect(ui->spinboxWidth, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
     disconnect(ui->spinboxHeight, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
+    disconnect(btnGroup, &ButtonGroup::buttonClicked, this, &ipGeometry::updateItem);
+}
+
+void ipGeometry::updateFrameState(AbstractItemBase::FrameType frameType)
+{
+    switch(frameType){
+    case AbstractItemBase::Free:
+        btnFree->setChecked(true);
+        ui->spinboxWidth->setEnabled(true);
+        ui->spinboxHeight->setEnabled(true);
+        break;
+    case AbstractItemBase::FixedWidth:
+        btnFixedWidth->setChecked(true);
+        ui->spinboxWidth->setEnabled(false);
+        ui->spinboxHeight->setEnabled(true);
+        break;
+    case AbstractItemBase::FixedHeight:
+        btnFixedHeight->setChecked(true);
+        ui->spinboxWidth->setEnabled(true);
+        ui->spinboxHeight->setEnabled(false);
+        break;
+    case AbstractItemBase::FixedSize:
+        btnFixedSize->setChecked(true);
+        ui->spinboxWidth->setEnabled(false);
+        ui->spinboxHeight->setEnabled(false);
+        break;
+    }
 }
 
 void ipGeometry::updateItem()
@@ -116,6 +180,15 @@ void ipGeometry::updateItem()
 
       m_item->setRect(QRectF(0,0,ui->spinboxWidth->value(), ui->spinboxHeight->value()));
       m_item->setPos(QPointF(ui->spinboxXPos->value(), ui->spinboxYPos->value()));
+
+      ButtonGroupButton * activeButton = dynamic_cast<ButtonGroupButton*>( btnGroup->checkedButton() );
+
+      if(activeButton){
+          m_item->setFrameType( static_cast<AbstractItemBase::FrameType>(activeButton->data().toInt() ) );
+          updateFrameState( m_item->frameType() );
+      }
+
+      emit itemsChanged();
 
     }
 }

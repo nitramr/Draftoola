@@ -8,5 +8,9 @@
         <file>dark/chevron-right.svg</file>
         <file>dark/chevron-down.svg</file>
         <file>dark/delete-24px.svg</file>
+        <file>dark/frame-all-lock.svg</file>
+        <file>dark/frame-free.svg</file>
+        <file>dark/frame-horizontal-lock.svg</file>
+        <file>dark/frame-vertical-lock.svg</file>
     </qresource>
 </RCC>

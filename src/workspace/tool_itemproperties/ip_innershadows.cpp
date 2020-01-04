@@ -134,7 +134,7 @@ void ipInnerShadows::updateItem()
 
     if(m_changedProperty && m_item){
 
-       m_item->updateInnerShadow(m_changedProperty->shadow());
-
+        m_item->updateInnerShadow(m_changedProperty->shadow());
+        emit itemsChanged();
     }
 }

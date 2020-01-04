@@ -199,6 +199,7 @@ HandleFrame::HandleFrame(CanvasScene *scene, qreal grid, int handleSize): QObjec
     m_rect(QRectF(0,0,10,10)),
     m_ratio(1.0),
     m_canHeightChange(true),
+    m_canWidthChange(true),
     m_color(QColor(0, 128, 255)),
     m_canRotate(true)
 {
@@ -649,10 +650,10 @@ void HandleFrame::updateHandles()
     qreal tollerance = handleSize() * 6 / scaleFactor();
 
     // set visibility of handles
-    m_handles[0]->setVisible(true); // TopLeft
-    m_handles[2]->setVisible(true); // TopRight
-    m_handles[4]->setVisible(true); // BottomRight
-    m_handles[6]->setVisible(true); // BottomLeft
+    m_handles[0]->setVisible(m_canWidthChange && m_canHeightChange); // TopLeft
+    m_handles[2]->setVisible(m_canWidthChange && m_canHeightChange); // TopRight
+    m_handles[4]->setVisible(m_canWidthChange && m_canHeightChange); // BottomRight
+    m_handles[6]->setVisible(m_canWidthChange && m_canHeightChange); // BottomLeft
 
     // hide middle handles if rect is to small
     if(this->width() < tollerance){
@@ -669,8 +670,8 @@ void HandleFrame::updateHandles()
         m_handles[3]->setVisible(false); // Right
         m_handles[7]->setVisible(false); // Left
     }else{
-        m_handles[3]->setVisible(true); // Right
-        m_handles[7]->setVisible(true); // Left
+        m_handles[3]->setVisible(m_canWidthChange); // Right
+        m_handles[7]->setVisible(m_canWidthChange); // Left
     }
 
 }
@@ -717,6 +718,30 @@ void HandleFrame::frameToSelection()
         m_canRotate = !selectionContainsArtboards();
 
         QRectF selectionBox = selectionRect();
+
+        if(m_items.size() == 1){
+            switch(m_items.first()->frameType()){
+            case AbstractItemBase::Free:
+                m_canWidthChange = true;
+                m_canHeightChange = true;
+                break;
+            case AbstractItemBase::FixedWidth:
+                m_canWidthChange = false;
+                m_canHeightChange = true;
+                break;
+            case AbstractItemBase::FixedHeight:
+                m_canWidthChange = true;
+                m_canHeightChange = false;
+                break;
+            case AbstractItemBase::FixedSize:
+                m_canWidthChange = false;
+                m_canHeightChange = false;
+                break;
+            }
+        }else{
+            m_canWidthChange = true;
+            m_canHeightChange = true;
+        }
 
         this->setRect(QRectF(0,0, selectionBox.width(), selectionBox.height()));
         this->setPos(selectionBox.topLeft());

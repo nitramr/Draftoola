@@ -30,6 +30,7 @@ public slots:
 
 signals:
     void exportItem(AbstractItemBase *item);
+    void itemsChanged();
 
 private:
     Ui::ItemProperties *ui;

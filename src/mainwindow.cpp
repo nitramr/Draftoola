@@ -47,12 +47,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(m_canvas->handleFrame(), &HandleFrame::sendActiveItems, this, &MainWindow::setActiveItems);
     connect(m_canvas, &CanvasView::itemsChanged, m_outliner, &Outliner::updateList);
+    connect(m_properties, &ItemProperties::itemsChanged, m_canvas->handleFrame(), &HandleFrame::frameToSelection);
 
     // signal to signal connection
     connect(m_properties, &ItemProperties::exportItem, [this](AbstractItemBase *item){
         emit m_scene->exportItem(item);
     });
 
+
+    // TODO: delete function for release
     tmpSetup();
 
 }

@@ -135,8 +135,8 @@ void ipFills::updateItem()
 
     if(m_changedProperty && m_item){
 
-       m_item->updateFills(m_changedProperty->fill());
-
+        m_item->updateFills(m_changedProperty->fill());
+        emit itemsChanged();
     }
 
 }
