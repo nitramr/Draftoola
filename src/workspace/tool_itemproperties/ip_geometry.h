@@ -47,7 +47,6 @@ private slots:
     void updateItem();
 
 signals:
-    void hasChanged(bool);
     void itemsChanged();
 };
 
