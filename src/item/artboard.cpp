@@ -17,8 +17,8 @@ void ArtboardLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
 
     QStyleOptionGraphicsItem myOption(*option);
-        myOption.state &= ~QStyle::State_Selected;
-        QGraphicsSimpleTextItem::paint(painter, &myOption, widget);
+    myOption.state &= ~QStyle::State_Selected;
+    QGraphicsSimpleTextItem::paint(painter, &myOption, widget);
 }
 
 void ArtboardLabel::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -49,9 +49,9 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
     m_artboard = new QGraphicsRectItem(rect);
     m_artboard->setFlags(
                 QGraphicsItem::ItemClipsChildrenToShape /*|
-                QGraphicsItem::ItemContainsChildrenInShape |
-                QGraphicsItem::ItemSendsScenePositionChanges |
-                QGraphicsItem::ItemSendsGeometryChanges*/
+                            QGraphicsItem::ItemContainsChildrenInShape |
+                            QGraphicsItem::ItemSendsScenePositionChanges |
+                            QGraphicsItem::ItemSendsGeometryChanges*/
                 );
     m_artboard->setPen(Qt::NoPen);
     m_artboard->setBrush(Qt::NoBrush);
@@ -61,8 +61,8 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
 
 
     this->setFlag( QGraphicsItem::ItemIsSelectable, false );
-//    this->setFlag( QGraphicsItem::ItemSendsScenePositionChanges, true );
-//    this->setFlag( QGraphicsItem::ItemSendsGeometryChanges, true );
+    //    this->setFlag( QGraphicsItem::ItemSendsScenePositionChanges, true );
+    //    this->setFlag( QGraphicsItem::ItemSendsGeometryChanges, true );
 
     this->setAcceptHoverEvents(true);
     this->setName(name);
@@ -90,11 +90,30 @@ void Artboard::setRect(QRectF rect)
     m_artboard->update();
 }
 
+
+/*!
+ * \brief Add item to artboard canvas.
+ * \param item
+ */
 void Artboard::addItem(AbstractItemBase *item)
 {
     item->setParentItem(m_artboard);
-    m_children.append(item);
+}
 
+
+/*!
+ * \brief Return list of first level children items.
+ * \return
+ */
+QList<AbstractItemBase *> Artboard::childItems()
+{
+    QList<AbstractItemBase*> aibList;
+
+    foreach(QGraphicsItem * item, m_artboard->childItems()){
+        AbstractItemBase * abItem = dynamic_cast<AbstractItemBase*>(item);
+        if(abItem) aibList.append(abItem);
+    }
+    return aibList;
 }
 
 

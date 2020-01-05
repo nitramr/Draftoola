@@ -189,6 +189,7 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
         qDebug() << "Canvas: Item is no Artboard";
 
         QList<Artboard*> abList = artboardList();
+
         if(parent == nullptr && abList.count() > 0){
 
             qDebug() << "Canvas: Item has no Parent";
@@ -225,11 +226,16 @@ AbstractItemBase *CanvasView::itemByName(const QString name)
     return nullptr;
 }
 
+
+/*!
+ * \brief Return list of all artboards on canvas.
+ * \return
+ */
 QList<Artboard *> CanvasView::artboardList()
 {
     QList<Artboard *> artboardList = QList<Artboard*>();
 
-    foreach(QGraphicsItem *item, m_scene->items()){
+    foreach(QGraphicsItem *item, m_scene->items(Qt::AscendingOrder)){
         Artboard *artItem = dynamic_cast<Artboard*>(item);
         if(artItem) artboardList.append(artItem);
     }
@@ -273,9 +279,14 @@ void CanvasView::ungroupSelection()
 void CanvasView::deleteSelection()
 {
     foreach(QGraphicsItem *graphicItem, m_scene->selectedItems() ){
-        m_scene->removeItem(graphicItem);
-        delete graphicItem;
+        AbstractItemBase * abItem = dynamic_cast<AbstractItemBase*>(graphicItem);
+        if(abItem){
+            m_scene->removeItem(abItem);
+            abItem->deleteLater();
+        }
     }
+
+    emit itemsChanged();
 }
 
 

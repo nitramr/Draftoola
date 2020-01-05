@@ -245,13 +245,13 @@ void MainWindow::tmpSetup()
     star->setInnerRadius(0.5);
     star->addFills(Fills("color", QColor(255,200,0)));
     star->addShadow(Shadow("shadow", Qt::black, 10, QPointF(0,0)));
-    m_canvas->addItem(star, 80,300, artboard2);
+    m_canvas->addItem(star, 80,300, artboard);
 
     ItemPolygon *pentagon = new ItemPolygon(80,80, 5);
     pentagon->setInnerRadius(1);
     pentagon->addFills(Fills("color", QColor(255,200,0)));
     pentagon->addShadow(Shadow("shadow", Qt::black, 10, QPointF(0,0)));
-    m_canvas->addItem(pentagon, 200,300, artboard2);
+    m_canvas->addItem(pentagon, 200,300, artboard);
 
 
 //	stroke.setStrokePosition(StrokePosition::Outer);

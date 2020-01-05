@@ -292,7 +292,7 @@ QPainterPath ItemBase::scaleStroke(const QPainterPath &path, qreal amount, QPen 
 void ItemBase::addItem(AbstractItemBase *item)
 {
     item->setParentItem(this);
-    m_children.append(item);
+//    m_children.append(item);
 }
 
 QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)

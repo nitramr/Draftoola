@@ -87,10 +87,10 @@ public:
     QList<ExportLevel> exportLevels() const;
     ExportLevel exportLevel(int index);
 
-    QList<AbstractItemBase*> children();
+    virtual QList<AbstractItemBase*> childItems();
 
     // Functions
-    virtual void addItem(AbstractItemBase * children) = 0;
+    virtual void addItem(AbstractItemBase * childItems) = 0;
 
     // Events
 //    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) = 0;
@@ -117,7 +117,7 @@ private:
 
     // Members
     QList<ExportLevel>	m_exportFactorList;
-    QList<AbstractItemBase*> m_children;
+//    QList<AbstractItemBase*> m_children;
 
 };
 

@@ -65,16 +65,6 @@ QString AbstractItemBase::name() const
     return m_name;
 }
 
-//void AbstractItemBase::setItemType(ItemType type)
-//{
-//    m_itemType = type;
-//}
-
-//ItemType AbstractItemBase::itemType() const
-//{
-//    return m_itemType;
-//}
-
 void AbstractItemBase::setInvalidateCache(bool invalidate)
 {
     m_invaliateCache = invalidate;
@@ -249,9 +239,16 @@ ExportLevel AbstractItemBase::exportLevel(int index)
     return m_exportFactorList.value(index);
 }
 
-QList<AbstractItemBase *> AbstractItemBase::children()
+QList<AbstractItemBase *> AbstractItemBase::childItems()
 {
-    return m_children;
+    QList<AbstractItemBase*> aibList;
+
+    foreach(QGraphicsItem * item, QGraphicsItem::childItems()){
+        AbstractItemBase * abItem = dynamic_cast<AbstractItemBase*>(item);
+        if(abItem) aibList.append(abItem);
+    }
+
+    return aibList;
 }
 
 
@@ -275,7 +272,7 @@ void AbstractItemBase::render(QPainter *painter, qreal scale)
     paint(painter, new QStyleOptionGraphicsItem());
     m_doRender = false;
 
-    QList<AbstractItemBase*> list = this->children();
+    QList<AbstractItemBase*> list = this->childItems();
 
     foreach(AbstractItemBase *abItem, list){
 

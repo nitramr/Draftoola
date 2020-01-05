@@ -26,7 +26,7 @@ Outliner::~Outliner()
 
 void Outliner::updateList()
 {
-    CanvasView *canvas = dynamic_cast<CanvasView*>(sender());
+    CanvasView *canvas = static_cast<CanvasView*>(sender());
 
     if(canvas){
 
@@ -36,7 +36,7 @@ void Outliner::updateList()
             QTreeWidgetItem * twi = new QTreeWidgetItem();
             twi->setText(0, artboard->name());
 
-            foreach(AbstractItemBase *item, artboard->children()){
+            foreach(AbstractItemBase *item, artboard->childItems()){
                 QTreeWidgetItem * twc = new QTreeWidgetItem();
                 twc->setText(0, item->name());
                 twi->addChild(twc);

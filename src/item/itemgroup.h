@@ -18,7 +18,7 @@ public:
     QRectF boundingRect() const override;
 
     // Member
-    void addItem(AbstractItemBase *children) override;
+    void addItem(AbstractItemBase *childItems) override;
     QList<AbstractItemBase*> childItems() const;
 
     // Events

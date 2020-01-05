@@ -44,6 +44,7 @@ public:
     bool useBackgroundColor() const;
 
     void addItem(AbstractItemBase *item) override;
+    QList<AbstractItemBase *> childItems() override;
 
 
 private:
