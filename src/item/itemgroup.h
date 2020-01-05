@@ -2,16 +2,34 @@
 #define ITEMGROUP_H
 
 #include <QGraphicsItemGroup>
-#include "itembase.h"
+#include "abstractitembase.h"
 
-class ItemGroup : /*public QGraphicsItemGroup, */public ItemBase
+class ItemGroup : public AbstractItemBase
 {
 
 public:
     explicit ItemGroup(QGraphicsItem *parent = nullptr);
 
 	// Properties
-	void setRect(QRectF rect);
+    int type() const override { return Type::Group; }
+    void setRect(QRectF rect) override;
+    QRectF renderRect() const override;
+    QRectF rect() const override;
+    QRectF boundingRect() const override;
+
+    // Member
+    void addItem(AbstractItemBase *children) override;
+    QList<AbstractItemBase*> childItems() const;
+
+    // Events
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+    void render(QPainter *painter, qreal scale = 1) override;
+
+private:
+//    QGraphicsItemGroup * m_group;
+    QList<AbstractItemBase*> m_children;
+    QRectF m_renderRect;
+    QRectF m_rect;
 
 signals:
 

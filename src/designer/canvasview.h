@@ -9,6 +9,7 @@
 #include "canvasscene.h"
 #include "handleframe.h"
 #include "ruler.h"
+#include "src/item/itemgroup.h"
 
 class CanvasView : public QGraphicsView
 {
@@ -20,8 +21,9 @@ public:
     void addItem(AbstractItemBase *item, qreal x = 0, qreal y = 0, AbstractItemBase *parent = nullptr);
 
     AbstractItemBase *itemByName(const QString name);
-
     QList<Artboard *> artboardList();
+
+
 
 protected:
 	void wheelEvent(QWheelEvent *event);
@@ -38,16 +40,22 @@ private:
     qreal        m_grid;
     QTimer      *timer;
 
-    QList<Artboard*> m_artboardList;
     QDRuler                 *m_HRuler;
     QDRuler                 *m_VRuler;
 
     void applyScaleFactor();
     qreal scaleFactor() const;
 
+    ItemGroup *createItemGroup(const QList<QGraphicsItem *> &items);
+
 signals:
     void signalViewIsDragged(bool);
     void itemsChanged();
+
+public slots:
+    void groupSelection();
+    void ungroupSelection();
+    void deleteSelection();
 
 private slots:
     void resetItemCache();

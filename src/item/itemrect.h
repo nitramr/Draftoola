@@ -22,7 +22,7 @@ public:
 	void setRadius(qreal radius);
 	void setRadius(qreal topleft, qreal topright, qreal bottomright, qreal bottomleft);
 	qreal radius() const;
-    void setRect(QRectF rect);
+    void setRect(QRectF rect) override;
     virtual QPainterPath shapeScaled(QRectF frame) const;
 //    virtual QPainterPath shapeScaled2(QRectF frame, qreal scaleFactor, qreal offset = 0, Stroke stroke = Stroke("tmp",QBrush(Qt::transparent),0, StrokePosition::Center)) const;
 

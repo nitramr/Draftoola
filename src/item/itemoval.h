@@ -18,7 +18,7 @@ public:
 
 	// Properties
     int type() const override { return Type::Oval; }
-    void setRect(QRectF rect);
+    void setRect(QRectF rect) override;
 
 };
 

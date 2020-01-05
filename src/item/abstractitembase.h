@@ -15,6 +15,7 @@ class AbstractItemBase : public QGraphicsObject
 
     friend class ItemBase;
     friend class Artboard;
+    friend class ItemPolygon;
 
 public:
 
@@ -25,12 +26,12 @@ public:
     enum Type { Artboard = UserType + 2,
            Rect = UserType + 3,
            Oval = UserType + 4,
-           Triangle = UserType + 5,
-           Star = UserType + 6,
-           Path = UserType + 7,
-           Line = UserType + 8,
-           Text = UserType + 9,
-           Instance = UserType + 10,
+           Polygon = UserType + 5,
+           Path = UserType + 6,
+           Line = UserType + 7,
+           Text = UserType + 8,
+           Instance = UserType + 9,
+           Group = UserType + 10
          };
 
     enum FrameType {

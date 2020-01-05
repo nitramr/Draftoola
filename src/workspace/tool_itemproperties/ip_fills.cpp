@@ -49,13 +49,13 @@ void ipFills::loadProperties()
     case AbstractItemBase::Oval:
     case AbstractItemBase::Path:
     case AbstractItemBase::Rect:
-    case AbstractItemBase::Star:
-    case AbstractItemBase::Triangle:
+    case AbstractItemBase::Polygon:
         loadFills();
         break;
     case AbstractItemBase::Instance:
     case AbstractItemBase::Line:
     case AbstractItemBase::Text:
+    case AbstractItemBase::Group:
     default:
         resetItems();
         break;

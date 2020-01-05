@@ -221,8 +221,8 @@ HandleFrame::HandleFrame(CanvasScene *scene, qreal grid, int handleSize): QObjec
     this->setVisible(false);
     this->setAcceptHoverEvents(true);
     this->setFlag(QGraphicsItem::ItemDoesntPropagateOpacityToChildren, true);
-//    this->setFlag(QGraphicsItem::ItemStacksBehindParent, true);
-//    this->setFlag(QGraphicsItem::ItemNegativeZStacksBehindParent, true);
+    //    this->setFlag(QGraphicsItem::ItemStacksBehindParent, true);
+    //    this->setFlag(QGraphicsItem::ItemNegativeZStacksBehindParent, true);
 
     this->setZValue(99999999);
 
@@ -592,26 +592,34 @@ void HandleFrame::reset()
 
 
 /*!
- * \brief Return true if at least one artboard is fully covered in selection region. In addition m_items will contain only artboards or other items.
+ * \brief Return true if selection contains at least one item. If an artboard is fully covered in selection
+ *  region it returns true for hasArtboards and \a m_items will contain only artboards.
  * \return
  */
-bool HandleFrame::selectionContainsArtboards()
-{
-    bool containsArtboard = false;
+bool HandleFrame::checkSelection(bool &hasArtboards)
+{    
     m_items.clear();
+    bool foundArtboard =false;
 
-    if(m_scene->selectedItems().isEmpty()) return containsArtboard;
+    if(m_scene->selectedItems().isEmpty()){
+        hasArtboards = foundArtboard;
+        return false;
+    }
 
     QList<AbstractItemBase*> artboardList = QList<AbstractItemBase*>();
 
     foreach(QGraphicsItem * item, m_scene->selectedItems()){
+
+        QGraphicsItemGroup* grpItem = dynamic_cast<QGraphicsItemGroup*>(item);
+        if(grpItem) qDebug() << "Group selected";
+
         AbstractItemBase* abItem = dynamic_cast<AbstractItemBase*>(item);
 
         if(abItem){
             switch(abItem->type()){
             case AbstractItemBase::Artboard:
                 artboardList.append(abItem);
-                containsArtboard = true;
+                foundArtboard = true;
                 break;
             default:
                 m_items.append(abItem);
@@ -621,9 +629,10 @@ bool HandleFrame::selectionContainsArtboards()
     }
 
     // if there is at least 1 artboard override all other items
-    if(containsArtboard) m_items = artboardList;
+    if(foundArtboard) m_items = artboardList;
 
-    return containsArtboard;
+    hasArtboards = foundArtboard;
+    return !m_items.isEmpty();
 
 }
 
@@ -647,32 +656,26 @@ void HandleFrame::updateHandles()
     m_handles[7]->setPos(rect().left() - offX, rect().center().y() - offY); // Left
     m_handles[8]->setPos(rect().center().x() - offX, rect().top() - offY - handleSize() * 3 / scaleFactor()); // Rotate
 
-    qreal tollerance = handleSize() * 6 / scaleFactor();
+//    qreal tollerance = handleSize() * 3 / scaleFactor();
 
     // set visibility of handles
-    m_handles[0]->setVisible(m_canWidthChange && m_canHeightChange); // TopLeft
-    m_handles[2]->setVisible(m_canWidthChange && m_canHeightChange); // TopRight
-    m_handles[4]->setVisible(m_canWidthChange && m_canHeightChange); // BottomRight
-    m_handles[6]->setVisible(m_canWidthChange && m_canHeightChange); // BottomLeft
+//    if(this->width() < tollerance || this->height() < tollerance){
+//        m_handles[0]->setVisible(false); // TopLeft
+//        m_handles[2]->setVisible(false); // TopRight
+//        m_handles[4]->setVisible(false); // BottomRight
+//        m_handles[6]->setVisible(false); // BottomLeft
+//    }else{
+        m_handles[0]->setVisible(m_canWidthChange && m_canHeightChange); // TopLeft
+        m_handles[2]->setVisible(m_canWidthChange && m_canHeightChange); // TopRight
+        m_handles[4]->setVisible(m_canWidthChange && m_canHeightChange); // BottomRight
+        m_handles[6]->setVisible(m_canWidthChange && m_canHeightChange); // BottomLeft
+//    }
 
-    // hide middle handles if rect is to small
-    if(this->width() < tollerance){
-        m_handles[1]->setVisible(false); // Top
-        m_handles[5]->setVisible(false); // Bottom
-        m_handles[8]->setVisible(false); // Rotate
-    }else{
-        m_handles[1]->setVisible(m_canHeightChange); // Top
-        m_handles[5]->setVisible(m_canHeightChange); // Bottom
-        m_handles[8]->setVisible(m_canRotate); // Rotate
-    }
-
-    if(this->height() < tollerance){
-        m_handles[3]->setVisible(false); // Right
-        m_handles[7]->setVisible(false); // Left
-    }else{
-        m_handles[3]->setVisible(m_canWidthChange); // Right
-        m_handles[7]->setVisible(m_canWidthChange); // Left
-    }
+    m_handles[1]->setVisible(m_canHeightChange); // Top
+    m_handles[5]->setVisible(m_canHeightChange); // Bottom
+    m_handles[8]->setVisible(m_canRotate); // Rotate
+    m_handles[3]->setVisible(m_canWidthChange); // Right
+    m_handles[7]->setVisible(m_canWidthChange); // Left
 
 }
 
@@ -712,10 +715,10 @@ void HandleFrame::frameToSelection()
         return;
 
         //Multiple Selection
-    }else if(m_scene->selectedItems().size() >0){
+    }else{
 
         // filter Selection
-        m_canRotate = !selectionContainsArtboards();
+        if(!checkSelection(m_canRotate)) return;
 
         QRectF selectionBox = selectionRect();
 
@@ -987,7 +990,7 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
 
-//    const qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
+    //    const qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
 
     // fix the line on half pixels
     if (scaleFactor() > 2 ) {

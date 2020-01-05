@@ -51,11 +51,11 @@ void ipExportLevels::loadProperties()
     case AbstractItemBase::Oval:
     case AbstractItemBase::Path:
     case AbstractItemBase::Rect:
-    case AbstractItemBase::Star:
-    case AbstractItemBase::Triangle:
+    case AbstractItemBase::Polygon:
     case AbstractItemBase::Instance:
     case AbstractItemBase::Line:
     case AbstractItemBase::Text:
+    case AbstractItemBase::Group:
         loadExportLevels();
         break;
     default:

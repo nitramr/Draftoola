@@ -190,7 +190,7 @@ private:
     void updateItemGeometry(AbstractItemBase *item);
     void updateItemsSelection();
     void reset();
-    bool selectionContainsArtboards();
+    bool checkSelection(bool &hasArtboards);
 
 protected:
     // Events

@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QGraphicsItemAnimation>
+#include <QGraphicsItemGroup>
 #include <QGridLayout>
 #include <QPropertyAnimation>
 #include <QTimeLine>
@@ -11,6 +12,7 @@
 
 #include "src/item/itemstruct.h"
 #include "src/item/itembase.h"
+#include "src/item/itemgroup.h"
 
 #include "canvasscene.h"
 #include "handleframe.h"
@@ -37,7 +39,6 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
 
     m_grid = 1;
-    m_artboardList = QList<Artboard*>();
     QColor color(0, 128, 255);
 
     m_handleFrame = new HandleFrame(m_scene, m_grid);
@@ -141,13 +142,6 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
 
     QList<QGraphicsItem *> selectedItems = m_scene->items(rubberBand, Qt::IntersectsItemShape, Qt::AscendingOrder, this->transform());
 
-
-    if(selectedItems.size() >0){
-        qreal vPos = -mapToScene(selectedItems.first()->pos().toPoint()).y();
-        m_VRuler->setOrigin(vPos);
-    }
-
-
     foreach(QGraphicsItem *selectedItem, selectedItems) {
 
         Artboard * abItem = dynamic_cast<Artboard*>(selectedItem);
@@ -156,8 +150,6 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
 
             QRect itemRect = abItem->rect().toRect();
             itemRect.moveTo(abItem->scenePos().toPoint() );
-
-            // qDebug() << abItem->name() << itemRect << rubberBand << rubberBand.contains(itemRect);
 
             if(rubberBand.contains(itemRect) ){
                 abItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -188,7 +180,6 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
         qDebug() << "Canvas: Item is Artboard";
 
         m_scene->addItem(m_artboard);
-        m_artboardList.append(m_artboard);
         m_artboard->setPos(x,y);
 
         emit itemsChanged();
@@ -197,10 +188,11 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
 
         qDebug() << "Canvas: Item is no Artboard";
 
-        if(parent == nullptr && m_artboardList.count() > 0){
+        QList<Artboard*> abList = artboardList();
+        if(parent == nullptr && abList.count() > 0){
 
             qDebug() << "Canvas: Item has no Parent";
-            Artboard * artboard = m_artboardList.first();
+            Artboard * artboard = abList.first();
 
             if(artboard){
                 artboard->addItem(item);
@@ -235,8 +227,57 @@ AbstractItemBase *CanvasView::itemByName(const QString name)
 
 QList<Artboard *> CanvasView::artboardList()
 {
-    return m_artboardList;
+    QList<Artboard *> artboardList = QList<Artboard*>();
+
+    foreach(QGraphicsItem *item, m_scene->items()){
+        Artboard *artItem = dynamic_cast<Artboard*>(item);
+        if(artItem) artboardList.append(artItem);
+    }
+
+    return artboardList;
 }
+
+/*!
+ * \brief [SLOT] Create QGraphicsItemGroup out of selected items.
+ */
+void CanvasView::groupSelection()
+{
+//    QGraphicsItemGroup *grpItem = new QGraphicsItemGroup();
+
+//    foreach(QGraphicsItem *item, m_scene->selectedItems()){
+//        grpItem->addToGroup(item);
+//    }
+
+    // Group all selected items together
+    ItemGroup *group = createItemGroup(m_scene->selectedItems());
+//    group->setFlag(QGraphicsItem::ItemIsSelectable, true);
+//    group->setFlag(QGraphicsItem::ItemIsMovable, true);
+
+    // Destroy the group, and delete the group item
+   // scene->destroyItemGroup(group);
+}
+
+
+/*!
+ * \brief [SLOT] Destroy selected QGraphicsItemGroup into single items.
+ */
+void CanvasView::ungroupSelection()
+{
+
+}
+
+
+/*!
+ * \brief [SLOT] Delete selected items from canvas.
+ */
+void CanvasView::deleteSelection()
+{
+    foreach(QGraphicsItem *graphicItem, m_scene->selectedItems() ){
+        m_scene->removeItem(graphicItem);
+        delete graphicItem;
+    }
+}
+
 
 void CanvasView::applyScaleFactor()
 {
@@ -248,9 +289,53 @@ void CanvasView::applyScaleFactor()
     m_HRuler->setScaleFactor(scaleFactor);
 }
 
+
 qreal CanvasView::scaleFactor() const
 {
     return this->matrix().m11();
+}
+
+
+ItemGroup *CanvasView::createItemGroup(const QList<QGraphicsItem *> &items)
+{
+    // Build a list of the first item's ancestors
+    QList<QGraphicsItem *> ancestors;
+    int n = 0;
+    if (!items.isEmpty()) {
+        QGraphicsItem *parent = items.at(n++);
+        while ((parent = parent->parentItem()))
+            ancestors.append(parent);
+    }
+    // Find the common ancestor for all items
+    QGraphicsItem *commonAncestor = 0;
+    if (!ancestors.isEmpty()) {
+        while (n < items.size()) {
+            int commonIndex = -1;
+            QGraphicsItem *parent = items.at(n++);
+            do {
+                int index = ancestors.indexOf(parent, qMax(0, commonIndex));
+                if (index != -1) {
+                    commonIndex = index;
+                    break;
+                }
+            } while ((parent = parent->parentItem()));
+            if (commonIndex == -1) {
+                commonAncestor = 0;
+                break;
+            }
+            commonAncestor = ancestors.at(commonIndex);
+        }
+    }
+    // Create a new group at that level
+    ItemGroup *group = new ItemGroup(commonAncestor);
+    if (!commonAncestor)
+        m_scene->addItem(group);
+    for (QGraphicsItem *item : items){
+        AbstractItemBase * abItem = dynamic_cast<AbstractItemBase*>(item);
+        if(abItem) group->addItem(abItem);
+    }
+
+    return group;
 }
 
 /***************************************************
@@ -382,14 +467,6 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
         this->setInteractive(false);
 
         break;
-    case Qt::Key_Delete:
-
-        foreach(QGraphicsItem *graphicItem, m_scene->selectedItems() ){
-            m_scene->removeItem(graphicItem);
-            delete graphicItem;
-        }
-
-        break;
 
     }
 
@@ -399,17 +476,32 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 
 void CanvasView::keyReleaseEvent(QKeyEvent *event)
 {
+    // Single Key + Ctrl
+    if (event->modifiers() & Qt::CTRL) {
+        switch(event->key())
+        {
+        case Qt::Key_G :
+            groupSelection();
+            break;
+        }
+
+    }
+
+    // Single Key
     switch(event->key())
     {
     case Qt::Key_Space :
         this->setDragMode(QGraphicsView::RubberBandDrag);
         this->setInteractive(true);
         break;
-
     case Qt::Key_Shift :
         m_handleFrame->setKeepAspectRatio(false);
         break;
+    case Qt::Key_Delete:
+        deleteSelection();
+        break;
 
+        // Tmp functions
     case Qt::Key_A:{
 
         m_scene->clearSelection();
@@ -448,13 +540,10 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
         break;
     }
     case Qt::Key_V:{
-
-
         m_scene->exportItems();
-
-
         break;
     }
+
     }
 
 

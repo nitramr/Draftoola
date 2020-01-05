@@ -15,6 +15,7 @@ TARGET = WhiteprintApp
 TEMPLATE = app
 
 SOURCES += src/main.cpp\
+    src/item/itempolygon.cpp \
     src/mainwindow.cpp \
     src/designer/canvasscene.cpp \
     src/designer/canvasview.cpp \
@@ -68,6 +69,7 @@ HEADERS  +=     src/mainwindow.h \
     src/item/gradient.h \
     src/item/itembase.h \
     src/item/itemeffects.h \
+    src/item/itempolygon.h \
     src/item/itemtext.h \
     src/item/itemrect.h \
     src/item/itemoval.h \
