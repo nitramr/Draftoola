@@ -13,7 +13,7 @@ ui(new Ui::propertyFill)
     ui->setupUi(this);
 
     QPixmap pixmap(ui->btn_color->iconSize());
-    pixmap.fill(Qt::black);
+    pixmap.fill(fill.color());
     ui->btn_color->setIcon(pixmap);
 
     // https://doc.qt.io/qt-5/qpainter.html#CompositionMode-enum

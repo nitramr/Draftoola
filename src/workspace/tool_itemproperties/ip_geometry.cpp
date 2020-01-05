@@ -1,6 +1,7 @@
 #include "ip_geometry.h"
 #include "ui_ip_geometry.h"
 #include "src/item/abstractitembase.h"
+#include "src/item/itempolygon.h"
 
 ipGeometry::ipGeometry(QWidget *parent) :
     QWidget(parent),
@@ -104,6 +105,28 @@ void ipGeometry::loadGeometry()
 
     updateFrameState( m_item->frameType() );
 
+
+    switch(m_item->type()){
+    case AbstractItemBase::Type::Polygon:
+        ItemPolygon * plyItem = dynamic_cast<ItemPolygon*>(m_item);
+        if(plyItem){
+            ui->spinBoxPolygonPoints->setValue(plyItem->sides());
+            ui->spinBoxPolygonRadius->setValue(qRound(plyItem->innerRadius() * 100));
+            ui->lbl_polygonPoints->setVisible(true);
+            ui->spinBoxPolygonPoints->setVisible(true);
+            if(plyItem->useInnerRadius()){
+                ui->lbl_polygonRadius->setVisible(true);
+                ui->spinBoxPolygonRadius->setVisible(true);
+            }else{
+                ui->lbl_polygonRadius->setVisible(false);
+                ui->spinBoxPolygonRadius->setVisible(false);
+            }
+
+        }
+        break;
+    }
+
+
     connectSlots();
 }
 
@@ -119,6 +142,11 @@ void ipGeometry::resetItems()
     btnFree->setChecked(true);
     ui->spinboxWidth->setEnabled(true);
     ui->spinboxHeight->setEnabled(true);
+
+    ui->lbl_polygonPoints->setVisible(false);
+    ui->lbl_polygonRadius->setVisible(false);
+    ui->spinBoxPolygonPoints->setVisible(false);
+    ui->spinBoxPolygonRadius->setVisible(false);
 
     connectSlots();
 }
@@ -137,6 +165,8 @@ void ipGeometry::connectSlots()
     connect(ui->spinboxWidth, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
     connect(ui->spinboxHeight, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
     connect(btnGroup, &ButtonGroup::buttonClicked, this, &ipGeometry::updateItem);
+    connect(ui->spinBoxPolygonPoints, QOverload<int>::of(&QSpinBox::valueChanged), this, &ipGeometry::updateItem);
+    connect(ui->spinBoxPolygonRadius, QOverload<int>::of(&QSpinBox::valueChanged), this, &ipGeometry::updateItem);
 }
 
 void ipGeometry::disconnectSlots()
@@ -146,6 +176,8 @@ void ipGeometry::disconnectSlots()
     disconnect(ui->spinboxWidth, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
     disconnect(ui->spinboxHeight, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &ipGeometry::updateItem);
     disconnect(btnGroup, &ButtonGroup::buttonClicked, this, &ipGeometry::updateItem);
+    disconnect(ui->spinBoxPolygonPoints, QOverload<int>::of(&QSpinBox::valueChanged), this, &ipGeometry::updateItem);
+    disconnect(ui->spinBoxPolygonRadius, QOverload<int>::of(&QSpinBox::valueChanged), this, &ipGeometry::updateItem);
 }
 
 void ipGeometry::updateFrameState(AbstractItemBase::FrameType frameType)
@@ -176,19 +208,31 @@ void ipGeometry::updateFrameState(AbstractItemBase::FrameType frameType)
 
 void ipGeometry::updateItem()
 {
- if(m_item){
+    if(m_item){
 
-      m_item->setRect(QRectF(0,0,ui->spinboxWidth->value(), ui->spinboxHeight->value()));
-      m_item->setPos(QPointF(ui->spinboxXPos->value(), ui->spinboxYPos->value()));
+        m_item->setRect(QRectF(0,0,ui->spinboxWidth->value(), ui->spinboxHeight->value()));
+        m_item->setPos(QPointF(ui->spinboxXPos->value(), ui->spinboxYPos->value()));
 
-      ButtonGroupButton * activeButton = dynamic_cast<ButtonGroupButton*>( btnGroup->checkedButton() );
+        ButtonGroupButton * activeButton = dynamic_cast<ButtonGroupButton*>( btnGroup->checkedButton() );
 
-      if(activeButton){
-          m_item->setFrameType( static_cast<AbstractItemBase::FrameType>(activeButton->data().toInt() ) );
-          updateFrameState( m_item->frameType() );
-      }
+        if(activeButton){
+            m_item->setFrameType( static_cast<AbstractItemBase::FrameType>(activeButton->data().toInt() ) );
+            updateFrameState( m_item->frameType() );
+        }
 
-      emit itemsChanged();
+        switch(m_item->type()){
+        case AbstractItemBase::Type::Polygon:
+            ItemPolygon * plyItem = dynamic_cast<ItemPolygon*>(m_item);
+            if(plyItem){
+
+                plyItem->setSides(ui->spinBoxPolygonPoints->value());
+                plyItem->setInnerRadius(ui->spinBoxPolygonRadius->value() / 100.0);
+
+            }
+            break;
+        }
+
+        emit itemsChanged();
 
     }
 }

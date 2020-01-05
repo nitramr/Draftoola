@@ -3,14 +3,15 @@
 #include <QtMath>
 
 ItemPolygon::ItemPolygon(QGraphicsItem *parent) : ItemPolygon(0,0,300,350, 10, parent){}
-ItemPolygon::ItemPolygon(qreal x, qreal y, qreal width, qreal height, int sides, QGraphicsItem *parent) : ItemPolygon(QRectF(x,y,width,height), sides, parent){}
-ItemPolygon::ItemPolygon(qreal width, qreal height, int sides, QGraphicsItem *parent) : ItemPolygon(QRectF(0,0,width,height), sides, parent){}
-ItemPolygon::ItemPolygon(QRectF rect, int sides, QGraphicsItem *parent) : ItemBase(rect, parent){
+ItemPolygon::ItemPolygon(qreal x, qreal y, qreal width, qreal height, int sides, bool useInnerRadius, QGraphicsItem *parent) : ItemPolygon(QRectF(x,y,width,height), sides, useInnerRadius, parent){}
+ItemPolygon::ItemPolygon(qreal width, qreal height, int sides, bool useInnerRadius, QGraphicsItem *parent) : ItemPolygon(QRectF(0,0,width,height), sides, useInnerRadius, parent){}
+ItemPolygon::ItemPolygon(QRectF rect, int sides, bool useInnerRadius, QGraphicsItem *parent) : ItemBase(rect, parent){
 
-    m_sides = sides;
-    m_innerLength = 0.5;
+    m_innerRadius = 0.5;
+    m_useInnerRadius = useInnerRadius;
+    m_sides = qMin(qMax(sides, 3), (m_useInnerRadius) ? 50 : 10);
     this->setRect(rect);
-    this->setName(tr("Rect"));
+    this->setName(tr("Polygon"));
 }
 
 /***************************************************
@@ -21,7 +22,7 @@ ItemPolygon::ItemPolygon(QRectF rect, int sides, QGraphicsItem *parent) : ItemBa
 
 void ItemPolygon::setSides(int count)
 {
-    m_sides = count;
+    m_sides = qMin(qMax(count, 3), (m_useInnerRadius) ? 50 : 10);
     setRect(rect());
 }
 
@@ -30,15 +31,25 @@ int ItemPolygon::sides() const
     return m_sides;
 }
 
-void ItemPolygon::setInnerLength(qreal length)
+void ItemPolygon::setInnerRadius(qreal length)
 {
-    m_innerLength = qMin(qMax(length, 0.0), 1.0);
+    m_innerRadius = qMin(qMax(length, 0.0), 1.0);
     setRect(rect());
 }
 
-qreal ItemPolygon::innerLength() const
+qreal ItemPolygon::innerRadius() const
 {
-    return m_innerLength;
+    return m_innerRadius;
+}
+
+void ItemPolygon::setUseInnerRadius(bool allow)
+{
+    m_useInnerRadius = allow;
+}
+
+bool ItemPolygon::useInnerRadius()
+{
+    return m_useInnerRadius;
 }
 
 void ItemPolygon::setRect(QRectF rect)
@@ -63,8 +74,8 @@ void ItemPolygon::setRect(QRectF rect)
 
 QPainterPath ItemPolygon::shapeScaled(QRectF frame) const
 {
-    int points = m_sides;
-    int angle = -90;
+    int points = (m_useInnerRadius) ? sides() *2 : sides();
+    qreal angle = -90.0;
 
     QPointF center = frame.center();
     QPointF start(center.x(), frame.top());
@@ -83,12 +94,12 @@ QPainterPath ItemPolygon::shapeScaled(QRectF frame) const
         line.setP1(center);
         line.setP2(ellipsePoint);
 
-        qreal length = (i % 2) ? line.length() * m_innerLength: line.length();
+        qreal length = (i % 2 && m_useInnerRadius) ? line.length() * innerRadius(): line.length();
         line.setLength(length);
 
         polygon.lineTo( line.p2() );
 
-        angle +=360 / points;
+        angle +=360.0 / points;
     }
 
     polygon.closeSubpath();

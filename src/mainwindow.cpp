@@ -241,15 +241,14 @@ void MainWindow::tmpSetup()
     oval2->addFills(fill2);
     m_canvas->addItem(oval2, 50,120, artboard2);
 
-    ItemPolygon *star = new ItemPolygon(80,80);
-    star->setInnerLength(0.5);
+    ItemPolygon *star = new ItemPolygon(80,80, 5, true);
+    star->setInnerRadius(0.5);
     star->addFills(Fills("color", QColor(255,200,0)));
     star->addShadow(Shadow("shadow", Qt::black, 10, QPointF(0,0)));
     m_canvas->addItem(star, 80,300, artboard2);
 
-    ItemPolygon *pentagon = new ItemPolygon(80,80);
-    pentagon->setSides(5);
-    pentagon->setInnerLength(1);
+    ItemPolygon *pentagon = new ItemPolygon(80,80, 5);
+    pentagon->setInnerRadius(1);
     pentagon->addFills(Fills("color", QColor(255,200,0)));
     pentagon->addShadow(Shadow("shadow", Qt::black, 10, QPointF(0,0)));
     m_canvas->addItem(pentagon, 200,300, artboard2);

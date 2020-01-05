@@ -40,8 +40,6 @@ void PropertyShadow::setShadow(Shadow shadow)
 
 Shadow PropertyShadow::shadow() const
 {
-    qDebug() << "Shadow ID" << m_shadow.ID();
-
     return m_shadow;
 }
 

@@ -52,6 +52,13 @@ void ItemText::setRect(QRectF rect)
         break;
     }
 
+
+
+//    QPainterPath path;
+//    QFont f_font(font());
+//    f_font.setStyleStrategy(QFont::ForceOutline);
+//    path.addText(0, 0, f_font, text());
+
     QPainterPath path;
     path.addRect(rect);
     setShape(path);
@@ -221,6 +228,5 @@ void ItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     m_text->paint(painter, opt, widget);
 
     painter->restore();
-
 
 }

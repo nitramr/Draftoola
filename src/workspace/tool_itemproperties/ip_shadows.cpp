@@ -50,11 +50,11 @@ void ipShadows::loadProperties()
     case AbstractItemBase::Path:
     case AbstractItemBase::Rect:
     case AbstractItemBase::Polygon:
+    case AbstractItemBase::Text:
+    case AbstractItemBase::Line:
         loadShadows();
         break;
     case AbstractItemBase::Instance:
-    case AbstractItemBase::Line:
-    case AbstractItemBase::Text:
     case AbstractItemBase::Group:
     default:
         resetItems();
