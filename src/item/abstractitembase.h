@@ -19,9 +19,6 @@ class AbstractItemBase : public QGraphicsObject
 
 public:
 
-    AbstractItemBase(const QRectF rect, QGraphicsItem *parent = nullptr);
-    AbstractItemBase(const AbstractItemBase &other);
-
     // Enums
     enum Type { Artboard = UserType + 2,
            Rect = UserType + 3,
@@ -41,15 +38,23 @@ public:
         FixedSize = 3
     };
 
+
+    // Constructor
+    AbstractItemBase(const QRectF rect, QGraphicsItem *parent = nullptr);
+    AbstractItemBase(const AbstractItemBase &other);
+
+
+    // operator
+    bool operator==( const AbstractItemBase & other ) const;
+    inline bool operator!=(const AbstractItemBase &abstractItemBase) const;
+
+
     // Properties
     void setID(int id);
     int ID() const;
 
     void setName(QString name);
     QString name() const;
-
-//    void setItemType(ItemType type);
-//    ItemType itemType() const;
 
     virtual void setShape(QPainterPath itemShape);
     virtual QPainterPath shape() const override;
@@ -79,6 +84,7 @@ public:
     QPointF anchorLeft() const;
     QPointF anchorCenter() const;
 
+
     // Members
     void addExportLevel(ExportLevel exportLevel, int index = -1);
     void removeExportLevel(int index);
@@ -87,13 +93,14 @@ public:
     QList<ExportLevel> exportLevels() const;
     ExportLevel exportLevel(int index);
 
-    virtual QList<AbstractItemBase*> childItems();
+    virtual QList<AbstractItemBase*> childItems() const;
+
 
     // Functions
     virtual void addItem(AbstractItemBase * childItems) = 0;
 
+
     // Events
-//    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) = 0;
     virtual void render(QPainter *painter, qreal scale = 1);
 
 public slots:
@@ -102,6 +109,7 @@ public slots:
 
 
 private:
+
     // Properties
     int m_id;
     QRectF m_rect;
@@ -109,15 +117,14 @@ private:
     FrameType m_frameType;
     QString m_name;
     bool m_invaliateCache;
-//    ItemType m_itemType;
     qreal m_scaleFactor;
     bool m_renderQuality;
     bool m_doRender;
     QPainterPath m_shape;
 
+
     // Members
     QList<ExportLevel>	m_exportFactorList;
-//    QList<AbstractItemBase*> m_children;
 
 };
 

@@ -18,24 +18,54 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
     path.addRect(rect);
     setShape(path);
 
- //   this->setAcceptHoverEvents(true);
+    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+    this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
 
 }
 
 AbstractItemBase::AbstractItemBase(const AbstractItemBase &other) : QGraphicsObject(other.parentItem())
-{
-//    m_itemType = other.m_itemType;
-    m_name = other.m_name;
+{        
     m_id = other.m_id;
+    m_rect = other.m_rect;
+    m_name = other.m_name;
+    m_frameType = other.m_frameType;
     m_scaleFactor = other.m_scaleFactor;
     m_renderQuality = other.m_renderQuality;
     m_boundingRect = other.m_boundingRect;
     m_exportFactorList = other.m_exportFactorList;
     m_shape = other.m_shape;
     m_invaliateCache = other.m_invaliateCache;
-    m_rect = other.m_rect;
+    m_doRender = other.m_doRender;
+    m_exportFactorList = other.m_exportFactorList;
 
     this->setFlags(other.flags());
+    this->setPos(other.pos());
+    this->setTransform(other.transform());
+    this->setScale(other.scale());
+
+}
+
+bool AbstractItemBase::operator==(const AbstractItemBase &other) const
+{
+    if(this == &other) return true;
+
+    return m_id == other.m_id &&
+            m_rect == other.m_rect &&
+            m_name == other.m_name &&
+            m_frameType == other.m_frameType &&
+            m_scaleFactor == other.m_scaleFactor &&
+            m_renderQuality == other.m_renderQuality &&
+            m_boundingRect == other.m_boundingRect &&
+            m_exportFactorList == other.m_exportFactorList &&
+            m_shape == other.m_shape &&
+            m_invaliateCache == other.m_invaliateCache &&
+            m_doRender == other.m_doRender &&
+            m_exportFactorList == other.m_exportFactorList &&
+            flags() == other.flags() &&
+            pos() == other.pos() &&
+            transform() == other.transform() &&
+            scale() == other.scale();
+
 }
 
 
@@ -239,7 +269,7 @@ ExportLevel AbstractItemBase::exportLevel(int index)
     return m_exportFactorList.value(index);
 }
 
-QList<AbstractItemBase *> AbstractItemBase::childItems()
+QList<AbstractItemBase *> AbstractItemBase::childItems() const
 {
     QList<AbstractItemBase*> aibList;
 

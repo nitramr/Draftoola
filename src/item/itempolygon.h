@@ -10,6 +10,13 @@ public:
     ItemPolygon(qreal width, qreal height, int sides = 10, bool useInnerRadius = false, QGraphicsItem * parent = nullptr);
     ItemPolygon(QRectF rect, int sides = 10, bool useInnerRadius = false, QGraphicsItem * parent = nullptr);
     ItemPolygon(QGraphicsItem * parent = nullptr);
+    ItemPolygon(const ItemPolygon &other);
+
+
+    // operator
+    bool operator==( const ItemPolygon & other ) const;
+    inline bool operator!=(const ItemPolygon &itemBase) const;
+
 
     // Properties
     int type() const override { return Type::Polygon; }

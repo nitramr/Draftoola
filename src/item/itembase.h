@@ -25,9 +25,15 @@ class ItemBase : public AbstractItemBase
 public:
 
     ItemBase(const QRectF rect, QGraphicsItem *parent = nullptr);
+    ItemBase(const ItemBase &other);
+
+
+    // operator
+    bool operator==( const ItemBase & other ) const;
+    inline bool operator!=(const ItemBase &itemBase) const;
+
 
     // Properties
-
 	void addStroke(Stroke stroke);
 	Stroke stroke(int id = 0) const;
     void updateStroke(Stroke stroke);
@@ -57,10 +63,12 @@ public:
 
     void clipsChildrenToShape(bool doClip);
 
+
 	// Members
     QPainterPath scaleStroke(const QPainterPath & path, qreal amount , QPen pen = QPen()) const;
 
     void addItem(AbstractItemBase *item) override;
+
 
     // Events
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;

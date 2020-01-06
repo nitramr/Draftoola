@@ -16,6 +16,13 @@ public:
     ItemRect(qreal width, qreal height, QGraphicsItem * parent = nullptr);
     ItemRect(QRectF rect, QGraphicsItem * parent = nullptr);
     ItemRect(QGraphicsItem * parent = nullptr);
+    ItemRect(const ItemRect &other);
+
+
+    // operator
+    bool operator==( const ItemRect & other ) const;
+    inline bool operator!=(const ItemRect &itemBase) const;
+
 
 	// Properties
     int type() const override { return Type::Rect; }

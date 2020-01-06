@@ -29,12 +29,19 @@ public:
     Artboard(QString name, QGraphicsItem *parent = nullptr);
     Artboard(QString name, QRectF rect, QGraphicsItem *parent = nullptr);
     Artboard(QString name, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = nullptr);
+    Artboard(const Artboard &other);
+
+
+    // operator
+    bool operator==( const Artboard & other ) const;
+    inline bool operator!=(const Artboard &itemBase) const;
+
 
     // Properties
     int type() const override { return Type::Artboard; }
 
 	QGraphicsRectItem *canvas() const;
-    void setRect(QRectF rect);
+    void setRect(QRectF rect) override;
     QRectF renderRect() const override;
 
     void setBackgroundColor(const QColor color);
@@ -44,7 +51,7 @@ public:
     bool useBackgroundColor() const;
 
     void addItem(AbstractItemBase *item) override;
-    QList<AbstractItemBase *> childItems() override;
+    QList<AbstractItemBase *> childItems() const override;
 
 
 private:

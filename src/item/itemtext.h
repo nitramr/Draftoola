@@ -13,6 +13,13 @@ class ItemText: public ItemBase
 {
 public:
     ItemText(const QString &text, QGraphicsItem * parent = nullptr);
+    ItemText(const ItemText &other);
+
+
+    // operator
+    bool operator==( const ItemText & other ) const;
+    inline bool operator!=(const ItemText &itemBase) const;
+
 
     // Properties
     int type() const override { return Type::Text; }
@@ -42,7 +49,6 @@ public:
 
 private:
     QGraphicsTextItem *m_text;
-//    bool m_frameFitText;
     QColor m_color;
     int m_lineHeight;
 

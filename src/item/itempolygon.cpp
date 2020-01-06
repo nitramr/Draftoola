@@ -2,7 +2,7 @@
 #include <QtGlobal>
 #include <QtMath>
 
-ItemPolygon::ItemPolygon(QGraphicsItem *parent) : ItemPolygon(0,0,300,350, 10, parent){}
+ItemPolygon::ItemPolygon(QGraphicsItem *parent) : ItemPolygon(0,0,80,80, 10, parent){}
 ItemPolygon::ItemPolygon(qreal x, qreal y, qreal width, qreal height, int sides, bool useInnerRadius, QGraphicsItem *parent) : ItemPolygon(QRectF(x,y,width,height), sides, useInnerRadius, parent){}
 ItemPolygon::ItemPolygon(qreal width, qreal height, int sides, bool useInnerRadius, QGraphicsItem *parent) : ItemPolygon(QRectF(0,0,width,height), sides, useInnerRadius, parent){}
 ItemPolygon::ItemPolygon(QRectF rect, int sides, bool useInnerRadius, QGraphicsItem *parent) : ItemBase(rect, parent){
@@ -12,6 +12,25 @@ ItemPolygon::ItemPolygon(QRectF rect, int sides, bool useInnerRadius, QGraphicsI
     m_sides = qMin(qMax(sides, 3), (m_useInnerRadius) ? 50 : 10);
     this->setRect(rect);
     this->setName(tr("Polygon"));
+}
+
+
+ItemPolygon::ItemPolygon(const ItemPolygon &other) : ItemBase(other)
+{
+    m_sides = other.m_sides;
+    m_innerRadius = other.m_innerRadius;
+    m_useInnerRadius = other.m_useInnerRadius;
+}
+
+
+bool ItemPolygon::operator==(const ItemPolygon &other) const
+{
+    if(this == &other) return true;
+
+    return m_sides == other.m_sides &&
+            m_innerRadius == other.m_innerRadius &&
+            m_useInnerRadius == other.m_useInnerRadius &&
+            ItemBase::operator==(other);
 }
 
 /***************************************************

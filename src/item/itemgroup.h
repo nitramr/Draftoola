@@ -17,16 +17,17 @@ public:
     QRectF rect() const override;
     QRectF boundingRect() const override;
 
+
     // Member
     void addItem(AbstractItemBase *childItems) override;
-    QList<AbstractItemBase*> childItems() const;
+    QList<AbstractItemBase*> childItems() const override;
+
 
     // Events
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     void render(QPainter *painter, qreal scale = 1) override;
 
 private:
-//    QGraphicsItemGroup * m_group;
     QList<AbstractItemBase*> m_children;
     QRectF m_renderRect;
     QRectF m_rect;

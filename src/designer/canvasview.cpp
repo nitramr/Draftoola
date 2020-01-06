@@ -286,6 +286,8 @@ void CanvasView::deleteSelection()
         }
     }
 
+    m_scene->clearSelection();
+
     emit itemsChanged();
 }
 
@@ -530,23 +532,6 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
         animation->setEndValue(init);
 
         animation->start();
-
-        switch(item->type()){
-        case AbstractItemBase::Rect:{
-            ItemRect *rect = static_cast<ItemRect*>(item);
-
-            if(rect){
-
-            }
-        }
-            break;
-        default:
-
-            break;
-        }
-
-
-
 
         break;
     }

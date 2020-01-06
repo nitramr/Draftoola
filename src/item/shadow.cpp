@@ -17,28 +17,24 @@ Shadow::Shadow(QString name, QColor color, qreal radius, QPointF offset, qreal s
     setSpread(spread);
 }
 
-Shadow::Shadow(const Shadow &other)
-{
-    m_id = other.m_id;
-    m_name = other.m_name;
+Shadow::Shadow(const Shadow &other) : AbstractItemProperty(other)
+{   
     m_color = other.m_color;
     m_radius = other.m_radius;
     m_offset = other.m_offset;
     m_spread = other.m_spread;
-    m_blendMode = other.m_blendMode;
-    m_isOn = other.m_isOn;
+
 }
 
 bool Shadow::operator==(const Shadow &other) const
 {
-    return m_id == other.m_id &&
-            m_name == other.m_name &&
-            m_color == other.m_color &&
+    if(this == &other) return true;
+
+    return m_color == other.m_color &&
             m_radius == other.m_radius &&
             m_offset == other.m_offset &&
             m_spread == other.m_spread &&
-            m_blendMode == other.m_blendMode &&
-            m_isOn == other.m_isOn;
+            AbstractItemProperty::operator==(other);;
 }
 
 QDebug operator<<(QDebug dbg, const Shadow &shadow)

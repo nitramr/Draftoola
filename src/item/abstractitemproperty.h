@@ -16,7 +16,14 @@ class AbstractItemProperty
 public:
     AbstractItemProperty();
     AbstractItemProperty(const QString name, QPainter::CompositionMode compositionMode = QPainter::CompositionMode_SourceOver, bool isOn = true);
+    AbstractItemProperty(const AbstractItemProperty &other);
 
+    // operator
+    bool operator==( const AbstractItemProperty & other ) const;
+    inline bool operator!=(const AbstractItemProperty &other) const { return !(operator==(other)); }
+
+
+    // Properties
     QString ID() const;
 
     void setName(QString name);

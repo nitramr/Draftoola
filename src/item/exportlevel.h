@@ -4,8 +4,6 @@
 #include <QString>
 #include <QDebug>
 
-//#include <QObject>
-
 class ExportLevel
 {
 //    Q_GADGET

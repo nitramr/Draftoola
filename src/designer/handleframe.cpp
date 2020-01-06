@@ -749,7 +749,7 @@ void HandleFrame::frameToSelection()
         this->setRect(QRectF(0,0, selectionBox.width(), selectionBox.height()));
         this->setPos(selectionBox.topLeft());
         this->updateHandles();
-        this->setRotation(m_items.first()->rotation());
+//        this->setRotation(m_items.first()->rotation());
         this->setVisible(true);
 
         emit sendActiveItems(m_items);

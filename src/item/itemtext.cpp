@@ -22,7 +22,7 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
     setAlignment(Qt::AlignLeft);
     setText(text);
     setRect(m_text->boundingRect());
-    this->setName(tr("Text"));
+    setName(tr("Text"));
 
 
 
@@ -31,6 +31,23 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
     //	setTextInteractionFlags(Qt::NoTextInteraction);
 
 
+}
+
+ItemText::ItemText(const ItemText &other) : ItemBase(other)
+{
+    m_text = other.m_text;
+    m_color = other.m_color;
+    m_lineHeight = other.m_lineHeight;
+}
+
+bool ItemText::operator==(const ItemText &other) const
+{
+    if(this == &other) return true;
+
+    return m_text == other.m_text &&
+            m_color == other.m_color &&
+            m_lineHeight == other.m_lineHeight &&
+            ItemBase::operator==(other);
 }
 
 void ItemText::setRect(QRectF rect)
@@ -48,16 +65,16 @@ void ItemText::setRect(QRectF rect)
     case AbstractItemBase::FixedSize:
         rect = this->rect();
         break;
-     case AbstractItemBase::Free:
+    case AbstractItemBase::Free:
         break;
     }
 
 
 
-//    QPainterPath path;
-//    QFont f_font(font());
-//    f_font.setStyleStrategy(QFont::ForceOutline);
-//    path.addText(0, 0, f_font, text());
+    //    QPainterPath path;
+    //    QFont f_font(font());
+    //    f_font.setStyleStrategy(QFont::ForceOutline);
+    //    path.addText(0, 0, f_font, text());
 
     QPainterPath path;
     path.addRect(rect);
@@ -122,17 +139,17 @@ void ItemText::setLineHeight(qreal lineHeight)
 
     m_lineHeight = lineHeight;
 
-//    QTextDocument* doc = m_text->document();
-//    QTextFrame * root = doc->rootFrame();
-//    QTextFrame::iterator it;
-//    for( it = root->begin(); !(it.atEnd()); ++it )
-//    {
-//        QTextBlock block = it.currentBlock();
-//        qDebug() << "setLineheight" << block.blockFormat().lineHeight();
-//        block.blockFormat().setLineHeight(100, QTextBlockFormat::LineDistanceHeight); //https://doc.qt.io/qt-5/qtextblockformat.html#LineHeightTypes-enum
-//        //block.blockFormat().setLineHeight(lineHeight, QTextBlockFormat::FixedHeight);
-//        qDebug() << "setLineheight";
-//    }
+    //    QTextDocument* doc = m_text->document();
+    //    QTextFrame * root = doc->rootFrame();
+    //    QTextFrame::iterator it;
+    //    for( it = root->begin(); !(it.atEnd()); ++it )
+    //    {
+    //        QTextBlock block = it.currentBlock();
+    //        qDebug() << "setLineheight" << block.blockFormat().lineHeight();
+    //        block.blockFormat().setLineHeight(100, QTextBlockFormat::LineDistanceHeight); //https://doc.qt.io/qt-5/qtextblockformat.html#LineHeightTypes-enum
+    //        //block.blockFormat().setLineHeight(lineHeight, QTextBlockFormat::FixedHeight);
+    //        qDebug() << "setLineheight";
+    //    }
 
 }
 

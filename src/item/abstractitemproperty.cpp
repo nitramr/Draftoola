@@ -17,6 +17,24 @@ AbstractItemProperty::AbstractItemProperty(const QString name , QPainter::Compos
     m_isOn = isOn;
 }
 
+AbstractItemProperty::AbstractItemProperty(const AbstractItemProperty &other)
+{
+    m_id = other.m_id;
+    m_name = other.m_name;
+    m_blendMode = other.m_blendMode;
+    m_isOn = other.m_isOn;
+}
+
+bool AbstractItemProperty::operator==(const AbstractItemProperty &other) const
+{
+    if(this == &other) return true;
+
+    return m_id == other.m_id &&
+            m_name == other.m_name &&
+            m_blendMode == other.m_blendMode &&
+            m_isOn == other.m_isOn;
+}
+
 
 /***************************************************
  *

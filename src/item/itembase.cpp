@@ -27,9 +27,41 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     this->setFlag(QGraphicsItem::ItemIsSelectable, true);
     this->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
     this->setFlag(QGraphicsItem::ItemContainsChildrenInShape, true);
-    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 
+}
 
+ItemBase::ItemBase(const ItemBase &other) : AbstractItemBase(other)
+{
+    m_id = other.m_id;
+    m_name = other.m_name;
+    m_strokePosition = other.m_strokePosition;
+    m_renderQuality = other.m_renderQuality;
+    m_shadowMapStroke = other.m_shadowMapStroke;
+    m_shadowMapFill = other.m_shadowMapFill;
+    m_renderRect = other.m_renderRect;
+    m_fillsList = other.m_fillsList;
+    m_strokeList = other.m_strokeList;
+    m_shadowList = other.m_shadowList;
+    m_innerShadowList = other.m_innerShadowList;
+
+}
+
+bool ItemBase::operator==(const ItemBase &other) const
+{
+    if(this == &other) return true;
+
+    return m_id == other.m_id &&
+    m_name == other.m_name &&
+    m_strokePosition == other.m_strokePosition &&
+    m_renderQuality == other.m_renderQuality &&
+    m_shadowMapStroke == other.m_shadowMapStroke &&
+    m_shadowMapFill == other.m_shadowMapFill &&
+    m_renderRect == other.m_renderRect &&
+    m_fillsList == other.m_fillsList &&
+    m_strokeList == other.m_strokeList &&
+    m_shadowList == other.m_shadowList &&
+    m_innerShadowList == other.m_innerShadowList &&
+    AbstractItemBase::operator==(other);
 }
 
 /***************************************************

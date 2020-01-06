@@ -1,6 +1,6 @@
 #include "itemrect.h"
 
-ItemRect::ItemRect(QGraphicsItem *parent) : ItemRect(0,0,300,350, parent){}
+ItemRect::ItemRect(QGraphicsItem *parent) : ItemRect(0,0,80,80, parent){}
 ItemRect::ItemRect(qreal x, qreal y, qreal width, qreal height, QGraphicsItem *parent) : ItemRect(QRectF(x,y,width,height), parent){}
 ItemRect::ItemRect(qreal width, qreal height, QGraphicsItem *parent) : ItemRect(QRectF(0,0,width,height), parent){}
 ItemRect::ItemRect(QRectF rect, QGraphicsItem *parent) : ItemBase(rect, parent){
@@ -13,7 +13,26 @@ ItemRect::ItemRect(QRectF rect, QGraphicsItem *parent) : ItemBase(rect, parent){
     this->setRect(rect);
     this->setName(tr("Rect"));
 
-   }
+}
+
+ItemRect::ItemRect(const ItemRect &other) : ItemBase(other)
+{
+    m_radiusTL = other.m_radiusTL;
+    m_radiusTR = other.m_radiusTR;
+    m_radiusBR = other.m_radiusBR;
+    m_radiusBL = other.m_radiusBL;
+}
+
+bool ItemRect::operator==(const ItemRect &other) const
+{
+    if(this == &other) return true;
+
+    return m_radiusTL == other.m_radiusTL &&
+            m_radiusTR == other.m_radiusTR &&
+            m_radiusBR == other.m_radiusBR &&
+            m_radiusBL == other.m_radiusBL &&
+            ItemBase::operator==(other);
+}
 
 /***************************************************
  *
@@ -48,7 +67,7 @@ void ItemRect::setRect(QRectF rect)
     case AbstractItemBase::FixedSize:
         rect = this->rect();
         break;
-     case AbstractItemBase::Free:
+    case AbstractItemBase::Free:
         break;
     }
 

@@ -39,35 +39,28 @@ Fills::Fills(const QString name, const QGradient &gradient) : Fills(name, QColor
     setGradient(gradient);
 }
 
-Fills::Fills(const Fills &other)
-{    
-    m_id = other.m_id;
-    m_name = other.m_name;
+Fills::Fills(const Fills &other) : AbstractItemProperty(other)
+{      
     m_fillType = other.m_fillType;
     m_fillMode = other.m_fillMode;
     m_gradient = other.m_gradient;
     m_color = other.m_color;
     m_pixmap = other.m_pixmap;
-    m_style = other.m_style;
-    m_blendMode = other.m_blendMode;
+    m_style = other.m_style;  
     m_opacity = other.m_opacity;
-    m_isOn = other.m_isOn;
 
 }
 
 bool Fills::operator==(const Fills &other) const
 {
-    return m_id == other.m_id &&
-            m_name == other.m_name &&
-            m_fillType == other.m_fillType &&
+    return  m_fillType == other.m_fillType &&
             m_fillMode == other.m_fillMode &&
             m_gradient == other.m_gradient &&
             m_color == other.m_color &&
-            // m_pixmap == other.m_pixmap &&
+           // m_pixmap == other.m_pixmap &&
             m_style == other.m_style &&
-            m_blendMode == other.m_blendMode &&
             m_opacity == other.m_opacity &&
-            m_isOn == other.m_isOn;
+            AbstractItemProperty::operator==(other);
 }
 
 QDebug operator<<(QDebug dbg, const Fills &fills)

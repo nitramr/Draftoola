@@ -8,20 +8,17 @@ Gradient::Gradient(QString name, GradientType type) : AbstractItemProperty (name
 }
 
 
-Gradient::Gradient(const Gradient &other)
+Gradient::Gradient(const Gradient &other) : AbstractItemProperty(other)
 {
-    m_id = other.m_id;
-    m_name = other.m_name;
     m_type = other.m_type;
-    m_blendMode = other.m_blendMode;
 }
 
 bool Gradient::operator==(const Gradient &other) const
 {
-    return m_id == other.m_id &&
-            m_name == other.m_name &&
-            m_type == other.m_type &&
-            m_blendMode == other.m_blendMode;
+    if(this == &other) return true;
+
+    return  m_type == other.m_type &&
+            AbstractItemProperty::operator==(other);
 }
 
 QDebug operator<<(QDebug dbg, const Gradient &gradient)

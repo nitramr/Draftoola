@@ -49,9 +49,9 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
     m_artboard = new QGraphicsRectItem(rect);
     m_artboard->setFlags(
                 QGraphicsItem::ItemClipsChildrenToShape /*|
-                            QGraphicsItem::ItemContainsChildrenInShape |
-                            QGraphicsItem::ItemSendsScenePositionChanges |
-                            QGraphicsItem::ItemSendsGeometryChanges*/
+                                        QGraphicsItem::ItemContainsChildrenInShape |
+                                        QGraphicsItem::ItemSendsScenePositionChanges |
+                                        QGraphicsItem::ItemSendsGeometryChanges*/
                 );
     m_artboard->setPen(Qt::NoPen);
     m_artboard->setBrush(Qt::NoBrush);
@@ -68,6 +68,29 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
     this->setName(name);
     //this->setItemType(ItemType::Artboard);
 
+}
+
+Artboard::Artboard(const Artboard &other) : AbstractItemBase(other)
+{
+    m_offset = other.m_offset;
+    m_buffer = other.m_buffer;
+    m_useBGColor = other.m_useBGColor;
+    m_backgroundColor = other.m_backgroundColor;
+    m_label = other.m_label;
+    m_artboard = other.m_artboard;
+}
+
+bool Artboard::operator==(const Artboard &other) const
+{
+    if(this == &other) return true;
+
+    return m_offset == other.m_offset &&
+            m_buffer == other.m_buffer &&
+            m_useBGColor == other.m_useBGColor &&
+            m_backgroundColor == other.m_backgroundColor &&
+            m_label == other.m_label &&
+            m_artboard == other.m_artboard &&
+            AbstractItemBase::operator==(other);
 }
 
 /***************************************************
@@ -105,7 +128,7 @@ void Artboard::addItem(AbstractItemBase *item)
  * \brief Return list of first level children items.
  * \return
  */
-QList<AbstractItemBase *> Artboard::childItems()
+QList<AbstractItemBase *> Artboard::childItems() const
 {
     QList<AbstractItemBase*> aibList;
 

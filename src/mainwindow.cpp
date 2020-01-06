@@ -190,7 +190,7 @@ void MainWindow::tmpSetup()
 //    m_outliner->addNode(artboard);
 
     // Object Ovals
-    ItemOval *oval = new ItemOval(60,80);
+    ItemOval *oval = new ItemOval();
     oval->setName("Oval1");
     oval->addFills(fill2);
 //    oval->setRotation(45);
@@ -236,7 +236,7 @@ void MainWindow::tmpSetup()
 
 
     // Object Ovals
-    ItemOval *oval2 = new ItemOval(60,60);
+    ItemOval *oval2 = new ItemOval();
     oval2->setName("Oval2");
     oval2->addFills(fill2);
     m_canvas->addItem(oval2, 50,120, artboard2);

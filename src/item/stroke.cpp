@@ -22,28 +22,19 @@ Stroke::Stroke(const QString name, const QPen &pen, const StrokePosition strokeP
  * \brief Assigns the given stroke to this stroke and returns a reference to this stroke.
  * \param other
  */
-Stroke::Stroke(const Stroke &other)
+Stroke::Stroke(const Stroke &other) : QPen(other), AbstractItemProperty(other)
 {
-    m_id = other.m_id;
-    m_name = other.m_name;
     m_strokePosition = other.m_strokePosition;
-    m_isOn = other.m_isOn;
-    m_blendMode = other.m_blendMode;
-
-    QPen::operator=(static_cast<QPen>(other));
-
 }
 
 
 bool Stroke::operator==(const Stroke &other) const
 {
-    return m_id == other.m_id &&
-            m_name == other.m_name &&
-            m_blendMode == other.m_blendMode &&
-            m_isOn == other.m_isOn &&
-            m_strokePosition == other.m_strokePosition &&
+    if(this == &other) return true;
 
-            QPen::operator==(static_cast<QPen>(other));
+    return m_strokePosition == other.m_strokePosition &&
+            AbstractItemProperty::operator==(other) &&
+            QPen::operator==(other);
 
 }
 

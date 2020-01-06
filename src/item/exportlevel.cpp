@@ -39,6 +39,8 @@ ExportLevel::ExportLevel(const ExportLevel &other)
 
 bool ExportLevel::operator==(const ExportLevel &other) const
 {
+    if(this == &other) return true;
+
     return m_id == other.m_id &&
             m_renderLevel == other.m_renderLevel &&
             m_fileFormat == other.m_fileFormat &&
