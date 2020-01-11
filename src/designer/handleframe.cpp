@@ -224,6 +224,8 @@ HandleFrame::HandleFrame(CanvasScene *scene, qreal grid, int handleSize): QObjec
     //    this->setFlag(QGraphicsItem::ItemStacksBehindParent, true);
     //    this->setFlag(QGraphicsItem::ItemNegativeZStacksBehindParent, true);
 
+    this->setFlag(QGraphicsItem::ItemIsSelectable, false);
+    this->setFlag(QGraphicsItem::ItemIsMovable, false);
     this->setZValue(99999999);
 
 

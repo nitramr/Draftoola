@@ -34,9 +34,22 @@ MainWindow::MainWindow(QWidget *parent) :
     // connect widgets
     connectSlots();
 
+    int offsetX = 0;
+    int offsetY = 0;
 
     // TODO: delete function for release
-    tmpSetup();
+    for(int y = 0; y <10; y++){
+
+        for(int x = 0; x <10; x++){
+        tmpSetup(offsetX,offsetY);
+
+        offsetX += 1000;
+
+        }
+        offsetX = 0;
+        offsetY += 1000;
+    }
+
 
 }
 
@@ -144,7 +157,7 @@ void MainWindow::connectSlots()
     });
 }
 
-void MainWindow::tmpSetup()
+void MainWindow::tmpSetup(int offsetX, int offsetY)
 {
     // Gradients
     QLinearGradient lGradient(0,0,50,50);
@@ -182,23 +195,6 @@ void MainWindow::tmpSetup()
 
     Fills fill4("Gradient", gradient);
 
-    qDebug() << c_black;
-    QByteArray ar;
-    QDataStream stream(&ar, QIODevice::ReadWrite);
-    stream << c_black;
-    stream.device()->seek(0);
-
-    // https://forum.qt.io/topic/78161/custom-class-serialize-with-qdatastream/2
-//    QVariant TempVariant;
-//    stream >> TempVariant;
-
-    Color strGradient;
-//    strTest = TempVariant.value<Shadow>(); // optional if QVariant is used
-
-    stream >> strGradient; // optional if QVariant is not used
-    qDebug() << strGradient;
-
-
     //Export Levels
     ExportLevel expLevel(0, 1);
     ExportLevel expLevel2(1, 2);
@@ -210,8 +206,26 @@ void MainWindow::tmpSetup()
     artboard->addExportLevel(expLevel);
     artboard->addExportLevel(expLevel2);
     //	artboard->setPos(20,20);
-    m_canvas->addItem(artboard, 0, 0);
+    m_canvas->addItem(artboard, 0+offsetX, 0+offsetY);
 //    m_outliner->addNode(artboard);
+
+
+    qDebug() << artboard;
+    QByteArray ar;
+    QDataStream stream(&ar, QIODevice::ReadWrite);
+    stream << artboard;
+    stream.device()->seek(0);
+
+    // https://forum.qt.io/topic/78161/custom-class-serialize-with-qdatastream/2
+//    QVariant TempVariant;
+//    stream >> TempVariant;
+
+    Artboard strGradient;
+//    strTest = TempVariant.value<Shadow>(); // optional if QVariant is used
+
+//    stream >> strGradient; // optional if QVariant is not used
+ //   qDebug() << strGradient;
+
 
     // Object Ovals
     ItemOval *oval = new ItemOval();
@@ -219,13 +233,13 @@ void MainWindow::tmpSetup()
     oval->addFills(fill2);
 //    oval->setRotation(45);
     oval->addStroke(stroke);
-//    oval->addShadow(shadow);
+    oval->addShadow(shadow);
     oval->addShadow(shadow2);
-//    oval->addShadow(shadow3);
+    oval->addShadow(shadow3);
     oval->addExportLevel(expLevel);
     oval->addExportLevel(expLevel2);
     oval->addExportLevel(expLevel3);
-    m_canvas->addItem(oval, 50,120);
+    m_canvas->addItem(oval, 50,120, artboard);
 
     // Object Rects
     ItemRect *rect = new ItemRect(60,100);
@@ -239,7 +253,7 @@ void MainWindow::tmpSetup()
     rect->addShadow(shadow2);
     rect->addInnerShadow(shadow3);
     rect->addFills(fill);
-    m_canvas->addItem(rect, 10,10);
+    m_canvas->addItem(rect, 10,10, artboard);
 
     ItemRect * rect2 = new ItemRect(10,10);
 //	rect2->setRadius(0,0,15,0);
@@ -250,13 +264,13 @@ void MainWindow::tmpSetup()
 
     // Object Text
     ItemText *text = new ItemText("Hello World<br>second line");
-    m_canvas->addItem(text, 100, 10);
+    m_canvas->addItem(text, 100, 10, artboard);
 
     // Artboard
     Artboard *artboard2 = new Artboard("Artboard2");
     artboard2->addExportLevel(expLevel);
     //	artboard->setPos(20,20);
-    m_canvas->addItem(artboard2, 400, 0);
+    m_canvas->addItem(artboard2, 400 +offsetX, 0 +offsetY);
 
 
     // Object Ovals

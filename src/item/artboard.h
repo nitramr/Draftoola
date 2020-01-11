@@ -27,16 +27,11 @@ public:
 class Artboard : public AbstractItemBase
 {
 public:
+    Artboard();
     Artboard(QString name, QGraphicsItem *parent = nullptr);
     Artboard(QString name, QRectF rect, QGraphicsItem *parent = nullptr);
     Artboard(QString name, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = nullptr);
     Artboard(const Artboard &other);
-
-
-    // operator
-    bool operator==( const Artboard & other ) const;
-    inline bool operator!=(const Artboard &itemBase) const;
-
 
     // Properties
     int type() const override { return Type::Artboard; }
@@ -54,6 +49,18 @@ public:
     void addItem(AbstractItemBase *item) override;
     QList<AbstractItemBase *> childItems() const override;
 
+    void setName(QString text) override;
+
+    // operator
+    bool operator==( const Artboard & other ) const;
+    inline bool operator!=(const Artboard &itemBase) const;
+    friend QDataStream &operator<<(QDataStream &out, const Artboard &obj);
+    friend QDataStream &operator>>(QDataStream &in, Artboard &obj);
+
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const Artboard &obj);
+#endif
+
 
 private:
     int m_offset;
@@ -62,6 +69,8 @@ private:
     QColor m_backgroundColor;
     ArtboardLabel * m_label;
 	QGraphicsRectItem * m_artboard;
+
+    void fromObject(AbstractItemBase *obj);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;

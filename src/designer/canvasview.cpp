@@ -35,7 +35,8 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     //    this->setCacheMode(QGraphicsView::CacheBackground);
     this->setOptimizationFlag(DontAdjustForAntialiasing, true); // https://doc.qt.io/qt-5/qgraphicsview.html#OptimizationFlag-enum
     this->setOptimizationFlag(DontSavePainterState, true); // restoring painter will handle in item paint event
-    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // http://doc.qt.io/gt-5/qgraphicsview.html#ViewportUpdateMode-enum
+//    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // http://doc.qt.io/gt-5/qgraphicsview.html#ViewportUpdateMode-enum
+    this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     this->setBackgroundBrush(QColor(240,240,240));
     //    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
@@ -43,7 +44,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
 
     m_scene = new CanvasScene();
-    m_scene->setSceneRect(QRectF(-4000, -4000, 8000,8000));
+    m_scene->setSceneRect(QRectF(-16000, -16000, 32000,32000));
     m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
 
@@ -513,7 +514,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 
         applyScaleFactor();
 
-        timer->start(100);
+        timer->start(150);
 
     } else {
         QGraphicsView::wheelEvent(event);

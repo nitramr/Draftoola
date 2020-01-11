@@ -7,6 +7,9 @@
 
 #include <handleframe.h>
 
+//#include <QGraphicsItemGroup>
+//#include <QGraphicsDropShadowEffect>
+
 /***************************************************
  *
  * Constructor
@@ -17,6 +20,44 @@ CanvasScene::CanvasScene(QObject *parent) : QGraphicsScene(parent)
 {
     m_scaleFactor = 1;
     m_grid = 1;
+
+
+//    TEST: It's a test of item layout (shadow, fills, etc, as single QGraphicsItems
+//    QRectF rect(0,0,100,120);
+
+//    QGraphicsItemGroup *group = new QGraphicsItemGroup();
+//    group->setFlag(QGraphicsItem::ItemIsMovable);
+//    group->setFlag(QGraphicsItem::ItemClipsToShape, true);
+
+//    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect();
+//    shadow->setColor(QColor(0,0,0));
+//    shadow->setXOffset(0);
+//    shadow->setYOffset(2);
+//    shadow->setBlurRadius(10);
+
+//    QGraphicsDropShadowEffect *shadow2 = new QGraphicsDropShadowEffect();
+//    shadow2->setColor(QColor(255,0,0));
+//    shadow2->setXOffset(0);
+//    shadow2->setYOffset(0);
+//    shadow2->setBlurRadius(4);
+
+//    QGraphicsEllipseItem *ellipse = new QGraphicsEllipseItem(rect);
+//    ellipse->setFlag(QGraphicsItem::ItemClipsToShape, true);
+//    ellipse->setBrush(Qt::yellow);
+//    ellipse->setPen(Qt::NoPen);
+//    ellipse->setGraphicsEffect(shadow);
+
+//    QGraphicsEllipseItem *ellipse2 = new QGraphicsEllipseItem(rect);
+//    ellipse2->setFlag(QGraphicsItem::ItemClipsToShape, true);
+//    ellipse2->setBrush(Qt::blue);
+//    ellipse2->setPen(Qt::NoPen);
+//    ellipse2->setGraphicsEffect(shadow2);
+
+//    group->addToGroup(ellipse);
+//    group->addToGroup(ellipse2);
+//    group->setPos(0,-300);
+
+//    this->addItem(group);
 
 }
 

@@ -3,9 +3,10 @@
 #include <QPainter>
 #include <QtWidgets>
 
+AbstractItemBase::AbstractItemBase() : AbstractItemBase(QRect()){}
 AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : QGraphicsObject(parent)
 {
-//    m_itemType = ItemType::Rect;
+    //    m_itemType = ItemType::Rect;
     m_name = "";
     m_id = -1;
     m_scaleFactor = 1;
@@ -45,28 +46,6 @@ AbstractItemBase::AbstractItemBase(const AbstractItemBase &other) : QGraphicsObj
 
 }
 
-bool AbstractItemBase::operator==(const AbstractItemBase &other) const
-{
-    if(this == &other) return true;
-
-    return m_id == other.m_id &&
-            m_rect == other.m_rect &&
-            m_name == other.m_name &&
-            m_frameType == other.m_frameType &&
-            m_scaleFactor == other.m_scaleFactor &&
-            m_renderQuality == other.m_renderQuality &&
-            m_boundingRect == other.m_boundingRect &&
-            m_exportFactorList == other.m_exportFactorList &&
-            m_shape == other.m_shape &&
-            m_invaliateCache == other.m_invaliateCache &&
-            m_doRender == other.m_doRender &&
-            m_exportFactorList == other.m_exportFactorList &&
-            flags() == other.flags() &&
-            pos() == other.pos() &&
-            transform() == other.transform() &&
-            scale() == other.scale();
-
-}
 
 
 /***************************************************
@@ -123,8 +102,8 @@ void AbstractItemBase::setShape(QPainterPath itemShape)
     setInvalidateCache(true);
     setTransformOriginPoint(m_rect.center());
 
-//    emit this->widthChanged();
-//    emit this->heightChanged();
+    //    emit this->widthChanged();
+    //    emit this->heightChanged();
 
     update();
 }
@@ -318,3 +297,95 @@ void AbstractItemBase::render(QPainter *painter, qreal scale)
     painter->restore();
 }
 
+/***************************************************
+ *
+ * Operator
+ *
+ ***************************************************/
+
+bool AbstractItemBase::operator==(const AbstractItemBase &other) const
+{
+    if(this == &other) return true;
+
+    return m_id == other.m_id &&
+            m_rect == other.m_rect &&
+            m_name == other.m_name &&
+            m_frameType == other.m_frameType &&
+            m_exportFactorList == other.m_exportFactorList &&
+            m_shape == other.m_shape &&
+            flags() == other.flags() &&
+            pos() == other.pos() &&
+            transform() == other.transform() &&
+            scale() == other.scale();
+
+}
+
+
+QDebug operator<<(QDebug dbg, const AbstractItemBase &obj)
+{
+
+    dbg << obj.m_id <<
+           obj.m_rect <<
+           obj.m_name <<
+           obj.m_frameType <<
+           obj.m_exportFactorList <<
+           obj.m_shape;
+
+    dbg << obj.flags() <<
+           obj.pos() <<
+           obj.transform() <<
+           obj.scale();
+
+
+    return dbg.maybeSpace();
+}
+
+QDataStream &operator<<(QDataStream &out, const AbstractItemBase &obj)
+{
+    out << obj.m_id <<
+           obj.m_rect <<
+           obj.m_name <<
+           (int)obj.m_frameType <<
+           obj.m_exportFactorList <<
+           obj.m_shape;
+
+    out << obj.flags() <<
+           obj.pos() <<
+           obj.transform() <<
+           obj.scale();
+
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, AbstractItemBase &obj)
+{
+    int id;
+    QRectF rect;
+    int frameType;
+    QString name;
+    QPainterPath shape;
+    QList<ExportLevel>	exportFactorList;
+    QGraphicsItem::GraphicsItemFlags flags;
+    QPointF pos;
+    QTransform transform;
+    double scale;
+
+    in >> id >> rect >> name >> frameType >> exportFactorList >> shape >> flags >> pos >> transform >> scale;
+
+    obj.setID(id);
+    obj.setShape(shape);
+    obj.setRect(rect);
+    obj.setName(name);
+    obj.setFrameType(AbstractItemBase::FrameType(frameType));
+    foreach(ExportLevel expLevel, exportFactorList){
+        obj.addExportLevel(expLevel);
+    }
+
+    obj.setFlags(flags);
+    obj.setPos(pos);
+    obj.setTransform(transform);
+    obj.setScale(scale);
+
+
+    return in;
+}

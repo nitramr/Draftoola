@@ -40,6 +40,7 @@ public:
 
 
     // Constructor
+    AbstractItemBase();
     AbstractItemBase(const QRectF rect, QGraphicsItem *parent = nullptr);
     AbstractItemBase(const AbstractItemBase &other);
 
@@ -47,13 +48,19 @@ public:
     // operator
     bool operator==( const AbstractItemBase & other ) const;
     inline bool operator!=(const AbstractItemBase &abstractItemBase) const;
+    friend QDataStream &operator<<(QDataStream &out, const AbstractItemBase &obj);
+    friend QDataStream &operator>>(QDataStream &in, AbstractItemBase &obj);
+
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const AbstractItemBase &obj);
+#endif
 
 
     // Properties
     void setID(int id);
     int ID() const;
 
-    void setName(QString name);
+    virtual void setName(QString name);
     QString name() const;
 
     virtual void setShape(QPainterPath itemShape);

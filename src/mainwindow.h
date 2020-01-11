@@ -53,7 +53,7 @@ private:
 
     void connectSlots();
 
-    void tmpSetup();
+    void tmpSetup(int offsetX, int offsetY);
 
 
 public slots:
