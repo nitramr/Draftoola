@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QToolButton>
-#include "src/item/exportlevel.h"
+
+#include <exportlevel.h>
 
 namespace Ui {
 class propertyExportLevel;

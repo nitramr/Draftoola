@@ -4,7 +4,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QSvgGenerator>
 #include <QPdfWriter>
-#include "src/designer/handleframe.h"
+
+#include <handleframe.h>
 
 /***************************************************
  *

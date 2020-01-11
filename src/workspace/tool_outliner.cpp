@@ -1,7 +1,8 @@
 #include "tool_outliner.h"
 #include "ui_tool_outliner.h"
-#include "src/item/artboard.h"
-#include "src/designer/canvasview.h"
+
+#include <artboard.h>
+#include <canvasview.h>
 
 #include <QDebug>
 

@@ -1,10 +1,10 @@
 #include "tool_itemproperties.h"
 #include "ui_tool_itemproperties.h"
 
-#include "src/widgets/layoutsection.h"
+#include <layoutsection.h>
 
-#include "src/item/itemoval.h"
-#include "src/item/itemrect.h"
+#include <itemoval.h>
+#include <itemrect.h>
 
 #include <QDebug>
 

@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QtMath>
 
-#include "canvasscene.h"
+#include <canvasscene.h>
 
 ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int handleSize, QColor color, Style style) :
     QGraphicsItem(parent),

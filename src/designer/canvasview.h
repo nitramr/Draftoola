@@ -6,10 +6,10 @@
 #include <QGraphicsScene>
 #include <QWheelEvent>
 
-#include "canvasscene.h"
-#include "handleframe.h"
-#include "ruler.h"
-#include "src/item/itemgroup.h"
+#include <canvasscene.h>
+#include <handleframe.h>
+#include <ruler.h>
+#include <itemgroup.h>
 
 class CanvasView : public QGraphicsView
 {
@@ -47,15 +47,18 @@ private:
     qreal scaleFactor() const;
 
     ItemGroup *createItemGroup(const QList<QGraphicsItem *> &items);
+    QList<AbstractItemBase*> m_copyCache;
 
 signals:
     void signalViewIsDragged(bool);
     void itemsChanged();
 
 public slots:
-    void groupSelection();
-    void ungroupSelection();
-    void deleteSelection();
+    void groupItems();
+    void ungroupItems();
+    void deleteItems();
+    void copyItems(bool asDuplicate);
+    void pasteItems();
 
 private slots:
     void resetItemCache();

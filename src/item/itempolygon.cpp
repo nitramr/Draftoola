@@ -1,4 +1,4 @@
-#include "itempolygon.h"
+#include <itempolygon.h>
 #include <QtGlobal>
 #include <QtMath>
 

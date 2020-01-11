@@ -1,4 +1,4 @@
-#include "itemoval.h"
+#include <itemoval.h>
 
 ItemOval::ItemOval(QGraphicsItem *parent) : ItemOval(0,0,80,80, parent){}
 ItemOval::ItemOval(qreal x, qreal y, qreal width, qreal height, QGraphicsItem *parent) : ItemOval(QRectF(x,y,width,height), parent){}

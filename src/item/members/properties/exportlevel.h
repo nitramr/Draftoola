@@ -3,10 +3,12 @@
 
 #include <QString>
 #include <QDebug>
+#include <QDataStream>
+
 
 class ExportLevel
 {
-//    Q_GADGET
+
 public:
 
     enum FileFormat{
@@ -15,22 +17,25 @@ public:
         SVG = 2,
         PDF = 3
     };
-//    Q_ENUM(FileFormat)
 
     enum PathType{
         prefix = 0,
         suffix = 1
     };
-//    Q_ENUM(PathType)
 
     ExportLevel();
     ExportLevel(int id, double level, FileFormat fileFormat = FileFormat::PNG, QString path = "", PathType pathType = PathType::suffix);
     ExportLevel(const ExportLevel &other);
-//    virtual ~ExportLevel(){}
+    //    virtual ~ExportLevel(){}
 
     bool operator==( const ExportLevel & other ) const;
     inline bool operator!=(const ExportLevel &exportLevel) const { return !(operator==(exportLevel)); }
- //   friend QDebug operator<<(QDebug dbg, const ExportLevel &exportLevel);
+    friend QDataStream &operator<<(QDataStream &out, const ExportLevel &obj);
+    friend QDataStream &operator>>(QDataStream &in, ExportLevel &obj);
+
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const ExportLevel &obj);
+#endif
 
     void setID(int id);
     int ID() const;
@@ -61,8 +66,5 @@ Q_DECLARE_METATYPE(ExportLevel)
 Q_DECLARE_METATYPE(ExportLevel::FileFormat)
 Q_DECLARE_METATYPE(ExportLevel::PathType)
 
-#ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const ExportLevel &exportLevel);
-#endif
 
 #endif // EXPORTLEVEL_H

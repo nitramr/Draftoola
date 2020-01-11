@@ -1,8 +1,8 @@
 #include <QDebug>
-#include "itemgroup.h"
-#include "itemoval.h"
-#include "itemrect.h"
-#include "itemtext.h"
+#include <itemgroup.h>
+#include <itemoval.h>
+#include <itemrect.h>
+#include <itemtext.h>
 
 ItemGroup::ItemGroup(QGraphicsItem *parent) : AbstractItemBase(QRectF(), parent){
 //    m_group = new QGraphicsItemGroup();

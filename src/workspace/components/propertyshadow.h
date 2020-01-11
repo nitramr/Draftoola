@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QPixmap>
-#include "src/item/shadow.h"
+
+#include <shadow.h>
 
 namespace Ui {
 class propertyShadow;

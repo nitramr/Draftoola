@@ -2,7 +2,8 @@
 #define ITEMGROUP_H
 
 #include <QGraphicsItemGroup>
-#include "abstractitembase.h"
+
+#include <abstractitembase.h>
 
 class ItemGroup : public AbstractItemBase
 {

@@ -6,7 +6,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
-#include "src/item/abstractitembase.h"
+#include <abstractitembase.h>
 
 namespace Ui {
 class Outliner;

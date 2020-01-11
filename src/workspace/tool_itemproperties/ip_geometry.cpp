@@ -1,7 +1,8 @@
 #include "ip_geometry.h"
 #include "ui_ip_geometry.h"
-#include "src/item/abstractitembase.h"
-#include "src/item/itempolygon.h"
+
+#include <abstractitembase.h>
+#include <itempolygon.h>
 
 ipGeometry::ipGeometry(QWidget *parent) :
     QWidget(parent),

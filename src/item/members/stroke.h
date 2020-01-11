@@ -8,13 +8,19 @@
 #include <QPainter>
 #include <QDebug>
 
-#include "itemstruct.h"
-#include "abstractitemproperty.h"
+#include <itemstruct.h>
+#include <abstractitemproperty.h>
 
 class Stroke : public QPen, public AbstractItemProperty
 {
  //   Q_GADGET
 public:
+
+    enum StrokePosition {
+        Center = 0,
+        Inner = 1,
+        Outer = 2
+    };
 
     Stroke();
     Stroke(const QString name, Qt::PenStyle style, const StrokePosition strokePosition = StrokePosition::Center);
@@ -27,20 +33,26 @@ public:
 
     bool operator==( const Stroke & other ) const;
     inline bool operator!=(const Stroke &stroke) const { return !(operator==(stroke)); }
+    friend QDataStream &operator<<(QDataStream &out, const Stroke &obj);
+    friend QDataStream &operator>>(QDataStream &in, Stroke &obj);
+
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const Stroke &obj);
+#endif
 
 	// Properties
 	void setStrokePosition(StrokePosition position);
 	StrokePosition strokePosition() const;
 
 
+
 private:
 	StrokePosition m_strokePosition;
 
+    void fromObject(AbstractItemProperty object, QPen pen);
+
 };
 Q_DECLARE_METATYPE(Stroke)
-
-#ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const Stroke &stroke);
-#endif
+Q_DECLARE_METATYPE(Stroke::StrokePosition)
 
 #endif // STROKE_H

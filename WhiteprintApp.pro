@@ -15,6 +15,8 @@ TARGET = WhiteprintApp
 TEMPLATE = app
 
 SOURCES += src/main.cpp\
+    src/item/members/properties/abstractproperty.cpp \
+    src/item/members/properties/color.cpp \
     src/item/itempolygon.cpp \
     src/mainwindow.cpp \
     src/designer/canvasscene.cpp \
@@ -23,17 +25,17 @@ SOURCES += src/main.cpp\
     src/designer/ruler.cpp \
     src/item/abstractitembase.cpp \
     src/item/artboard.cpp \
-    src/item/exportlevel.cpp \
-    src/item/fills.cpp \
-    src/item/gradient.cpp \
+    src/item/members/properties/exportlevel.cpp \
+    src/item/members/fills.cpp \
+    src/item/members/properties/gradient.cpp \
     src/item/itembase.cpp \
-    src/item/itemeffects.cpp \
+    src/item/members/itemeffects.cpp \
     src/item/itemtext.cpp \
     src/item/itemrect.cpp \
     src/item/itemoval.cpp \
     src/item/itemgroup.cpp \
-    src/item/shadow.cpp \
-    src/item/stroke.cpp \
+    src/item/members/shadow.cpp \
+    src/item/members/stroke.cpp \
     src/item/path/pathhandler.cpp \
     src/item/path/roundedpolygon.cpp \
     src/manager/stylefactory.cpp \
@@ -54,7 +56,7 @@ SOURCES += src/main.cpp\
     src/workspace/tool_itemproperties/ip_exportlevel.cpp \
     src/workspace/tool_itemproperties/ip_shadows.cpp \
     src/workspace/tool_itemproperties/ip_strokes.cpp \
-    src/item/abstractitemproperty.cpp \
+    src/item/members/abstractitemproperty.cpp \
     src/workspace/tool_itemproperties/ip_innershadows.cpp
 
 HEADERS  +=     src/mainwindow.h \
@@ -63,20 +65,22 @@ HEADERS  +=     src/mainwindow.h \
     src/designer/handleframe.h \
     src/designer/ruler.h \
     src/item/abstractitembase.h \
+    src/item/members/properties/abstractproperty.h \
     src/item/artboard.h \
-    src/item/exportlevel.h \
-    src/item/fills.h \
-    src/item/gradient.h \
+    src/item/members/properties/color.h \
+    src/item/members/properties/exportlevel.h \
+    src/item/members/fills.h \
+    src/item/members/properties/gradient.h \
     src/item/itembase.h \
-    src/item/itemeffects.h \
+    src/item/members/itemeffects.h \
     src/item/itempolygon.h \
     src/item/itemtext.h \
     src/item/itemrect.h \
     src/item/itemoval.h \
     src/item/itemgroup.h \
     src/item/itemstruct.h \
-    src/item/shadow.h \
-    src/item/stroke.h \
+    src/item/members/shadow.h \
+    src/item/members/stroke.h \
     src/item/path/pathhandler.h \
     src/item/path/roundedpolygon.h \
     src/manager/stylefactory.h \
@@ -97,7 +101,7 @@ HEADERS  +=     src/mainwindow.h \
     src/workspace/tool_itemproperties/ip_exportlevel.h \
     src/workspace/tool_itemproperties/ip_shadows.h \
     src/workspace/tool_itemproperties/ip_strokes.h \
-    src/item/abstractitemproperty.h \
+    src/item/members/abstractitemproperty.h \
     src/workspace/tool_itemproperties/ip_innershadows.h
 
 FORMS    += src/mainwindow.ui \
@@ -115,3 +119,14 @@ FORMS    += src/mainwindow.ui \
 
 RESOURCES += \
     src/resources/icons/icons.qrc
+
+INCLUDEPATH += \
+    $$PWD/src/item \
+    $$PWD/src/item/members \
+    $$PWD/src/item/members/properties \
+    $$PWD/src/widgets \
+    $$PWD/src/manager \
+    $$PWD/src/designer \
+    $$PWD/src/workspace \
+    $$PWD/src/workspace/components \
+    $$PWD/src/workspace/tool_itemproperties

@@ -9,7 +9,8 @@
 #include <QRectF>
 #include <QString>
 #include <QList>
-#include "abstractitembase.h"
+
+#include <abstractitembase.h>
 
 class Artboard;
 

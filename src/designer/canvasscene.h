@@ -4,8 +4,8 @@
 #include <QGraphicsScene>
 #include <QKeyEvent>
 
-#include "src/item/itembase.h"
-#include "src/item/artboard.h"
+#include <itembase.h>
+#include <artboard.h>
 
 class CanvasScene : public QGraphicsScene
 {

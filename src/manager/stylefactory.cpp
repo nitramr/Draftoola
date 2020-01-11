@@ -1,4 +1,4 @@
-#include "stylefactory.h"
+#include <stylefactory.h>
 #include <QtWidgets>
 
 StyleFactory::StyleFactory(const QString name) : QProxyStyle(QStyleFactory::create(name))

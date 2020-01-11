@@ -1,4 +1,4 @@
-#include "itemtext.h"
+#include <itemtext.h>
 #include <QPainter>
 #include <QTextDocument>
 #include <QDebug>

@@ -1,9 +1,9 @@
-#include "itembase.h"
+#include <itembase.h>
 #include <QDebug>
 //#include <QGraphicsScene>
 //#include <QPainter>
 //#include <QtWidgets>
-#include "path/pathhandler.h"
+#include <path/pathhandler.h>
 //#include <QGraphicsEffect>
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
@@ -15,7 +15,7 @@ QT_END_NAMESPACE
 
 ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(rect, parent)
 {
-    m_strokePosition = StrokePosition::Inner;
+    m_strokePosition = Stroke::Inner;
     m_fillsList = QList<Fills>();
     m_strokeList = QList<Stroke>();
     m_shadowList = QList<Shadow>();
@@ -483,17 +483,32 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
         QMatrix m_matrix;
         m_matrix.scale(scaleFactor(), scaleFactor());
 
-        QBrush brush(fills.color(),fills.style());
-        brush.setMatrix(m_matrix.inverted());
-        painter->setBrush(brush);
+//        QBrush brush(fills.color(),fills.style());
+//        brush.setMatrix(m_matrix.inverted());
+//        painter->setBrush(brush);
+//        painter->drawPath(shape());
+        break;
+    }
+    case FillType::RadialGradient:{
+        QRadialGradient rg(fills.gradient().radial());
+        rg.setCenter(rect().center());
+        painter->setBrush(QBrush(rg));
         painter->drawPath(shape());
         break;
     }
-    case FillType::Gradient:{
+    case FillType::ConicalGradient:{
+        QConicalGradient cg(fills.gradient().conical());
+        cg.setCenter(rect().center());
+        painter->setBrush(QBrush(cg));
+        painter->drawPath(shape());
+        break;
+    }
+    case FillType::LinearGradient:{
 
-        QGradient gradient(fills.gradient());
+        Gradient gr = Gradient( "name", fills.gradient().radial(rect()) );
+        gr.setFocalPoint(QPointF(30,30));
 
-        painter->setBrush(QBrush(gradient));
+        painter->setBrush(QBrush( fills.gradient().linear( QLineF(QPointF(), QPointF(0,rect().bottom())) ) ));
         painter->drawPath(shape());
         break;
     }
@@ -510,20 +525,20 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
 
             // Respect the aspect ratio mode.
             switch (fills.fillMode()) {
-            case FillMode::Fill:
+            case Fills::Fill:
                 xratio = yratio = qMin(xratio, yratio);
                 xOffset = (texture.width() - shapeRect.width() * xratio) / 2;
                 yOffset = (texture.height() - shapeRect.height() * yratio) / 2;
 
                 break;
-            case FillMode::Fit:
+            case Fills::Fit:
                 xratio = yratio = qMax(xratio, yratio);
 
                 break;
-            case FillMode::Stretch:
+            case Fills::Stretch:
                 // nothing to do
                 break;
-            case FillMode::Tile:
+            case Fills::Tile:
                 painter->drawTiledPixmap(shapeRect.toRect(), texture);
                 painter->restore();
 
@@ -569,12 +584,12 @@ QRectF ItemBase::drawStrokes(Stroke stroke, QPainter *painter)
     QPainterPath pathStroke = shape();
 
     switch(stroke.strokePosition()){
-    case StrokePosition::Inner:
+    case Stroke::Inner:
         offset = 0;
         stroke.setWidthF(width * 2);
         painter->setClipPath(shape(), Qt::ClipOperation::IntersectClip);
         break;
-    case StrokePosition::Outer:{
+    case Stroke::Outer:{
         offset = width;
         stroke.setWidthF(width * 2);
         QPainterPath tmpMask;
@@ -582,7 +597,7 @@ QRectF ItemBase::drawStrokes(Stroke stroke, QPainter *painter)
         painter->setClipPath(tmpMask.subtracted(shape()), Qt::ClipOperation::IntersectClip);
         break;
     }
-    case StrokePosition::Center:
+    case Stroke::Center:
         break;
     }
 
@@ -622,14 +637,14 @@ QPainterPath ItemBase::strokeShape() const
         foreach(Stroke stroke, strokeList()) {
             qreal width = stroke.widthF();
             switch(stroke.strokePosition()){
-            case StrokePosition::Inner:
+            case Stroke::Inner:
                 pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke), shape(), PathHandler::Booleans::Intersect);
                 break;
-            case StrokePosition::Outer:{
+            case Stroke::Outer:{
                 pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke), shape(), PathHandler::Booleans::Subtract);
                 break;
             }
-            case StrokePosition::Center:
+            case Stroke::Center:
                 pathMask = scaleStroke(shape(), width, stroke);
                 break;
             }

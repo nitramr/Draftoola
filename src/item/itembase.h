@@ -9,12 +9,12 @@
 #include <QImage>
 //#include <QPixmapCache>
 
-#include "itemstruct.h"
-#include "stroke.h"
-#include "fills.h"
-#include "gradient.h"
-#include "shadow.h"
-#include "abstractitembase.h"
+#include <itemstruct.h>
+#include <stroke.h>
+#include <fills.h>
+#include <gradient.h>
+#include <shadow.h>
+#include <abstractitembase.h>
 
 //#include <QGraphicsDropShadowEffect>
 
@@ -77,7 +77,7 @@ public:
 
 private:
 	// Properties
-	StrokePosition m_strokePosition;
+    Stroke::StrokePosition m_strokePosition;
     bool m_renderQuality;
     QPainterPath m_shadowMapStroke;
     QPainterPath m_shadowMapFill;

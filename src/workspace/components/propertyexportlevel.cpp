@@ -4,7 +4,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QMap>
-#include "src/item/itemstruct.h"
+#include <itemstruct.h>
 
 PropertyExportLevel::PropertyExportLevel(QWidget *parent) : PropertyExportLevel(ExportLevel(), parent) {}
 

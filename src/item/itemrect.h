@@ -5,8 +5,7 @@
 #include <QGraphicsRectItem>
 #include <QDebug>
 
-
-#include "itembase.h"
+#include <itembase.h>
 
 class ItemRect : public ItemBase
 {

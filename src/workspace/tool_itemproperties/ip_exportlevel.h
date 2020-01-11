@@ -3,14 +3,14 @@
 
 #include <QWidget>
 #include <QList>
-#include "src/item/abstractitembase.h"
-#include "src/item/artboard.h"
-#include "src/item/itembase.h"
-#include "src/item/itemrect.h"
-#include "src/item/itemoval.h"
-#include "src/item/itemtext.h"
-#include "src/item/fills.h"
-#include "../components/propertyexportlevel.h"
+#include <abstractitembase.h>
+#include <artboard.h>
+#include <itembase.h>
+#include <itemrect.h>
+#include <itemoval.h>
+#include <itemtext.h>
+#include <fills.h>
+#include <propertyexportlevel.h>
 
 namespace Ui {
 class ipExportLevel;

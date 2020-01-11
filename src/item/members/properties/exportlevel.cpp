@@ -7,7 +7,7 @@
  *
  ***************************************************/
 
-ExportLevel::ExportLevel() : ExportLevel(-1.0, 1){}
+ExportLevel::ExportLevel() : ExportLevel(-1, 1.0){}
 
 /*!
  * \brief Exportlevel for item rendering.
@@ -24,8 +24,6 @@ ExportLevel::ExportLevel(int id, double level, ExportLevel::FileFormat fileForma
     setPath(path);
     setRenderLevel(level);
     setFileFormat(fileFormat);
-
-//    qDebug() << this->staticMetaObject.className();
 }
 
 ExportLevel::ExportLevel(const ExportLevel &other)
@@ -37,16 +35,13 @@ ExportLevel::ExportLevel(const ExportLevel &other)
     m_pathType = other.m_pathType;
 }
 
-bool ExportLevel::operator==(const ExportLevel &other) const
-{
-    if(this == &other) return true;
 
-    return m_id == other.m_id &&
-            m_renderLevel == other.m_renderLevel &&
-            m_fileFormat == other.m_fileFormat &&
-            m_path == other.m_path &&
-            m_pathType == other.m_pathType;
-}
+
+/***************************************************
+ *
+ * Properties
+ *
+ ***************************************************/
 
 void ExportLevel::setID(int id)
 {
@@ -58,27 +53,6 @@ int ExportLevel::ID() const
     return m_id;
 }
 
-QDebug operator<<(QDebug dbg, const ExportLevel &exportLevel)
-{
-    int fType = QVariant::fromValue(exportLevel.fileFormat()).value<int>();
-    int pType = QVariant::fromValue(exportLevel.pathType()).value<int>();
-
-
-    dbg << "ExportLevel("  <<
-           "ID:" << exportLevel.ID() <<
-           ", RenderLevel:" << exportLevel.renderLevel() <<
-           ", FileFormat:" << fType <<
-           ", PathType:" << pType <<
-           ", Path:" << exportLevel.path() <<
-           ")";
-    return dbg.maybeSpace();
-}
-
-/***************************************************
- *
- * Properties
- *
- ***************************************************/
 
 void ExportLevel::setRenderLevel(double level)
 {
@@ -124,3 +98,61 @@ ExportLevel::PathType ExportLevel::pathType() const
     return m_pathType;
 }
 
+/***************************************************
+ *
+ * Operator
+ *
+ ***************************************************/
+
+bool ExportLevel::operator==(const ExportLevel &other) const
+{
+    if(this == &other) return true;
+
+    return m_id == other.m_id &&
+            m_renderLevel == other.m_renderLevel &&
+            m_fileFormat == other.m_fileFormat &&
+            m_path == other.m_path &&
+            m_pathType == other.m_pathType;
+}
+
+QDebug operator<<(QDebug dbg, const ExportLevel &obj)
+{
+    dbg << "ExportLevel("
+        << obj.ID()
+        << obj.renderLevel()
+        << (int)obj.fileFormat()
+        << (int)obj.pathType()
+        << obj.path()
+        << ")";
+    return dbg.maybeSpace();
+}
+
+QDataStream &operator<<(QDataStream &out, const ExportLevel &obj)
+{
+    out << obj.ID()
+        << obj.renderLevel()
+        << (int)obj.fileFormat()
+        << (int)obj.pathType()
+        << obj.path();
+
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, ExportLevel &obj)
+{
+    int id;
+    double renderLevel;
+    int fileFormat;
+    int pathType;
+    QString path;
+
+    in >> id >> renderLevel >> fileFormat >> pathType >> path;
+
+    obj.m_id = id;
+    obj.m_renderLevel = renderLevel;
+    obj.m_fileFormat = ExportLevel::FileFormat(fileFormat);
+    obj.m_pathType = ExportLevel::PathType(pathType);
+    obj.m_path = path;
+
+    return in;
+}

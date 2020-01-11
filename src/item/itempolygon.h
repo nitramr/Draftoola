@@ -1,7 +1,7 @@
 #ifndef ITEMSTAR_H
 #define ITEMSTAR_H
 
-#include "src/item/itembase.h"
+#include <itembase.h>
 
 class ItemPolygon : public ItemBase
 {

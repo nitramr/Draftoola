@@ -3,8 +3,9 @@
 
 #include <QWidget>
 #include <QPixmap>
-#include "src/widgets/buttongroup.h"
-#include "src/item/stroke.h"
+
+#include <buttongroup.h>
+#include <stroke.h>
 
 namespace Ui {
 class propertyStroke;

@@ -7,8 +7,8 @@
 #include <QMap>
 #include <QList>
 
-#include "itemstruct.h"
-#include "exportlevel.h"
+#include <itemstruct.h>
+#include <exportlevel.h>
 
 class AbstractItemBase : public QGraphicsObject
 {

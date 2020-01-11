@@ -21,12 +21,12 @@
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsItemGroup>
 
-#include "src/item/itembase.h"
-#include "src/item/itemrect.h"
-#include "src/item/itemoval.h"
-#include "src/item/itemtext.h"
-#include "src/item/itemgroup.h"
-#include "src/item/artboard.h"
+#include <itembase.h>
+#include <itemrect.h>
+#include <itemoval.h>
+#include <itemtext.h>
+#include <itemgroup.h>
+#include <artboard.h>
 
 
 class CanvasScene;

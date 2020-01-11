@@ -3,7 +3,8 @@
 
 #include <QPainter>
 #include <QDebug>
-#include "src/item/itemstruct.h"
+#include <itemstruct.h>
+
 
 PropertyFill::PropertyFill(QWidget *parent) : PropertyFill(Fills(), parent){}
 
@@ -18,23 +19,22 @@ ui(new Ui::propertyFill)
 
     // https://doc.qt.io/qt-5/qpainter.html#CompositionMode-enum
     ui->combo_blending->addItem(tr("Normal"), QVariant(QPainter::CompositionMode_SourceOver)); //0
-
+    ui->combo_blending->insertSeparator(ui->combo_blending->count());
     ui->combo_blending->addItem(tr("Darken"), QVariant(QPainter::CompositionMode_Darken)); //16
     ui->combo_blending->addItem(tr("Multiply"), QVariant(QPainter::CompositionMode_Multiply)); //13
     ui->combo_blending->addItem(tr("Color Burn"), QVariant(QPainter::CompositionMode_ColorBurn)); //19
-
+    ui->combo_blending->insertSeparator(ui->combo_blending->count());
     ui->combo_blending->addItem(tr("Lighten"), QVariant(QPainter::CompositionMode_Lighten)); //17
     ui->combo_blending->addItem(tr("Screen"), QVariant(QPainter::CompositionMode_Screen)); //14
     ui->combo_blending->addItem(tr("Color Dodge"), QVariant(QPainter::CompositionMode_ColorDodge)); //18
-
+    ui->combo_blending->insertSeparator(ui->combo_blending->count());
     ui->combo_blending->addItem(tr("Overlay"), QVariant(QPainter::CompositionMode_Overlay)); //15
     ui->combo_blending->addItem(tr("Soft Light"), QVariant(QPainter::CompositionMode_SoftLight)); //21
     ui->combo_blending->addItem(tr("Hard Light"), QVariant(QPainter::CompositionMode_HardLight)); //20
     ui->combo_blending->addItem(tr("Difference"), QVariant(QPainter::CompositionMode_Difference)); //22
     ui->combo_blending->addItem(tr("Exclusion"), QVariant(QPainter::CompositionMode_Exclusion)); //23
-
+    ui->combo_blending->insertSeparator(ui->combo_blending->count());
     ui->combo_blending->addItem(tr("Plus"), QVariant(QPainter::CompositionMode_Plus)); //12
-
 
     setFill(fill);
 }
@@ -85,7 +85,14 @@ void PropertyFill::drawFill(Fills fill)
         painter.fillRect(pixmap.rect(), QBrush(fill.color()));
         break;
     }
-    case FillType::Gradient:
+    case FillType::RadialGradient:
+        painter.fillRect(pixmap.rect(), QBrush(fill.gradient().radial(pixmap.rect())));
+        break;
+    case FillType::ConicalGradient:
+        painter.fillRect(pixmap.rect(), QBrush(fill.gradient().conical(pixmap.rect())));
+        break;
+    case FillType::LinearGradient:
+        painter.fillRect(pixmap.rect(), QBrush(fill.gradient().linear()));
         break;
     case FillType::Image:
         painter.drawPixmap(pixmap.rect(), fill.pixmap(), fill.pixmap().rect());

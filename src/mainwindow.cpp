@@ -2,18 +2,19 @@
 #include "ui_mainwindow.h"
 
 
-#include "item/itembase.h"
-#include "item/itemrect.h"
-#include "item/itemoval.h"
-#include "item/itemtext.h"
-#include "item/itempolygon.h"
-#include "item/itemgroup.h"
-#include "item/itemstruct.h"
-#include "item/stroke.h"
-#include "item/shadow.h"
-#include "item/exportlevel.h"
-#include "designer/handleframe.h"
-#include "manager/stylefactory.h"
+#include <itembase.h>
+#include <itemrect.h>
+#include <itemoval.h>
+#include <itemtext.h>
+#include <itempolygon.h>
+#include <itemgroup.h>
+#include <itemstruct.h>
+#include <stroke.h>
+#include <shadow.h>
+#include <exportlevel.h>
+#include <color.h>
+#include <handleframe.h>
+#include <stylefactory.h>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -146,21 +147,24 @@ void MainWindow::connectSlots()
 void MainWindow::tmpSetup()
 {
     // Gradients
-    QLinearGradient gradient(0,0,50,50);
-    gradient.setColorAt(0, Qt::white);
-    gradient.setColorAt(1, Qt::darkBlue);
+    QLinearGradient lGradient(0,0,50,50);
+    lGradient.setColorAt(0, Qt::white);
+    lGradient.setColorAt(1, Qt::darkBlue);
+
+    Gradient gradient("Gradient", lGradient);
 
     // Strokes
-    Stroke strokeR("TestEllipseStroke", QBrush(QColor(128,208,23, 128)),3, StrokePosition::Inner);
-    Stroke stroke("TestEllipseStroke", QBrush(gradient),4, StrokePosition::Outer);
+    Stroke strokeR("TestEllipseStroke", QBrush(QColor(128,208,23, 128)),3, Stroke::Inner);
+    Stroke stroke("TestEllipseStroke", QBrush(lGradient),4, Stroke::Outer);
     stroke.setCapStyle(Qt::PenCapStyle::RoundCap);
     stroke.setStyle(Qt::PenStyle::DotLine);
-    Stroke stroke3("TestEllipseStroke", QBrush(QColor(128,208,23)),2, StrokePosition::Center);
+    Stroke stroke3("TestEllipseStroke", QBrush(QColor(128,208,23)),2, Stroke::Center);
 
     // Shadows
     Shadow shadow = Shadow("Shadow", QColor(0,0,0,100), 0, QPointF(0,0),0);
     Shadow shadow2 = Shadow("Shadow2", QColor(255,0,0), 10, QPointF(0,0), 2);
     Shadow shadow3 = Shadow("Shadow3", QColor(0,0,0,255), 1, QPointF(0,0),0);
+
 
     // Fills - Image
     QImage fillImage("sun.jpg");
@@ -169,11 +173,31 @@ void MainWindow::tmpSetup()
     fill.setBlendMode(QPainter::CompositionMode_SourceOver);
 //    fill.setFillMode(FillMode::Stretch);
 
-    Fills fill2("oval", QColor(255,0,0,128));
+    Fills fill2("oval", Color(255,0,0,128));
 //    fill2.setStyle(Qt::Dense7Pattern);
 //    fill2.setFillType(FillType::Pattern);
 
-    Fills fill3("black", QColor());
+    Color c_black;
+    Fills fill3("black", c_black);
+
+    Fills fill4("Gradient", gradient);
+
+    qDebug() << c_black;
+    QByteArray ar;
+    QDataStream stream(&ar, QIODevice::ReadWrite);
+    stream << c_black;
+    stream.device()->seek(0);
+
+    // https://forum.qt.io/topic/78161/custom-class-serialize-with-qdatastream/2
+//    QVariant TempVariant;
+//    stream >> TempVariant;
+
+    Color strGradient;
+//    strTest = TempVariant.value<Shadow>(); // optional if QVariant is used
+
+    stream >> strGradient; // optional if QVariant is not used
+    qDebug() << strGradient;
+
 
     //Export Levels
     ExportLevel expLevel(0, 1);
@@ -238,18 +262,18 @@ void MainWindow::tmpSetup()
     // Object Ovals
     ItemOval *oval2 = new ItemOval();
     oval2->setName("Oval2");
-    oval2->addFills(fill2);
+    oval2->addFills(fill4);
     m_canvas->addItem(oval2, 50,120, artboard2);
 
     ItemPolygon *star = new ItemPolygon(80,80, 5, true);
     star->setInnerRadius(0.5);
-    star->addFills(Fills("color", QColor(255,200,0)));
+    star->addFills(Fills("color", Color("yellow",255,200,0)));
     star->addShadow(Shadow("shadow", Qt::black, 10, QPointF(0,0)));
     m_canvas->addItem(star, 80,300, artboard);
 
     ItemPolygon *pentagon = new ItemPolygon(80,80, 5);
     pentagon->setInnerRadius(1);
-    pentagon->addFills(Fills("color", QColor(255,200,0)));
+    pentagon->addFills(Fills("color", Color("yellow",255,200,0)));
     pentagon->addShadow(Shadow("shadow", Qt::black, 10, QPointF(0,0)));
     m_canvas->addItem(pentagon, 200,300, artboard);
 
@@ -293,7 +317,7 @@ void MainWindow::addNewItem()
     // Object Rects
     ItemRect *rect = new ItemRect(100,100);
     rect->setName("Rect");
-    rect->addStroke(Stroke("tmpStroke", Qt::darkGray));
-    rect->addFills(Fills("tmpFills", Qt::lightGray));
+    rect->addStroke(Stroke("tmpStroke", Color(Qt::darkGray)));
+    rect->addFills(Fills("tmpFills", Color(Qt::lightGray)));
     m_canvas->addItem(rect, 0,0);
 }

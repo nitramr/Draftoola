@@ -2,14 +2,14 @@
 #define ITEMPROPERTIES_H
 
 #include <QWidget>
-#include "src/item/abstractitembase.h"
 
-#include "tool_itemproperties/ip_geometry.h"
-#include "tool_itemproperties/ip_fills.h"
-#include "tool_itemproperties/ip_strokes.h"
-#include "tool_itemproperties/ip_shadows.h"
-#include "tool_itemproperties/ip_innershadows.h"
-#include "tool_itemproperties/ip_exportlevel.h"
+#include <abstractitembase.h>
+#include <ip_geometry.h>
+#include <ip_fills.h>
+#include <ip_strokes.h>
+#include <ip_shadows.h>
+#include <ip_innershadows.h>
+#include <ip_exportlevel.h>
 
 #include <QScrollArea>
 

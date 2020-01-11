@@ -25,17 +25,6 @@ AbstractItemProperty::AbstractItemProperty(const AbstractItemProperty &other)
     m_isOn = other.m_isOn;
 }
 
-bool AbstractItemProperty::operator==(const AbstractItemProperty &other) const
-{
-    if(this == &other) return true;
-
-    return m_id == other.m_id &&
-            m_name == other.m_name &&
-            m_blendMode == other.m_blendMode &&
-            m_isOn == other.m_isOn;
-}
-
-
 /***************************************************
  *
  * Properties
@@ -47,7 +36,7 @@ QString AbstractItemProperty::ID() const
     return m_id;
 }
 
-void AbstractItemProperty::setName(QString name)
+void AbstractItemProperty::setName(const QString name)
 {
     m_name = name;
 }
@@ -76,3 +65,64 @@ bool AbstractItemProperty::isOn() const
 {
     return m_isOn;
 }
+
+
+
+/***************************************************
+ *
+ * Operator
+ *
+ ***************************************************/
+
+bool AbstractItemProperty::operator==(const AbstractItemProperty &other) const
+{
+    if(this == &other) return true;
+
+    return m_id == other.m_id &&
+            m_name == other.m_name &&
+            m_blendMode == other.m_blendMode &&
+            m_isOn == other.m_isOn;
+}
+
+void AbstractItemProperty::setID(const QString id)
+{
+    m_id = id;
+}
+
+QDebug operator<<(QDebug dbg, const AbstractItemProperty &obj)
+{
+    dbg << obj.ID() <<
+           obj.name() <<
+           obj.blendMode() <<
+           obj.isOn();
+    return dbg.maybeSpace();
+}
+
+
+QDataStream &operator<<(QDataStream &out, const AbstractItemProperty &obj)
+{
+    out << obj.ID()
+       << obj.name()
+       << (int)obj.blendMode()
+       << obj.isOn();
+
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, AbstractItemProperty &obj)
+{
+    QString m_id;
+    QString m_name;
+    int m_blendMode;
+    bool m_isOn;
+
+    in >> m_id >> m_name >> m_blendMode >> m_isOn;
+
+    obj.m_isOn = m_isOn;
+    obj.m_name = m_name;
+    obj.m_blendMode = QPainter::CompositionMode(m_blendMode);
+    obj.m_id = m_id;
+
+    return in;
+}
+

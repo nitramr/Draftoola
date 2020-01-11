@@ -1,11 +1,11 @@
-
 #include <QLayout>
 #include <QPainter>
 #include <QWidgetAction>
 #include <QMenu>
 #include <QDebug>
+
 #include "layoutsection.h"
-#include "popupmenu.h"
+#include <popupmenu.h>
 
 
 LayoutSectionHeader::LayoutSectionHeader( QString text, QWidget *menu, bool toggle, QWidget *parent ) : QWidget( parent ){

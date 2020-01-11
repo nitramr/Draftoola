@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QPixmap>
-#include "src/item/fills.h"
+
+#include <fills.h>
 
 namespace Ui {
 class propertyFill;

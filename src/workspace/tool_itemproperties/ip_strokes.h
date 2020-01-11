@@ -3,13 +3,13 @@
 
 #include <QWidget>
 #include <QList>
-#include "src/item/abstractitembase.h"
-#include "src/item/itembase.h"
-#include "src/item/itemrect.h"
-#include "src/item/itemoval.h"
-#include "src/item/itemtext.h"
-#include "src/item/stroke.h"
-#include "../components/propertystroke.h"
+#include <abstractitembase.h>
+#include <itembase.h>
+#include <itemrect.h>
+#include <itemoval.h>
+#include <itemtext.h>
+#include <stroke.h>
+#include <propertystroke.h>
 
 namespace Ui {
 class ipStrokes;

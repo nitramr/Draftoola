@@ -3,7 +3,7 @@
 
 #include <QPainter>
 #include <QDebug>
-#include "src/item/itemstruct.h"
+#include <itemstruct.h>
 
 PropertyStroke::PropertyStroke(QWidget *parent) : PropertyStroke(Stroke("tmpFill", QColor(0,0,0) ), parent){}
 
@@ -51,13 +51,13 @@ void PropertyStroke::setStroke(Stroke stroke)
     ui->sb_width->setValue(stroke.widthF());
 
     switch(stroke.strokePosition()){
-    case StrokePosition::Center:
+    case Stroke::Center:
             btn_center->setChecked(true);
         break;
-    case StrokePosition::Outer:
+    case Stroke::Outer:
             btn_outer->setChecked(true);
         break;
-    case StrokePosition::Inner:
+    case Stroke::Inner:
             btn_inner->setChecked(true);
         break;
 
@@ -111,10 +111,10 @@ void PropertyStroke::updateStroke()
     m_stroke.setWidthF(ui->sb_width->value());
 
     if(btn_outer->isChecked()){
-        m_stroke.setStrokePosition(StrokePosition::Outer);
+        m_stroke.setStrokePosition(Stroke::Outer);
     }else if(btn_inner->isChecked()){
-        m_stroke.setStrokePosition(StrokePosition::Inner);
-    }else m_stroke.setStrokePosition(StrokePosition::Center);
+        m_stroke.setStrokePosition(Stroke::Inner);
+    }else m_stroke.setStrokePosition(Stroke::Center);
 
 
     emit hasChanged(true);

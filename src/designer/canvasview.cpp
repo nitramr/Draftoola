@@ -9,13 +9,22 @@
 #include <QTimer>
 #include <QTransform>
 #include <QScrollBar>
+#include <QMimeData>
+#include <QApplication>
+#include <QClipboard>
 
-#include "src/item/itemstruct.h"
-#include "src/item/itembase.h"
-#include "src/item/itemgroup.h"
+#include <itemstruct.h>
+#include <artboard.h>
+#include <itembase.h>
+#include <itemgroup.h>
+#include <itempolygon.h>
+#include <itemoval.h>
+#include <itemrect.h>
+#include <itemtext.h>
+#include <canvasscene.h>
+#include <handleframe.h>
 
-#include "canvasscene.h"
-#include "handleframe.h"
+static const QString mimeType("application/canvasItem");
 
 CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 {
@@ -246,28 +255,28 @@ QList<Artboard *> CanvasView::artboardList()
 /*!
  * \brief [SLOT] Create QGraphicsItemGroup out of selected items.
  */
-void CanvasView::groupSelection()
+void CanvasView::groupItems()
 {
-//    QGraphicsItemGroup *grpItem = new QGraphicsItemGroup();
+    //    QGraphicsItemGroup *grpItem = new QGraphicsItemGroup();
 
-//    foreach(QGraphicsItem *item, m_scene->selectedItems()){
-//        grpItem->addToGroup(item);
-//    }
+    //    foreach(QGraphicsItem *item, m_scene->selectedItems()){
+    //        grpItem->addToGroup(item);
+    //    }
 
     // Group all selected items together
     ItemGroup *group = createItemGroup(m_scene->selectedItems());
-//    group->setFlag(QGraphicsItem::ItemIsSelectable, true);
-//    group->setFlag(QGraphicsItem::ItemIsMovable, true);
+    //    group->setFlag(QGraphicsItem::ItemIsSelectable, true);
+    //    group->setFlag(QGraphicsItem::ItemIsMovable, true);
 
     // Destroy the group, and delete the group item
-   // scene->destroyItemGroup(group);
+    // scene->destroyItemGroup(group);
 }
 
 
 /*!
  * \brief [SLOT] Destroy selected QGraphicsItemGroup into single items.
  */
-void CanvasView::ungroupSelection()
+void CanvasView::ungroupItems()
 {
 
 }
@@ -276,7 +285,7 @@ void CanvasView::ungroupSelection()
 /*!
  * \brief [SLOT] Delete selected items from canvas.
  */
-void CanvasView::deleteSelection()
+void CanvasView::deleteItems()
 {
     foreach(QGraphicsItem *graphicItem, m_scene->selectedItems() ){
         AbstractItemBase * abItem = dynamic_cast<AbstractItemBase*>(graphicItem);
@@ -289,6 +298,115 @@ void CanvasView::deleteSelection()
     m_scene->clearSelection();
 
     emit itemsChanged();
+}
+
+void CanvasView::pasteItems()
+{
+    //    if(m_copyCache.isEmpty()) return;
+
+    //    // find artboard under mouse
+    //    // if artboard contain in cache add it to scene
+    //    foreach(AbstractItemBase *abItem, m_copyCache ){
+    //        addItem(abItem);
+    //    }
+
+
+
+    QClipboard* clipboard = QApplication::clipboard();
+    const QMimeData* mimeData = clipboard->mimeData();
+
+    QStringList formats = mimeData->formats();
+    foreach (QString format, formats)
+    {
+        if (format == mimeType)
+        {
+            QByteArray itemData = mimeData->data(mimeType);
+            QDataStream inData(&itemData, QIODevice::ReadOnly);
+            int itemsSize;
+            inData >> itemsSize;
+            for (int i = 0; i < itemsSize; ++i)
+            {
+                //                    AbstractItemBase* item = ...
+                //                    item->loadItem(inData);
+            }
+        }
+    }
+
+}
+
+
+void CanvasView::copyItems(bool asDuplicate)
+{
+    m_copyCache.clear();
+
+    // TODO: add all children to cache too
+    // Reference: https://stackoverflow.com/questions/32980629/how-to-implement-clipboard-actions-for-custom-mime-types
+
+    //    foreach(QGraphicsItem *graphicItem, m_scene->selectedItems() ){
+    //        AbstractItemBase * abItem = dynamic_cast<AbstractItemBase*>(graphicItem);
+    //        if(abItem){
+    //            switch(abItem->type()){
+    //            case AbstractItemBase::Artboard:
+    //                m_copyCache.append(new Artboard(*dynamic_cast<Artboard*>(abItem)) );
+    //                break;
+    //            case AbstractItemBase::Oval:{
+    //                ItemOval *oval = new ItemOval(*dynamic_cast<ItemOval*>(abItem));
+    //                if(!asDuplicate){
+    //                    //oval->setParentItem(nullptr);
+    //                    m_scene->removeItem(oval);
+    //                }
+    //                m_copyCache.append(oval );
+    //                break;
+    //            }
+    //            case AbstractItemBase::Path:
+    //                break;
+    //            case AbstractItemBase::Rect:
+    //                m_copyCache.append(new ItemRect(*dynamic_cast<ItemRect*>(abItem)) );
+    //                break;
+    //            case AbstractItemBase::Polygon:
+    //                m_copyCache.append(new ItemPolygon(*dynamic_cast<ItemPolygon*>(abItem)) );
+    //                break;
+    //            case AbstractItemBase::Instance:
+    //                break;
+    //            case AbstractItemBase::Line:
+    //                break;
+    //            case AbstractItemBase::Text:
+    //                m_copyCache.append(new ItemText(*dynamic_cast<ItemText*>(abItem)) );
+    //                break;
+    //            case AbstractItemBase::Group:
+    //                break;
+    //            default:
+    //                break;
+    //            }
+    //        }
+    //    }
+
+    //    qDebug() << m_copyCache.size();
+
+
+    QByteArray itemData;
+    QDataStream outData(&itemData, QIODevice::WriteOnly);
+    outData << m_scene->selectedItems().size();
+    foreach(QGraphicsItem* qItem, m_scene->selectedItems())
+    {
+        AbstractItemBase* item = dynamic_cast<AbstractItemBase*>(qItem);
+        //item->saveItem(outData);
+        outData << item;
+    }
+
+    QMimeData* mimeData = new QMimeData;
+    mimeData->setData(mimeType, itemData);
+    mimeData->setText("Canvas Item");
+
+    QClipboard* clipboard = QApplication::clipboard();
+    clipboard->clear();
+    clipboard->setMimeData(mimeData);
+
+    qDebug() << clipboard->mimeData();
+
+    // if duplicate paste directly
+    if(asDuplicate) pasteItems();
+
 }
 
 
@@ -493,8 +611,17 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
     if (event->modifiers() & Qt::CTRL) {
         switch(event->key())
         {
+        case Qt::Key_C :
+            copyItems(false);
+            break;
+        case Qt::Key_D :
+            copyItems(true);
+            break;
         case Qt::Key_G :
-            groupSelection();
+            groupItems();
+            break;
+        case Qt::Key_V:
+            pasteItems();
             break;
         }
 
@@ -511,7 +638,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
         m_handleFrame->setKeepAspectRatio(false);
         break;
     case Qt::Key_Delete:
-        deleteSelection();
+        deleteItems();
         break;
 
         // Tmp functions

@@ -6,7 +6,7 @@
 #include <QTextCursor>
 #include <QGraphicsSceneMouseEvent>
 
-#include "itembase.h"
+#include <itembase.h>
 
 
 class ItemText: public ItemBase

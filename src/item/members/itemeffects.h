@@ -2,8 +2,8 @@
 #define ITEMEFFECTS_H
 
 #include <QGraphicsEffect>
-#include "shadow.h"
-#include "fills.h"
+#include <shadow.h>
+#include <fills.h>
 
 class ItemEffects : public QGraphicsEffect
 {
