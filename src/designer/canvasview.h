@@ -1,5 +1,5 @@
-#ifndef WAVIEW_H
-#define WAVIEW_H
+#ifndef CANVASVIEW_H
+#define CANVASVIEW_H
 
 #include <QWidget>
 #include <QGraphicsView>
@@ -16,9 +16,12 @@ class CanvasView : public QGraphicsView
     Q_OBJECT
 public:
     CanvasView(QWidget * parent = nullptr);
-	HandleFrame *handleFrame() const;
+    HandleFrame *handleFrame() const;
 
     void addItem(AbstractItemBase *item, qreal x = 0, qreal y = 0, AbstractItemBase *parent = nullptr);
+
+    AbstractItemBase::RenderQuality renderQuality() const;
+    void setRenderQuality(AbstractItemBase::RenderQuality renderQuality);
 
     AbstractItemBase *itemByName(const QString name);
     QList<Artboard *> artboardList();
@@ -26,22 +29,24 @@ public:
 
 
 protected:
-	void wheelEvent(QWheelEvent *event);
-	void keyPressEvent(QKeyEvent *event);
-	void keyReleaseEvent(QKeyEvent * event);
-	void mouseMoveEvent(QMouseEvent *event);
-	void mousePressEvent(QMouseEvent *event);
-	void mouseReleaseEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent * event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 private:
     CanvasScene	*m_scene;
-	HandleFrame *m_handleFrame;
+    HandleFrame *m_handleFrame;
     int          m_handleBuffer;
     qreal        m_grid;
     QTimer      *timer;
 
-    QDRuler                 *m_HRuler;
-    QDRuler                 *m_VRuler;
+    QDRuler     *m_HRuler;
+    QDRuler     *m_VRuler;
+
+    AbstractItemBase::RenderQuality m_renderQuality;
 
     void applyScaleFactor();
     qreal scaleFactor() const;
@@ -52,6 +57,7 @@ private:
 signals:
     void signalViewIsDragged(bool);
     void itemsChanged();
+    void zoomChanged(qreal);
 
 public slots:
     void groupItems();
@@ -68,4 +74,4 @@ private slots:
 
 };
 
-#endif // WAVIEW_H
+#endif // CANVASVIEW_H

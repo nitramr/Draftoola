@@ -6,14 +6,21 @@
 AbstractItemBase::AbstractItemBase() : AbstractItemBase(QRect()){}
 AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : QGraphicsObject(parent)
 {
-    //    m_itemType = ItemType::Rect;
     m_name = "";
-    m_id = -1;
-    m_scaleFactor = 1;
-    m_renderQuality = false;
+    m_lod = 1;
     m_boundingRect = rect;
     m_exportFactorList = QList<ExportLevel>();
     m_frameType = FrameType::Free;
+    m_invaliateCache = true;
+    m_doRender = false;
+
+    setRenderQuality(RenderQuality::Optimal);
+
+    QRandomGenerator *random = QRandomGenerator::global();
+    quint32 value32 = random->generate();
+    QString hexvalue = QString("0x%1").arg(value32, 8, 16, QLatin1Char( '0' ));
+
+    m_id = hexvalue; //static_cast<int>(value32);
 
     QPainterPath path;
     path.addRect(rect);
@@ -30,13 +37,12 @@ AbstractItemBase::AbstractItemBase(const AbstractItemBase &other) : QGraphicsObj
     m_rect = other.m_rect;
     m_name = other.m_name;
     m_frameType = other.m_frameType;
-    m_scaleFactor = other.m_scaleFactor;
+    m_lod = other.m_lod;
     m_renderQuality = other.m_renderQuality;
     m_boundingRect = other.m_boundingRect;
     m_exportFactorList = other.m_exportFactorList;
     m_shape = other.m_shape;
     m_invaliateCache = other.m_invaliateCache;
-    m_doRender = other.m_doRender;
     m_exportFactorList = other.m_exportFactorList;
 
     this->setFlags(other.flags());
@@ -54,12 +60,12 @@ AbstractItemBase::AbstractItemBase(const AbstractItemBase &other) : QGraphicsObj
  *
  ***************************************************/
 
-void AbstractItemBase::setID(int id)
+void AbstractItemBase::setID(QString id)
 {
     m_id = id;
 }
 
-int AbstractItemBase::ID() const
+QString AbstractItemBase::ID() const
 {
     return m_id;
 }
@@ -84,22 +90,13 @@ bool AbstractItemBase::invalidateCache() const
     return m_invaliateCache;
 }
 
-void AbstractItemBase::setScaleFactor(qreal scaleFactor)
-{
-    m_scaleFactor = scaleFactor;
-}
-
-qreal AbstractItemBase::scaleFactor() const
-{
-    return m_scaleFactor;
-}
-
 
 void AbstractItemBase::setShape(QPainterPath itemShape)
 {
     m_shape = itemShape;
     m_rect = m_shape.boundingRect().normalized();
     setInvalidateCache(true);
+    qDebug() << "Invalidate::setShape()";
     setTransformOriginPoint(m_rect.center());
 
     //    emit this->widthChanged();
@@ -148,13 +145,23 @@ AbstractItemBase::FrameType AbstractItemBase::frameType()
 }
 
 
-void AbstractItemBase::setHighRenderQuality(bool isHighResolution)
+void AbstractItemBase::setRenderQuality(RenderQuality qualityLevel)
 {
-    m_renderQuality = isHighResolution;
+    m_renderQuality = qualityLevel;
+
+    switch(m_renderQuality){
+    case RenderQuality::Performance:
+        QGraphicsItem::setCacheMode(QGraphicsItem::ItemCoordinateCache);
+        break;
+    case RenderQuality::Optimal:
+    case RenderQuality::Quality:
+        QGraphicsItem::setCacheMode(QGraphicsItem::NoCache);
+        break;
+    }
 
 }
 
-bool AbstractItemBase::highRenderQuality() const
+AbstractItemBase::RenderQuality AbstractItemBase::renderQuality() const
 {
     return m_renderQuality;
 }
@@ -266,7 +273,7 @@ QList<AbstractItemBase *> AbstractItemBase::childItems() const
  * @param painter
  * @param scale
  */
-void AbstractItemBase::render(QPainter *painter, qreal scale)
+void AbstractItemBase::render(QPainter *painter)
 {
 
     painter->save();
@@ -275,11 +282,17 @@ void AbstractItemBase::render(QPainter *painter, qreal scale)
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    setHighRenderQuality(true);
+    this->setInvalidateCache(true);
 
+
+    RenderQuality renderState = renderQuality();
     m_doRender = true;
+    setRenderQuality(RenderQuality::Quality);
     paint(painter, new QStyleOptionGraphicsItem());
     m_doRender = false;
+    setRenderQuality(renderState);
+
+
 
     QList<AbstractItemBase*> list = this->childItems();
 
@@ -287,12 +300,10 @@ void AbstractItemBase::render(QPainter *painter, qreal scale)
 
         if(abItem){
             painter->translate(abItem->pos());
-            abItem->render(painter, scale );
+            abItem->render(painter);
             painter->translate(-abItem->pos());
         }
     }
-
-    setHighRenderQuality(false);
 
     painter->restore();
 }
@@ -359,7 +370,7 @@ QDataStream &operator<<(QDataStream &out, const AbstractItemBase &obj)
 
 QDataStream &operator>>(QDataStream &in, AbstractItemBase &obj)
 {
-    int id;
+    QString id;
     QRectF rect;
     int frameType;
     QString name;

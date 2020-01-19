@@ -59,6 +59,7 @@ private:
 public slots:
     void setActiveItems(QList<AbstractItemBase *> items);
     void addNewItem();
+    void zoomHasChanged(qreal zoomFactor);
 
 };
 

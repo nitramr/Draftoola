@@ -16,6 +16,7 @@ class AbstractItemBase : public QGraphicsObject
     friend class ItemBase;
     friend class Artboard;
     friend class ItemPolygon;
+    friend class ItemText;
 
 public:
 
@@ -38,6 +39,12 @@ public:
         FixedSize = 3
     };
 
+    enum RenderQuality {
+        Optimal = 0,
+        Performance = 1,
+        Quality = 2
+    };
+
 
     // Constructor
     AbstractItemBase();
@@ -57,8 +64,8 @@ public:
 
 
     // Properties
-    void setID(int id);
-    int ID() const;
+    void setID(QString id);
+    QString ID() const;
 
     virtual void setName(QString name);
     QString name() const;
@@ -74,12 +81,10 @@ public:
     void setFrameType(FrameType frameType );
     FrameType frameType();
 
-    bool highRenderQuality() const;
+    RenderQuality renderQuality() const;
 
     void setInvalidateCache(bool invalidate);
     bool invalidateCache() const;
-
-    qreal scaleFactor() const;
 
     QPointF anchorTopLeft() const;
     QPointF anchorTop() const;
@@ -108,26 +113,26 @@ public:
 
 
     // Events
-    virtual void render(QPainter *painter, qreal scale = 1);
+    virtual void render(QPainter *painter);
 
-public slots:
-    void setScaleFactor(qreal scaleFactor);
-    void setHighRenderQuality(bool isHighResolution);
+//public slots:
+    void setRenderQuality(RenderQuality qualityLevel);
 
 
 private:
 
     // Properties
-    int m_id;
+    QString m_id;
     QRectF m_rect;
     QRectF m_boundingRect;
     FrameType m_frameType;
     QString m_name;
     bool m_invaliateCache;
-    qreal m_scaleFactor;
-    bool m_renderQuality;
-    bool m_doRender;
+    qreal m_lod;
+    RenderQuality m_renderQuality;
     QPainterPath m_shape;
+    bool m_doRender;
+//    QPixmap m_cache;
 
 
     // Members

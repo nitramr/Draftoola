@@ -7,7 +7,7 @@
 #include <QMap>
 #include <QList>
 #include <QImage>
-//#include <QPixmapCache>
+#include <QPixmapCache>
 
 #include <itemstruct.h>
 #include <stroke.h>
@@ -78,7 +78,7 @@ public:
 private:
 	// Properties
     Stroke::StrokePosition m_strokePosition;
-    bool m_renderQuality;
+//    bool m_renderQuality;
     QPainterPath m_shadowMapStroke;
     QPainterPath m_shadowMapFill;
     QRectF m_renderRect;
@@ -93,7 +93,7 @@ private:
     QList<Shadow>			m_innerShadowList;
 
 
-    qreal lod() const;
+    qreal lod();
 
     void setShadowMapStroke(const QPainterPath &shape);
     QPainterPath shadowMapStroke() const;

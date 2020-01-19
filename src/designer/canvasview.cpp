@@ -12,6 +12,7 @@
 #include <QMimeData>
 #include <QApplication>
 #include <QClipboard>
+#include <QtMath>
 
 #include <itemstruct.h>
 #include <artboard.h>
@@ -35,8 +36,8 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     //    this->setCacheMode(QGraphicsView::CacheBackground);
     this->setOptimizationFlag(DontAdjustForAntialiasing, true); // https://doc.qt.io/qt-5/qgraphicsview.html#OptimizationFlag-enum
     this->setOptimizationFlag(DontSavePainterState, true); // restoring painter will handle in item paint event
-//    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // http://doc.qt.io/gt-5/qgraphicsview.html#ViewportUpdateMode-enum
-    this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    //    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // http://doc.qt.io/gt-5/qgraphicsview.html#ViewportUpdateMode-enum
+    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     this->setBackgroundBrush(QColor(240,240,240));
     //    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
@@ -49,6 +50,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
 
     m_grid = 1;
+    m_renderQuality = AbstractItemBase::Optimal;
     QColor color(0, 128, 255);
 
     m_handleFrame = new HandleFrame(m_scene, m_grid);
@@ -103,11 +105,15 @@ HandleFrame *CanvasView::handleFrame() const
 
 void CanvasView::resetItemCache()
 {
-    foreach(QGraphicsItem *item, m_scene->items()){
+    QRectF _viewFrame = this->mapToScene( this->viewport()->geometry() ).boundingRect();
+
+    foreach(QGraphicsItem *item, m_scene->items(_viewFrame)){
+
         ItemBase * b_item = dynamic_cast<ItemBase*>(item);
         if(b_item){
-            b_item->setCacheMode(QGraphicsItem::NoCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
-            // b_item->setInvalidateCache(true);
+            b_item->setRenderQuality(m_renderQuality);
+            //b_item->setCacheMode(QGraphicsItem::NoCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
+            //b_item->setInvalidateCache(true); // needed for shadow map refresh
         }
     }
 
@@ -222,6 +228,19 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
 
     }
 }
+
+
+AbstractItemBase::RenderQuality CanvasView::renderQuality() const
+{
+    return m_renderQuality;
+}
+
+
+void CanvasView::setRenderQuality(AbstractItemBase::RenderQuality renderQuality)
+{
+    m_renderQuality = renderQuality;
+}
+
 
 AbstractItemBase *CanvasView::itemByName(const QString name)
 {
@@ -419,6 +438,8 @@ void CanvasView::applyScaleFactor()
     m_scene->setScaleFactor(scaleFactor);
     m_VRuler->setScaleFactor(scaleFactor);
     m_HRuler->setScaleFactor(scaleFactor);
+
+    emit zoomChanged(scaleFactor);
 }
 
 
@@ -480,8 +501,11 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 {
     if (event->modifiers() & Qt::ControlModifier) {
 
-        timer->stop();
         qreal scaleX = this->scaleFactor();
+
+        bool isZoomed = (scaleX > 1.0) ? true : false;
+
+        if(isZoomed) timer->stop();
 
         const ViewportAnchor anchor = transformationAnchor();
         this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
@@ -493,19 +517,23 @@ void CanvasView::wheelEvent(QWheelEvent *event)
             factor = 1.0;
         }
         else if (angle < 0) {
-            if(scaleX >= 40) return; // limit zoom level to 4000%
+            if(scaleX >= 50) return; // limit zoom level to 5000%
             factor += .2;
         }else {
             if(scaleX <= 0.1) return; // limit zoom level to 10%
             factor -= .2;
         }
 
+
         // Performance optimization by zooming
-        foreach(QGraphicsItem *item, m_scene->items()){
-            ItemBase * b_item = dynamic_cast<ItemBase*>(item);
-            if(b_item){
-                // keep the rendered item in cache while zooming. No redraw = better performance.
-                b_item->setCacheMode(QGraphicsItem::ItemCoordinateCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
+        if(isZoomed) {
+            QRectF _viewFrame = this->mapToScene( this->viewport()->geometry() ).boundingRect();
+            foreach(QGraphicsItem *item, m_scene->items(_viewFrame)){
+                ItemBase * b_item = dynamic_cast<ItemBase*>(item);
+                if(b_item){
+                    // keep the rendered item in cache while zooming. No redraw = better performance.
+                    if(b_item->cacheMode() != QGraphicsItem::ItemCoordinateCache) b_item->setCacheMode(QGraphicsItem::ItemCoordinateCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
+                }
             }
         }
 
@@ -514,7 +542,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 
         applyScaleFactor();
 
-        timer->start(150);
+        if(isZoomed) timer->start(200);
 
     } else {
         QGraphicsView::wheelEvent(event);
@@ -541,7 +569,6 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 
             this->scale(2, 2);
             applyScaleFactor();
-            qDebug() << this->matrix().m11() * 100 << "%";
 
             break;
         }
@@ -678,6 +705,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 {
     QGraphicsView::mouseMoveEvent(event);
 
+    // Ruler
     m_HRuler->setCursorPos(event->screenPos().toPoint()/* -QPoint(RULER_BREADTH, RULER_BREADTH)*/);
     m_VRuler->setCursorPos(event->screenPos().toPoint()/* -QPoint(RULER_BREADTH, RULER_BREADTH)*/);
 

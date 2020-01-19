@@ -82,7 +82,7 @@ void ItemGroup::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     }
 }
 
-void ItemGroup::render(QPainter *painter, qreal scale)
+void ItemGroup::render(QPainter *painter)
 {
 
 }

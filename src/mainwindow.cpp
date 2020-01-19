@@ -149,7 +149,9 @@ void MainWindow::connectSlots()
 {
     connect(m_canvas->handleFrame(), &HandleFrame::sendActiveItems, this, &MainWindow::setActiveItems);
     connect(m_canvas, &CanvasView::itemsChanged, m_outliner, &Outliner::updateList);
+    connect(m_canvas, &CanvasView::zoomChanged, this, &MainWindow::zoomHasChanged);
     connect(m_properties, &ItemProperties::itemsChanged, m_canvas->handleFrame(), &HandleFrame::frameToSelection);
+
 
     // signal to signal connection
     connect(m_properties, &ItemProperties::exportItem, [this](AbstractItemBase *item){
@@ -334,4 +336,9 @@ void MainWindow::addNewItem()
     rect->addStroke(Stroke("tmpStroke", Color(Qt::darkGray)));
     rect->addFills(Fills("tmpFills", Color(Qt::lightGray)));
     m_canvas->addItem(rect, 0,0);
+}
+
+void MainWindow::zoomHasChanged(qreal zoomFactor)
+{
+    ui->statusBar->showMessage(QString::number(zoomFactor * 100) + "%");
 }

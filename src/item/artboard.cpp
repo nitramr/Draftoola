@@ -45,7 +45,6 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
     m_buffer = 4;
     m_backgroundColor = Qt::white;
     m_useBGColor = true;
-    m_doRender = false;
 
     m_artboard = new QGraphicsRectItem(rect);
     m_artboard->setFlags(
@@ -60,6 +59,8 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
 
     m_label = new ArtboardLabel(name, this);
 
+    setRenderQuality(RenderQuality::Quality);
+
 
     this->setFlag( QGraphicsItem::ItemIsSelectable, false );
     //    this->setFlag( QGraphicsItem::ItemSendsScenePositionChanges, true );
@@ -67,7 +68,6 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
 
     this->setAcceptHoverEvents(true);
     this->setName(name);
-    //this->setItemType(ItemType::Artboard);
 
 }
 
@@ -174,12 +174,17 @@ void Artboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     if(m_useBGColor) painter->fillRect(renderRect(), QBrush(m_backgroundColor));
 
-    m_scaleFactor = option->levelOfDetailFromTransform( painter->transform());
+    m_lod = option->levelOfDetailFromTransform( painter->transform());
 
     if(!m_doRender){
-        qreal offset = m_offset/m_scaleFactor;
+        qreal offset = m_offset/m_lod;
         m_boundingRect = rect().adjusted( -m_buffer, -offset - m_buffer, m_buffer, m_buffer);
-        m_label->setPos(this->rect().x(), this->rect().y() -offset);
+
+        if(m_lod > 0.15){
+            m_label->setPos(this->rect().x(), this->rect().y() -offset);
+            m_label->show();
+        }else m_label->hide();
+
 
         QPen pen = QPen(QColor(200,200,200));
         pen.setCosmetic(true);

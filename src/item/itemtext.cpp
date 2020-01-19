@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QTextFrame>
 #include <QStyleOptionGraphicsItem>
+#include <QTextDocument>
 
 
 
@@ -17,16 +18,14 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
     m_lineHeight = f.pixelSize() * 1.2;
 
     m_text = new QGraphicsTextItem(text);
+    m_text->document()->setUseDesignMetrics(true);
+
     setFont(f);
     setTextColor(QColor(0,0,0));
     setAlignment(Qt::AlignLeft);
     setText(text);
     setRect(m_text->boundingRect());
     setName(tr("Text"));
-
-
-
-    //this->setItemType(ItemType::Text);
 
     //	setTextInteractionFlags(Qt::NoTextInteraction);
 
@@ -240,9 +239,14 @@ void ItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     QStyleOptionGraphicsItem *opt = new QStyleOptionGraphicsItem();
 
     painter->save();
-    painter->setClipRect(this->rect());
 
-    m_text->paint(painter, opt, widget);
+    if(m_lod < 0.6 && !m_doRender){
+
+    //painter->fontMetrics().xHeight();
+
+       // m_text->document()->set
+
+    }else m_text->document()->drawContents(painter, rect());
 
     painter->restore();
 

@@ -77,6 +77,7 @@ void CanvasScene::setScaleFactor(qreal factor)
     m_scaleFactor = factor;
 }
 
+
 /***************************************************
  *
  * Slots
@@ -152,11 +153,7 @@ void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QStrin
     QPainter painter(&image);
     painter.scale(multiplier,multiplier);
     painter.translate(bi->renderRect().topLeft().x() * -1, bi->renderRect().topLeft().y() * -1);
-
-    bi->setHighRenderQuality(true);
     bi->render(&painter);
-    bi->setHighRenderQuality(false);
-
     painter.end();
 
     image.save(outputPath, nullptr, 100);
@@ -183,9 +180,11 @@ void CanvasScene::saveSVG(AbstractItemBase *bi, const QString outputPath)
 
     QPainter painter(&generator);
 
-    bi->setHighRenderQuality(true);
+    AbstractItemBase::RenderQuality renderQuality = bi->renderQuality();
+
+    bi->setRenderQuality(AbstractItemBase::Quality);
     bi->render(&painter);
-    bi->setHighRenderQuality(false);
+    bi->setRenderQuality(renderQuality);
 
     painter.end();
 
@@ -212,9 +211,11 @@ void CanvasScene::savePDF(AbstractItemBase *bi, const QString outputPath)
     QPainter painter(&pdfWriter);
     painter.translate(bi->renderRect().topLeft().x() * -1, bi->renderRect().topLeft().y() * -1);
 
-    bi->setHighRenderQuality(true);
+    AbstractItemBase::RenderQuality renderQuality = bi->renderQuality();
+
+    bi->setRenderQuality(AbstractItemBase::Quality);
     bi->render(&painter);
-    bi->setHighRenderQuality(false);
+    bi->setRenderQuality(renderQuality);
 
     painter.end();
 
@@ -293,38 +294,40 @@ void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mouseMoveEvent(event);
 
-    m_hoverPath = QPainterPath();
-    update(); // not sure if that is a performance killer
 
-    QPoint mousePos = event->scenePos().toPoint();
+//    m_hoverPath = QPainterPath();
+//    // refresh only foreground layer
+// //   invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
 
-    QList<QGraphicsItem*> list = this->items(mousePos,Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform() );
-    if(list.isEmpty()) return;
+//    QPoint mousePos = event->scenePos().toPoint();
 
-    QGraphicsItem * cgItem = list.first();
+//    QList<QGraphicsItem*> list = this->items(mousePos,Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform() );
 
-    if(cgItem->type() == HandleFrame::Type::Handle && list.count() >1){
-        cgItem = list[1];
-    }
+//    if(list.isEmpty()) return;
 
-    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( cgItem );
+//    QGraphicsItem * cgItem = list.first();
 
-    // get hover path from item under mouse and respect item shape
-    if(item ){
+//    if(cgItem->type() == HandleFrame::Type::Handle && list.count() >1){
+//        cgItem = list[1];
+//    }
 
-        if(item->shape().contains(item->mapFromScene(mousePos)) ){
-            QPainterPath shape = m_hoverPath;
-            m_hoverPath = item->shape();
-            m_hoverPoint = item->scenePos();
-            m_hoverTransform = item->transform();
-            m_hoverRotation = item->rotation();
+//    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( cgItem );
 
-            if(m_hoverPath != shape){
-                update();
-            }
-        }
-    }
+//    // get hover path from item under mouse and respect item shape
+//    if(item ){
 
+//        if(item->shape().contains(item->mapFromScene(mousePos)) ){
+//            QPainterPath shape = m_hoverPath;
+//            m_hoverPath = item->shape();
+//            m_hoverPoint = item->scenePos();
+//            m_hoverTransform = item->transform();
+//            m_hoverRotation = item->rotation();
+
+//            if(m_hoverPath != shape){
+//                invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+//            }
+//        }
+//    }
 
 }
 

@@ -20,8 +20,7 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     m_strokeList = QList<Stroke>();
     m_shadowList = QList<Shadow>();
     m_innerShadowList = QList<Shadow>();
-    m_invaliateCache = false;
- //   m_cache = QPixmapCache();
+    //    m_cache = QPixmapCache();
     //    m_cache.setCacheLimit(51200); // 50MB
 
     this->setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -51,17 +50,17 @@ bool ItemBase::operator==(const ItemBase &other) const
     if(this == &other) return true;
 
     return m_id == other.m_id &&
-    m_name == other.m_name &&
-    m_strokePosition == other.m_strokePosition &&
-    m_renderQuality == other.m_renderQuality &&
-    m_shadowMapStroke == other.m_shadowMapStroke &&
-    m_shadowMapFill == other.m_shadowMapFill &&
-    m_renderRect == other.m_renderRect &&
-    m_fillsList == other.m_fillsList &&
-    m_strokeList == other.m_strokeList &&
-    m_shadowList == other.m_shadowList &&
-    m_innerShadowList == other.m_innerShadowList &&
-    AbstractItemBase::operator==(other);
+            m_name == other.m_name &&
+            m_strokePosition == other.m_strokePosition &&
+            m_renderQuality == other.m_renderQuality &&
+            m_shadowMapStroke == other.m_shadowMapStroke &&
+            m_shadowMapFill == other.m_shadowMapFill &&
+            m_renderRect == other.m_renderRect &&
+            m_fillsList == other.m_fillsList &&
+            m_strokeList == other.m_strokeList &&
+            m_shadowList == other.m_shadowList &&
+            m_innerShadowList == other.m_innerShadowList &&
+            AbstractItemBase::operator==(other);
 }
 
 /***************************************************
@@ -74,6 +73,7 @@ void ItemBase::addStroke(Stroke stroke)
 {
     m_strokeList.append(stroke);
     setInvalidateCache(true);
+    qDebug() << "Invalidate::addStroke()";
 }
 
 Stroke ItemBase::stroke(int id) const
@@ -89,6 +89,7 @@ void ItemBase::updateStroke(Stroke stroke)
         if(m_property.ID() == stroke.ID()){
             m_strokeList.replace(i,stroke);
             setInvalidateCache(true);
+            qDebug() << "Invalidate::updateStroke()";
             update();
             return;
         }
@@ -115,6 +116,7 @@ void ItemBase::addFills(Fills fills)
 {
     m_fillsList.append(fills);
     setInvalidateCache(true);
+    qDebug() << "Invalidate::addFills()";
 }
 
 Fills ItemBase::fills(int id) const
@@ -130,6 +132,7 @@ void ItemBase::updateFills(Fills fills)
         if(m_property.ID() == fills.ID()){
             m_fillsList.replace(i,fills);
             setInvalidateCache(true);
+            qDebug() << "Invalidate::updateFills()";
             update();
             return;
         }
@@ -157,6 +160,7 @@ void ItemBase::addShadow(Shadow shadow)
 {
     m_shadowList.append(shadow);
     setInvalidateCache(true);
+    qDebug() << "Invalidate::addShadow()";
 }
 
 Shadow ItemBase::shadow(int id) const
@@ -172,6 +176,7 @@ void ItemBase::updateShadow(Shadow shadow)
         if(m_property.ID() == shadow.ID()){
             m_shadowList.replace(i,shadow);
             setInvalidateCache(true);
+            qDebug() << "Invalidate::updateShadow()";
             update();
             return;
         }
@@ -199,6 +204,7 @@ void ItemBase::addInnerShadow(Shadow shadow)
 {
     m_innerShadowList.append(shadow);
     setInvalidateCache(true);
+    qDebug() << "Invalidate::addInnerShadow()";
 }
 
 Shadow ItemBase::innerShadow(int id) const
@@ -214,6 +220,7 @@ void ItemBase::updateInnerShadow(Shadow shadow)
         if(m_property.ID() == shadow.ID()){
             m_innerShadowList.replace(i,shadow);
             setInvalidateCache(true);
+            qDebug() << "Invalidate::updateInnerShadow()";
             update();
             return;
         }
@@ -242,24 +249,31 @@ bool ItemBase::hasInnerShadows() const
  * @brief Returns level of details value. If highRenderQuality() = true it returns best level but results in slow rendering.
  * @return
  */
-qreal ItemBase::lod() const
+qreal ItemBase::lod()
 {    
-    qreal m_lod = scaleFactor();
+    // m_lod = best render result but slow
+    // 1 = worst render result but fast
+    // returns amount of pixels within 1 pixel
+//    return (highRenderQuality()) ? m_lod : qMin(2.0, m_lod);
 
-    if(highRenderQuality()) return m_lod;
+    switch(renderQuality()){
+    case RenderQuality::Optimal:
+        return qMin(2.0, m_lod);
+        break;
+    case RenderQuality::Performance:
+        return 1.0;
+        break;
+    case RenderQuality::Quality:
+        return m_lod;
+        break;
+    }
 
-    if(m_lod > 2){
-        // scaleFactor = best render result but slow
-        // 1 = worst render result but fast
-        // returns amount of pixels within 1 pixel
-        return 2;
-    }else return m_lod;
 }
 
 
 QRectF ItemBase::renderRect() const
 {
-    return m_renderRect;
+    return m_boundingRect;
 }
 
 void ItemBase::clipsChildrenToShape(bool doClip)
@@ -324,7 +338,6 @@ QPainterPath ItemBase::scaleStroke(const QPainterPath &path, qreal amount, QPen 
 void ItemBase::addItem(AbstractItemBase *item)
 {
     item->setParentItem(this);
-//    m_children.append(item);
 }
 
 QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
@@ -337,11 +350,9 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, highRenderQuality());
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, (renderQuality() == RenderQuality::Quality) ? true : false);
     painter->setCompositionMode(shadow.blendMode());
 
-
-    qreal m_lod = lod();
 
     // plain values
     qreal buffer = 0; // additional space around the bounding box
@@ -372,10 +383,12 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
         painter->setClipPath(clip, Qt::ClipOperation::IntersectClip);
     }
 
+    qreal _lod = lod();
+
     if(m_radiusShadow > 0){
 
-        qreal m_width = (mask.boundingRect().width() + buffer * 2 + m_radiusShadow * 2) * m_lod;
-        qreal m_height = (mask.boundingRect().height() + buffer * 2 + m_radiusShadow * 2) * m_lod;
+        qreal m_width = (mask.boundingRect().width() + buffer * 2 + m_radiusShadow * 2) * _lod;
+        qreal m_height = (mask.boundingRect().height() + buffer * 2 + m_radiusShadow * 2) * _lod;
 
         mask.translate(mask.boundingRect().left() * -1 + buffer + m_radiusShadow,
                        mask.boundingRect().top() * -1 +buffer + m_radiusShadow);
@@ -384,7 +397,7 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
         QImage tmp = blurShadow(mask,
                                 QSize(qRound(m_width), qRound(m_height)),
                                 m_radiusShadow,
-                                m_lod,
+                                _lod,
                                 QPainter::CompositionMode_SourceIn,
                                 m_color);
 
@@ -413,11 +426,10 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, highRenderQuality());
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, (renderQuality() == RenderQuality::Quality) ? true : false);
     painter->setCompositionMode(shadow.blendMode());
     painter->setClipPath(shape(), Qt::ClipOperation::IntersectClip);
 
-    qreal m_lod = lod();
 
     QRectF target(shape().boundingRect());
 
@@ -430,17 +442,18 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
     QPainterPath mask = pHandler.scale(shape(), -m_radiusShadow / 2 - m_spread);
     mask.translate(shadow.offset().x(), shadow.offset().y());
 
+    qreal _lod = lod();
 
     if(m_radiusShadow > 0){
 
-        qreal m_width = shape().boundingRect().width() * m_lod;
-        qreal m_height = shape().boundingRect().height() * m_lod;
+        qreal m_width = shape().boundingRect().width() * _lod;
+        qreal m_height = shape().boundingRect().height() * _lod;
 
         // Blur shadow
         QImage tmp = blurShadow(mask,
                                 QSize(static_cast<int>(m_width), static_cast<int>(m_height)),
                                 m_radiusShadow,
-                                m_lod,
+                                _lod,
                                 QPainter::CompositionMode_SourceOut,
                                 m_color);
 
@@ -465,7 +478,7 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, highRenderQuality());
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, (renderQuality() == RenderQuality::Quality) ? true : false);
 
     QRectF shapeRect = shape().boundingRect();
 
@@ -480,13 +493,13 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
     }
     case FillType::Pattern:{
 
-        QMatrix m_matrix;
-        m_matrix.scale(scaleFactor(), scaleFactor());
+        //        QMatrix m_matrix;
+        //        m_matrix.scale(scaleFactor(), scaleFactor());
 
-//        QBrush brush(fills.color(),fills.style());
-//        brush.setMatrix(m_matrix.inverted());
-//        painter->setBrush(brush);
-//        painter->drawPath(shape());
+        //        QBrush brush(fills.color(),fills.style());
+        //        brush.setMatrix(m_matrix.inverted());
+        //        painter->setBrush(brush);
+        //        painter->drawPath(shape());
         break;
     }
     case FillType::RadialGradient:{
@@ -723,31 +736,47 @@ QRectF ItemBase::ShadowBound(QPainterPath shape) const
 void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {    
     Q_UNUSED(widget);
-    Q_UNUSED(option);
 
-    if (rect().width() <= 0 || rect().height() <= 0)
-        return;
+    if (rect().width() <= 0 || rect().height() <= 0) return;
 
-    m_scaleFactor = option->levelOfDetailFromTransform( painter->transform());
+    m_lod = option->levelOfDetailFromTransform( painter->transform());
 
-    bool m_hasShadows = hasShadows();
-    bool m_hasStrokes = hasStrokes();
-    bool m_hasFills = hasFills();
-    bool m_hasInnerShadows = hasInnerShadows();
+    qDebug() << m_lod << lod();
 
-    m_renderRect = rect();
+    bool _hasShadows;
+    bool _hasStrokes = hasStrokes();
+    bool _hasFills = hasFills();
+    bool _hasInnerShadows;
+
+    switch(renderQuality()){
+    case RenderQuality::Optimal:
+    case RenderQuality::Performance:
+        _hasShadows = (m_lod < 0.6) ?  false : hasShadows();
+        _hasInnerShadows = (m_lod < 0.6) ? false : hasInnerShadows();
+        break;
+
+    case RenderQuality::Quality:
+        _hasShadows = hasShadows();
+        _hasInnerShadows = hasInnerShadows();
+        break;
+    }
+
+    m_boundingRect = rect();
+
 
     // Drop Shadow
-    if(m_hasShadows){
+    if(_hasShadows){
 
         // create new stroke and fill path only if cache have been invalidated
         if(invalidateCache()){
 
-            if(m_hasFills){
+//            QPixmapCache::remove(ID());
+
+            if(_hasFills){
                 setShadowMapFill(shape());
             }else setShadowMapFill(QPainterPath());
 
-            if(m_hasStrokes){
+            if(_hasStrokes){
                 setShadowMapStroke(strokeShape());
             }else setShadowMapStroke(QPainterPath());
 
@@ -755,76 +784,38 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         }
 
         // Calculate shadow bounding rect
-        m_renderRect = renderRect().united(ShadowBound(shadowMapStroke()));
+//        m_renderRect = renderRect().united(ShadowBound(shape()));
+        m_boundingRect = renderRect().united(ShadowBound(shadowMapStroke()));
 
-        // Draw Drop Shadows
-        foreach(Shadow shadow, shadowList()) {
-            m_renderRect = renderRect().united(drawShadow(shadow, painter));
-        }
+//        QPixmap m_cache;
+
+//        // https://doc.qt.io/archives/qq/qq12-qpixmapcache.html
+//        if (!QPixmapCache::find(ID(), m_cache)) {
+
+//            m_cache = QPixmap(static_cast<int>(renderRect().width() * m_lod), static_cast<int>(renderRect().height() * m_lod));
+//            m_cache.fill(Qt::transparent);
+
+//            QPainter c_painter(&m_cache);
+//            c_painter.scale(m_lod, m_lod);
+//            c_painter.translate(QPointF(renderRect().topLeft().x() * -1,renderRect().topLeft().y() * -1));
+
+            // Draw Drop Shadows
+            foreach(Shadow shadow, shadowList()) {
+ //               m_renderRect = renderRect().united(drawShadow(shadow, &c_painter));
+                m_boundingRect = renderRect().united(drawShadow(shadow, painter));
+            }
+
+//            qDebug() << "Draw new Pixmap";
+//            QPixmapCache::insert(ID(), m_cache);
+//            //setInvalidateCache(false);
+//        }
+
+//        painter->drawPixmap(renderRect(), m_cache, QRectF(m_cache.rect()));
+
     }
 
-    //    QPixmap pm;
-    //    if(invalidateCache() == false){
-    //        if (m_cache.find(m_cacheKey, &pm)) {
-    //            painter->save();
-    //            painter->setRenderHint(QPainter::Antialiasing, true);
-    //            painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-
-    //            if(shadowMapFill().isEmpty() == false){
-    //                QPainterPath clip;
-    //                clip.addRect(boundingRect());
-    //                clip = PathHandler::combine(clip, shape(), PathHandler::Booleans::Subtract);
-    //                painter->setClipPath(clip, Qt::ClipOperation::IntersectClip);
-    //            }
-
-
-    //            painter->drawPixmap(boundingRect(), pm, QRectF(pm.rect()));
-    //            painter->restore();
-    //            qDebug() << "Draw from Cache";
-
-    //        }
-    //    }else {
-
-
-    //        if(pm.isNull() && shadowList().count() != 0){
-
-    //            qreal tmpLOD = lod();
-
-    //            pm = QPixmap(static_cast<int>(boundingRect().width() * tmpLOD), static_cast<int>(boundingRect().height() * tmpLOD));
-    //            pm.fill(Qt::transparent);
-
-    //            QPainter cachePainter(&pm);
-    //            cachePainter.scale(tmpLOD, tmpLOD);
-    //            cachePainter.translate(QPointF(boundingRect().topLeft().x() * -1,boundingRect().topLeft().y() * -1));
-
-    //            // Draw Shadows
-    //            foreach(Shadow shadow, shadowList()) {
-    //                setBoundingRect(boundingRect().united(drawShadow(shadow, &cachePainter)));
-    //            }
-
-    //            m_cacheKey = m_cache.insert(pm);
-    //            painter->save();
-    //            painter->setRenderHint(QPainter::Antialiasing, true);
-    //            painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-
-    //            if(shadowMapFill().isEmpty() == false){
-    //                QPainterPath clip;
-    //                clip.addRect(boundingRect());
-    //                clip = PathHandler::combine(clip, shape(), PathHandler::Booleans::Subtract);
-    //                painter->setClipPath(clip, Qt::ClipOperation::IntersectClip);
-    //            }
-
-    //            painter->drawPixmap(boundingRect(), pm, QRectF(pm.rect()));
-    //            painter->restore();
-    //            setInvalidateCache(false);
-
-    //            qDebug() << "Draw new Pixmap";
-    //        }
-    //    }
-
-
     // Draw Fills
-    if(m_hasFills){
+    if(_hasFills){
         foreach(Fills fills,this->fillsList()) {
             drawFills(fills, painter);
         }
@@ -832,7 +823,7 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 
     // Draw InnerShadows
-    if(m_hasInnerShadows){
+    if(_hasInnerShadows){
         foreach(Shadow shadow, innerShadowList()) {
             drawInnerShadow(shadow, painter);
         }
@@ -840,12 +831,11 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 
     // Draw Strokes
-    if(m_hasStrokes){
+    if(_hasStrokes){
         foreach(Stroke stroke, strokeList()) {
-            m_renderRect = renderRect().united(drawStrokes(stroke, painter));
+            m_boundingRect = renderRect().united(drawStrokes(stroke, painter));
         }
     }
-
 
 }
 
@@ -854,9 +844,9 @@ void ItemBase::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mouseReleaseEvent(event);
 
     if(shape().contains(mapFromScene(event->scenePos())) ){
-       this->setSelected(true);
+        this->setSelected(true);
     }else{
-       this->setSelected(false);
+        this->setSelected(false);
     }
 }
 
@@ -865,9 +855,9 @@ void ItemBase::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mousePressEvent(event);
 
     if(shape().contains(mapFromScene(event->scenePos())) ){
-       this->setSelected(true);
+        this->setSelected(true);
     }else{
-       this->setSelected(false);
+        this->setSelected(false);
     }
 
 }
