@@ -54,6 +54,7 @@ private:
     ItemGroup *createItemGroup(const QList<QGraphicsItem *> &items);
     QList<AbstractItemBase*> m_copyCache;
 
+
 signals:
     void signalViewIsDragged(bool);
     void itemsChanged();

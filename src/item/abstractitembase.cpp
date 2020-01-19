@@ -129,7 +129,7 @@ QRectF AbstractItemBase::rect() const
  */
 QRectF AbstractItemBase::boundingRect() const
 {
-    return m_rect; //m_boundingRect;
+    return m_boundingRect;
 }
 
 
@@ -149,15 +149,15 @@ void AbstractItemBase::setRenderQuality(RenderQuality qualityLevel)
 {
     m_renderQuality = qualityLevel;
 
-    switch(m_renderQuality){
-    case RenderQuality::Performance:
-        QGraphicsItem::setCacheMode(QGraphicsItem::ItemCoordinateCache);
-        break;
-    case RenderQuality::Optimal:
-    case RenderQuality::Quality:
-        QGraphicsItem::setCacheMode(QGraphicsItem::NoCache);
-        break;
-    }
+//    switch(m_renderQuality){
+//    case RenderQuality::Performance:
+//        QGraphicsItem::setCacheMode(QGraphicsItem::ItemCoordinateCache);
+//        break;
+//    case RenderQuality::Optimal:
+//    case RenderQuality::Quality:
+//        QGraphicsItem::setCacheMode(QGraphicsItem::NoCache);
+//        break;
+//    }
 
 }
 
@@ -280,9 +280,10 @@ void AbstractItemBase::render(QPainter *painter)
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setRenderHint(QPainter::TextAntialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    this->setInvalidateCache(true);
+    setInvalidateCache(true);
 
     RenderQuality renderState = renderQuality();
     m_doRender = true;

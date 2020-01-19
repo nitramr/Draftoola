@@ -44,5 +44,6 @@ void ItemOval::setRect(QRectF rect)
     QPainterPath path;
     path.addEllipse(rect);
     ItemBase::setShape(path);
+    calculateRenderRect();
 }
 

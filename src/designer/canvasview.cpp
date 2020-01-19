@@ -50,7 +50,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
 
     m_grid = 1;
-    m_renderQuality = AbstractItemBase::Optimal;
+    m_renderQuality = AbstractItemBase::Performance;
     QColor color(0, 128, 255);
 
     m_handleFrame = new HandleFrame(m_scene, m_grid);
@@ -112,7 +112,7 @@ void CanvasView::resetItemCache()
         ItemBase * b_item = dynamic_cast<ItemBase*>(item);
         if(b_item){
             b_item->setRenderQuality(m_renderQuality);
-            //b_item->setCacheMode(QGraphicsItem::NoCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
+            b_item->setCacheMode(QGraphicsItem::NoCache); // https://doc.qt.io/qt-5/qgraphicsitem.html#CacheMode-enum
             //b_item->setInvalidateCache(true); // needed for shadow map refresh
         }
     }

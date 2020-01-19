@@ -78,6 +78,8 @@ void ItemText::setRect(QRectF rect)
     QPainterPath path;
     path.addRect(rect);
     setShape(path);
+
+    calculateRenderRect();
 }
 
 void ItemText::setText(const QString text)

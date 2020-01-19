@@ -767,9 +767,8 @@ void ItemBase::calculateRenderRect()
     }else setShadowMapStroke(QPainterPath());
 
     // Calculate shadow bounding rect
-    //        m_renderRect = renderRect().united(ShadowBound(shape()));
-    QRectF tmpRect = ShadowBound(shadowMapStroke());
-    m_renderRect = (tmpRect.isEmpty()) ? shape().boundingRect() : tmpRect;
+    QRectF tmpRect = ShadowBound(shadowMapStroke()).united(ShadowBound(shape()));
+    m_renderRect = m_boundingRect =(tmpRect.isEmpty()) ? shape().boundingRect() : tmpRect;
 }
 
 
@@ -800,34 +799,11 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     // Drop Shadow
     if(_hasShadows){
-
-        //        QPixmap m_cache;
-
-        //        // https://doc.qt.io/archives/qq/qq12-qpixmapcache.html
-        //        if (!QPixmapCache::find(ID(), m_cache)) {
-
-        //            m_cache = QPixmap(static_cast<int>(renderRect().width() * m_lod), static_cast<int>(renderRect().height() * m_lod));
-        //            m_cache.fill(Qt::transparent);
-
-        //            QPainter c_painter(&m_cache);
-        //            c_painter.scale(m_lod, m_lod);
-        //            c_painter.translate(QPointF(renderRect().topLeft().x() * -1,renderRect().topLeft().y() * -1));
-
-        // Draw Drop Shadows
-        foreach(Shadow shadow, shadowList()) {
-            //               m_renderRect = renderRect().united(drawShadow(shadow, &c_painter));
-            //m_renderRect = renderRect().united();
+        foreach(Shadow shadow, this->shadowList()) {
             drawShadow(shadow, painter);
         }
-
-        //            qDebug() << "Draw new Pixmap";
-        //            QPixmapCache::insert(ID(), m_cache);
-        //            //setInvalidateCache(false);
-        //        }
-
-        //        painter->drawPixmap(renderRect(), m_cache, QRectF(m_cache.rect()));
-
     }
+
 
     // Draw Fills
     if(m_hasFills){
@@ -839,7 +815,7 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     // Draw InnerShadows
     if(_hasInnerShadows){
-        foreach(Shadow shadow, innerShadowList()) {
+        foreach(Shadow shadow, this->innerShadowList()) {
             drawInnerShadow(shadow, painter);
         }
     }
@@ -847,9 +823,8 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     // Draw Strokes
     if(m_hasStrokes){
-        foreach(Stroke stroke, strokeList()) {
+        foreach(Stroke stroke, this->strokeList()) {
             drawStrokes(stroke, painter);
-            //m_renderRect = renderRect().united();
         }
     }
 

@@ -68,6 +68,7 @@ public:
     QPainterPath scaleStroke(const QPainterPath & path, qreal amount , QPen pen = QPen()) const;
 
     void addItem(AbstractItemBase *item) override;
+    void calculateRenderRect();
 
 
     // Events
@@ -78,7 +79,6 @@ public:
 private:
 	// Properties
     Stroke::StrokePosition m_strokePosition;
-//    bool m_renderQuality;
     QPainterPath m_shadowMapStroke;
     QPainterPath m_shadowMapFill;
     QRectF m_renderRect;
@@ -111,7 +111,6 @@ private:
     // functions    
     QImage blurShadow(QPainterPath shape, QSize size, qreal radius, qreal lod, QPainter::CompositionMode compositionMode, QColor tintColor = Qt::black) const;
     QRectF ShadowBound(QPainterPath shape) const;
-    void calculateRenderRect();
 
     QRectF drawShadow(Shadow shadow, QPainter *painter);
     QRectF drawInnerShadow(Shadow shadow, QPainter *painter);

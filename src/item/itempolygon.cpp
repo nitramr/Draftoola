@@ -88,7 +88,8 @@ void ItemPolygon::setRect(QRectF rect)
     }
 
     ItemBase::setShape(shapeScaled(rect));
-    m_rect = rect;
+    calculateRenderRect();
+    m_rect = rect; // overide rect, because shape doesn't fillout whole rect
 }
 
 QPainterPath ItemPolygon::shapeScaled(QRectF frame) const

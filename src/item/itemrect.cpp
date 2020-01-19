@@ -72,6 +72,7 @@ void ItemRect::setRect(QRectF rect)
     }
 
     ItemBase::setShape(shapeScaled(rect)); // setRect() will set by setShape()
+    calculateRenderRect();
 }
 
 QPainterPath ItemRect::shapeScaled(QRectF frame) const
