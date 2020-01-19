@@ -20,6 +20,11 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     m_strokeList = QList<Stroke>();
     m_shadowList = QList<Shadow>();
     m_innerShadowList = QList<Shadow>();
+    m_hasFills = false;
+    m_hasShadows = false;
+    m_hasStrokes = false;
+    m_hasInnerShadows = false;
+
     //    m_cache = QPixmapCache();
     //    m_cache.setCacheLimit(51200); // 50MB
 
@@ -72,6 +77,8 @@ bool ItemBase::operator==(const ItemBase &other) const
 void ItemBase::addStroke(Stroke stroke)
 {
     m_strokeList.append(stroke);
+    m_hasStrokes = hasStrokes();
+    calculateRenderRect();
     setInvalidateCache(true);
     qDebug() << "Invalidate::addStroke()";
 }
@@ -88,6 +95,8 @@ void ItemBase::updateStroke(Stroke stroke)
         Stroke m_property = m_strokeList.at(i);
         if(m_property.ID() == stroke.ID()){
             m_strokeList.replace(i,stroke);
+            m_hasStrokes = hasStrokes();
+            calculateRenderRect();
             setInvalidateCache(true);
             qDebug() << "Invalidate::updateStroke()";
             update();
@@ -115,6 +124,8 @@ bool ItemBase::hasStrokes() const
 void ItemBase::addFills(Fills fills)
 {
     m_fillsList.append(fills);
+    m_hasFills = hasFills();
+    calculateRenderRect();
     setInvalidateCache(true);
     qDebug() << "Invalidate::addFills()";
 }
@@ -131,6 +142,8 @@ void ItemBase::updateFills(Fills fills)
         Fills m_property = m_fillsList.at(i);
         if(m_property.ID() == fills.ID()){
             m_fillsList.replace(i,fills);
+            m_hasFills = hasFills();
+            calculateRenderRect();
             setInvalidateCache(true);
             qDebug() << "Invalidate::updateFills()";
             update();
@@ -159,6 +172,8 @@ bool ItemBase::hasFills() const
 void ItemBase::addShadow(Shadow shadow)
 {
     m_shadowList.append(shadow);
+    m_hasShadows = hasShadows();
+    calculateRenderRect();
     setInvalidateCache(true);
     qDebug() << "Invalidate::addShadow()";
 }
@@ -175,6 +190,8 @@ void ItemBase::updateShadow(Shadow shadow)
         Shadow m_property = m_shadowList.at(i);
         if(m_property.ID() == shadow.ID()){
             m_shadowList.replace(i,shadow);
+            m_hasShadows = hasShadows();
+            calculateRenderRect();
             setInvalidateCache(true);
             qDebug() << "Invalidate::updateShadow()";
             update();
@@ -203,6 +220,7 @@ bool ItemBase::hasShadows() const
 void ItemBase::addInnerShadow(Shadow shadow)
 {
     m_innerShadowList.append(shadow);
+    m_hasInnerShadows = hasInnerShadows();
     setInvalidateCache(true);
     qDebug() << "Invalidate::addInnerShadow()";
 }
@@ -219,6 +237,7 @@ void ItemBase::updateInnerShadow(Shadow shadow)
         Shadow m_property = m_innerShadowList.at(i);
         if(m_property.ID() == shadow.ID()){
             m_innerShadowList.replace(i,shadow);
+            m_hasInnerShadows = hasInnerShadows();
             setInvalidateCache(true);
             qDebug() << "Invalidate::updateInnerShadow()";
             update();
@@ -254,7 +273,7 @@ qreal ItemBase::lod()
     // m_lod = best render result but slow
     // 1 = worst render result but fast
     // returns amount of pixels within 1 pixel
-//    return (highRenderQuality()) ? m_lod : qMin(2.0, m_lod);
+    //    return (highRenderQuality()) ? m_lod : qMin(2.0, m_lod);
 
     switch(renderQuality()){
     case RenderQuality::Optimal:
@@ -273,7 +292,7 @@ qreal ItemBase::lod()
 
 QRectF ItemBase::renderRect() const
 {
-    return m_boundingRect;
+    return m_renderRect;
 }
 
 void ItemBase::clipsChildrenToShape(bool doClip)
@@ -376,7 +395,7 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
                                                ));
     target.translate(m_offsetX, m_offsetY);
 
-    if(hasFills()){
+    if(m_hasFills){
         QPainterPath clip;
         clip.addRect(target);
         clip = pHandler.combine(clip, shape(), PathHandler::Booleans::Subtract);
@@ -716,22 +735,43 @@ QRectF ItemBase::ShadowBound(QPainterPath shape) const
     QRectF bound = shape.boundingRect();
 
     foreach(Shadow shadow, shadowList()) {
-        qreal radius = shadow.radius();
-        qreal spread = shadow.spread();
-        QPointF offset = shadow.offset();
+        if(shadow.isOn()){
+            qreal radius = shadow.radius();
+            qreal spread = shadow.spread();
+            QPointF offset = shadow.offset();
 
-        QRectF shadowRect = shape.boundingRect();
-        shadowRect.translate(offset);
-        shadowRect.adjust(-radius - spread,
-                          -radius - spread,
-                          radius + spread,
-                          radius + spread
-                          );
-        bound = bound.united(shadowRect);
+            QRectF shadowRect = shape.boundingRect();
+            shadowRect.translate(offset);
+            shadowRect.adjust(-radius - spread,
+                              -radius - spread,
+                              radius + spread,
+                              radius + spread
+                              );
+            bound = bound.united(shadowRect);
+        }
+
     }
 
     return bound;
 }
+
+
+void ItemBase::calculateRenderRect()
+{
+    if(m_hasFills){
+        setShadowMapFill(shape());
+    }else setShadowMapFill(QPainterPath());
+
+    if(m_hasStrokes){
+        setShadowMapStroke(strokeShape());
+    }else setShadowMapStroke(QPainterPath());
+
+    // Calculate shadow bounding rect
+    //        m_renderRect = renderRect().united(ShadowBound(shape()));
+    QRectF tmpRect = ShadowBound(shadowMapStroke());
+    m_renderRect = (tmpRect.isEmpty()) ? shape().boundingRect() : tmpRect;
+}
+
 
 void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {    
@@ -741,81 +781,56 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     m_lod = option->levelOfDetailFromTransform( painter->transform());
 
-    qDebug() << m_lod << lod();
-
     bool _hasShadows;
-    bool _hasStrokes = hasStrokes();
-    bool _hasFills = hasFills();
     bool _hasInnerShadows;
 
     switch(renderQuality()){
     case RenderQuality::Optimal:
     case RenderQuality::Performance:
-        _hasShadows = (m_lod < 0.6) ?  false : hasShadows();
-        _hasInnerShadows = (m_lod < 0.6) ? false : hasInnerShadows();
+        _hasShadows = (m_lod < 0.6) ?  false : m_hasShadows;
+        _hasInnerShadows = (m_lod < 0.6) ? false : m_hasInnerShadows;
         break;
 
     case RenderQuality::Quality:
-        _hasShadows = hasShadows();
-        _hasInnerShadows = hasInnerShadows();
+        _hasShadows = m_hasShadows;
+        _hasInnerShadows = m_hasInnerShadows;
         break;
     }
-
-    m_boundingRect = rect();
 
 
     // Drop Shadow
     if(_hasShadows){
 
-        // create new stroke and fill path only if cache have been invalidated
-        if(invalidateCache()){
+        //        QPixmap m_cache;
 
-//            QPixmapCache::remove(ID());
+        //        // https://doc.qt.io/archives/qq/qq12-qpixmapcache.html
+        //        if (!QPixmapCache::find(ID(), m_cache)) {
 
-            if(_hasFills){
-                setShadowMapFill(shape());
-            }else setShadowMapFill(QPainterPath());
+        //            m_cache = QPixmap(static_cast<int>(renderRect().width() * m_lod), static_cast<int>(renderRect().height() * m_lod));
+        //            m_cache.fill(Qt::transparent);
 
-            if(_hasStrokes){
-                setShadowMapStroke(strokeShape());
-            }else setShadowMapStroke(QPainterPath());
+        //            QPainter c_painter(&m_cache);
+        //            c_painter.scale(m_lod, m_lod);
+        //            c_painter.translate(QPointF(renderRect().topLeft().x() * -1,renderRect().topLeft().y() * -1));
 
-            setInvalidateCache(false);
+        // Draw Drop Shadows
+        foreach(Shadow shadow, shadowList()) {
+            //               m_renderRect = renderRect().united(drawShadow(shadow, &c_painter));
+            //m_renderRect = renderRect().united();
+            drawShadow(shadow, painter);
         }
 
-        // Calculate shadow bounding rect
-//        m_renderRect = renderRect().united(ShadowBound(shape()));
-        m_boundingRect = renderRect().united(ShadowBound(shadowMapStroke()));
+        //            qDebug() << "Draw new Pixmap";
+        //            QPixmapCache::insert(ID(), m_cache);
+        //            //setInvalidateCache(false);
+        //        }
 
-//        QPixmap m_cache;
-
-//        // https://doc.qt.io/archives/qq/qq12-qpixmapcache.html
-//        if (!QPixmapCache::find(ID(), m_cache)) {
-
-//            m_cache = QPixmap(static_cast<int>(renderRect().width() * m_lod), static_cast<int>(renderRect().height() * m_lod));
-//            m_cache.fill(Qt::transparent);
-
-//            QPainter c_painter(&m_cache);
-//            c_painter.scale(m_lod, m_lod);
-//            c_painter.translate(QPointF(renderRect().topLeft().x() * -1,renderRect().topLeft().y() * -1));
-
-            // Draw Drop Shadows
-            foreach(Shadow shadow, shadowList()) {
- //               m_renderRect = renderRect().united(drawShadow(shadow, &c_painter));
-                m_boundingRect = renderRect().united(drawShadow(shadow, painter));
-            }
-
-//            qDebug() << "Draw new Pixmap";
-//            QPixmapCache::insert(ID(), m_cache);
-//            //setInvalidateCache(false);
-//        }
-
-//        painter->drawPixmap(renderRect(), m_cache, QRectF(m_cache.rect()));
+        //        painter->drawPixmap(renderRect(), m_cache, QRectF(m_cache.rect()));
 
     }
 
     // Draw Fills
-    if(_hasFills){
+    if(m_hasFills){
         foreach(Fills fills,this->fillsList()) {
             drawFills(fills, painter);
         }
@@ -831,9 +846,10 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 
     // Draw Strokes
-    if(_hasStrokes){
+    if(m_hasStrokes){
         foreach(Stroke stroke, strokeList()) {
-            m_boundingRect = renderRect().united(drawStrokes(stroke, painter));
+            drawStrokes(stroke, painter);
+            //m_renderRect = renderRect().united();
         }
     }
 

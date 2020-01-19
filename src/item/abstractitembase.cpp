@@ -276,7 +276,7 @@ QList<AbstractItemBase *> AbstractItemBase::childItems() const
 void AbstractItemBase::render(QPainter *painter)
 {
 
-    painter->save();
+//    painter->save();
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
@@ -284,14 +284,12 @@ void AbstractItemBase::render(QPainter *painter)
 
     this->setInvalidateCache(true);
 
-
     RenderQuality renderState = renderQuality();
     m_doRender = true;
     setRenderQuality(RenderQuality::Quality);
     paint(painter, new QStyleOptionGraphicsItem());
     m_doRender = false;
     setRenderQuality(renderState);
-
 
 
     QList<AbstractItemBase*> list = this->childItems();
@@ -305,7 +303,7 @@ void AbstractItemBase::render(QPainter *painter)
         }
     }
 
-    painter->restore();
+//    painter->restore();
 }
 
 /***************************************************
