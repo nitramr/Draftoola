@@ -505,6 +505,10 @@ bool HandleFrame::canHeightChange()
 
 void HandleFrame::adjustSize(qreal x, qreal y)
 {
+    // respect grid and scale size only by integer
+    x = (static_cast<int>(x) / m_gridSpace) * m_gridSpace;
+    y = (static_cast<int>(y) / m_gridSpace) * m_gridSpace;
+
     m_oldRect = this->rect();
     m_oldPos = this->scenePos();
 
@@ -527,6 +531,8 @@ void HandleFrame::adjustSize(qreal x, qreal y)
         m_width += x;
         m_height += y;
     }
+
+
 
     this->setRect(this->rect().x(),
                   this->rect().y(),

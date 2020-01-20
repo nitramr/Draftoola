@@ -1,10 +1,12 @@
 #include <itemtext.h>
 #include <QPainter>
-#include <QTextDocument>
 #include <QDebug>
-#include <QTextFrame>
 #include <QStyleOptionGraphicsItem>
 #include <QTextDocument>
+#include <QTextFrame>
+#include <QTextFrameFormat>
+#include <QTextBlockFormat>
+#include <qabstracttextdocumentlayout.h>
 
 
 
@@ -17,14 +19,15 @@ ItemText::ItemText(const QString &text, QGraphicsItem *parent) : ItemBase(QRectF
 
     m_lineHeight = f.pixelSize() * 1.2;
 
-    m_text = new QGraphicsTextItem(text);
-    m_text->document()->setUseDesignMetrics(true);
+    m_text = new QTextDocument(text);
+    m_text->setUseDesignMetrics(true);
+    m_color = Qt::black;
 
     setFont(f);
-    setTextColor(QColor(0,0,0));
+    //setTextColor(QColor(0,0,0));
     setAlignment(Qt::AlignLeft);
     setText(text);
-    setRect(m_text->boundingRect());
+    setRect(QRectF(0,0,m_text->idealWidth(), m_text->size().height()));
     setName(tr("Text"));
 
     //	setTextInteractionFlags(Qt::NoTextInteraction);
@@ -56,7 +59,7 @@ void ItemText::setRect(QRectF rect)
 
     switch(frameType()){
     case AbstractItemBase::FixedWidth:
-        rect = m_text->boundingRect();
+        // rect = m_text->boundingRect();
         break;
     case AbstractItemBase::FixedHeight:
 
@@ -85,54 +88,58 @@ void ItemText::setRect(QRectF rect)
 void ItemText::setText(const QString text)
 {    
 
-    m_text->document()->setHtml("<p style='line-height:"+ QString::number(m_lineHeight) +"px;'>"+text+"</p>");
+    //   m_text->setHtml("<p style='line-height:"+ QString::number(m_lineHeight) +"px;'>"+text+"</p>");
+    m_text->setMarkdown("# Headline\n\rHello World\n\r**second** *line*", QTextDocument::MarkdownDialectGitHub);
 
 }
 
 QString ItemText::text() const
 {
-    return m_text->document()->toPlainText();
+    return m_text->toPlainText();
 }
 
 void ItemText::setFont(const QFont font)
 {
-    m_text->setFont(font);
+    m_text->setDefaultFont(font);
 }
 
 QFont ItemText::font() const
 {
-    return m_text->font();
+    return m_text->defaultFont();
 }
 
 void ItemText::setFontSize(int pixelSize)
 {
-    m_text->font().setPixelSize(pixelSize);
+    m_text->defaultFont().setPixelSize(pixelSize);
 }
 
 int ItemText::fontSize() const
 {
-    return m_text->font().pixelSize();
+    return m_text->defaultFont().pixelSize();
 }
 
 void ItemText::setTextColor(const QColor color)
 {
-    m_text->setDefaultTextColor(color);
+
+    //    m_text->firstBlock().blockFormat().setForeground(QBrush(color));
+    m_color = color;
 }
 
 QColor ItemText::textColor() const
 {
-    return m_text->defaultTextColor();
+    //  return m_text->firstBlock().blockFormat().foreground().color();
+    return m_color;
 }
 
 void ItemText::setAlignment(Qt::Alignment alignment)
 {
     QTextOption option(alignment);
-    m_text->document()->setDefaultTextOption(option);
+    m_text->setDefaultTextOption(option);
 }
 
 Qt::Alignment ItemText::alignment() const
 {
-    return m_text->document()->defaultTextOption().alignment();
+    return m_text->defaultTextOption().alignment();
 }
 
 void ItemText::setLineHeight(qreal lineHeight)
@@ -157,6 +164,67 @@ void ItemText::setLineHeight(qreal lineHeight)
 qreal ItemText::lineHeight() const
 {
     return m_lineHeight;
+}
+
+
+void ItemText::refreshFrame()
+{
+    //   QTextFrame format(m_text);
+
+    QTextFrameFormat frameFormat(m_text->rootFrame()->frameFormat());
+    frameFormat.setPadding(10);
+
+
+
+
+    //    QTextBlockFormat blockFormat(m_text->firstBlock().blockFormat());
+    //    blockFormat.setLineHeight(30, QTextBlockFormat::FixedHeight);
+    //    blockFormat.setTextIndent(0);
+
+    QTextCharFormat charFormat;
+    charFormat.setFontWeight(8);
+
+    QTextCursor cursor (m_text);
+    cursor.select (QTextCursor::Document);
+//    cursor.mergeCharFormat (charFormat);
+    cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+    cursor.selectionStart();
+    cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+    cursor.selectionEnd();
+    cursor.setCharFormat(charFormat);
+
+    m_text->rootFrame()->setFrameFormat(frameFormat);
+
+    QTextBlockFormat blockFormat(m_text->firstBlock().blockFormat());
+    blockFormat.setLineHeight(100, QTextBlockFormat::FixedHeight);
+
+
+    for (QTextBlock it = m_text->begin(); it != m_text->end(); it = it.next()){
+         qDebug() << it.text();
+         it.blockFormat().setLineHeight(10, QTextBlockFormat::FixedHeight);
+    }
+
+
+    QAbstractTextDocumentLayout *layout = m_text->documentLayout();
+    qDebug() << layout->blockBoundingRect(m_text->firstBlock());
+
+    // https://doc.qt.io/qt-5/qtextformat.html#Property-enum
+    //    format.setProperty(0x1048, m_lineHeight);
+
+    //    format.property(QTextFormat::LineHeight);
+
+    //    QTextCharFormat format;
+    //    //          format.setTextOutline (QPen (Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)); // Color and width of outline
+
+    //              QTextCursor cursor (m_text);
+    //              cursor.select (QTextCursor::Document);
+    //              cursor.mergeCharFormat (format);
+    //              m_text->document()->drawContents(painter, rect());
+    //              format.setTextOutline (QPen (Qt::transparent));
+
+
+
+
 }
 
 //void WAText::SetTextInteraction(bool on, bool selectAll)
@@ -242,14 +310,72 @@ void ItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     painter->save();
 
-    if(m_lod < 0.6 && !m_doRender){
+    //    if(m_lod < 0.6 && !m_doRender){
 
-    //painter->fontMetrics().xHeight();
+    ////        QTextCharFormat charFormat;
+    ////        charFormat.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+    ////        charFormat.setUnderlineColor(Qt::red);
 
-       // m_text->document()->set
+    ////        QTextCursor cur = m_text->document()->find("Hello");
+    ////        cur.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+    ////        cur.selectionStart();
+    ////        cur.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+    ////        cur.selectionEnd();
+    ////        cur.setCharFormat(charFormat);
 
-    }else m_text->document()->drawContents(painter, rect());
+
+    //        QTextCharFormat format;
+    //          format.setTextOutline (QPen (Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)); // Color and width of outline
+
+    //          QTextCursor cursor (m_text->document());
+    //          cursor.select (QTextCursor::Document);
+    //          cursor.mergeCharFormat (format);
+    //          m_text->document()->drawContents(painter, rect());
+    //          format.setTextOutline (QPen (Qt::transparent));
+    //          cursor.mergeCharFormat (format);
+    //          m_text->document()->drawContents(painter, rect());
+
+
+    // //       painter->save();
+    ////       painter->translate(opt->rect.x(), opt->rect.y());
+    //  //      m_text->document()->drawContents(painter, rect());
+    // //       painter->restore();
+
+
+
+    //    }else m_text->document()->drawContents(painter, rect());
+
+
+    /***
+     *  https://doc.qt.io/archives/qt-4.8/qtextlayout.html
+     *  https://doc.qt.io/archives/qq/qq24-textlayouts.html
+     *
+     */
+
+
+    //    painter->setBrush(QBrush(Qt::black));
+    //    m_textLayout.draw(painter, QPoint(0, 0));
+
+    //    QAbstractTextDocumentLayout::Selection selection;
+    ////      selection.cursor = textCursor();
+    ////      selection.format = textCursor().charFormat();
+
+    //      QAbstractTextDocumentLayout::PaintContext ctx;
+    //      ctx.palette.setColor(QPalette::Text, m_color);
+    //      //ctx.cursorPosition = textCursor().position();
+    //      ctx.selections.append(selection);
+    //      ctx.clip.setRect(0,0, rect().width(), rect().height());
+
+
+    //      m_text->documentLayout()->draw(painter,ctx);
+
+ //  refreshFrame();
+
+
+    m_text->drawContents(painter, rect());
 
     painter->restore();
 
 }
+
+

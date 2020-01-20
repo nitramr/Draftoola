@@ -5,6 +5,8 @@
 #include <QGraphicsTextItem>
 #include <QTextCursor>
 #include <QGraphicsSceneMouseEvent>
+#include <QTextLayout>
+#include <QTextDocument>
 
 #include <itembase.h>
 
@@ -26,14 +28,14 @@ public:
 
     void setRect(QRectF rect) override;
 
-	void setText(const QString text);
-	QString text() const;
+    void setText(const QString text);
+    QString text() const;
 
-	void setFont(const QFont font);
-	QFont font() const;
+    void setFont(const QFont font);
+    QFont font() const;
 
-	void setFontSize(int pixelSize);
-	int fontSize() const;
+    void setFontSize(int pixelSize);
+    int fontSize() const;
 
     void setTextColor(const QColor color);
     QColor textColor() const;
@@ -48,16 +50,23 @@ public:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
 private:
-    QGraphicsTextItem *m_text;
+//    QGraphicsTextItem *m_text;
+    QTextDocument * m_text;
     QColor m_color;
     int m_lineHeight;
 
-protected:
-//	virtual void focusOutEvent (QFocusEvent * event);
-//	virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event);
+    void refreshFrame();
 
-//	QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
-//	void SetTextInteraction(bool on, bool selectAll = false);
+//    QList<QTextLayout *> layouts;
+//    QStringList paragraphs;
+//    QList<QList<QTextLayout::FormatRange> > formats;
+
+protected:
+    //	virtual void focusOutEvent (QFocusEvent * event);
+    //	virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event);
+
+    //	QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
+    //	void SetTextInteraction(bool on, bool selectAll = false);
 };
 
 #endif // WATEXT_H
