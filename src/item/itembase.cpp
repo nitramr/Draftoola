@@ -4,7 +4,7 @@
 //#include <QPainter>
 //#include <QtWidgets>
 #include <path/pathhandler.h>
-//#include <QGraphicsEffect>
+#include <QGraphicsEffect>
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
 
@@ -420,6 +420,7 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
                                 QPainter::CompositionMode_SourceIn,
                                 m_color);
 
+
         // draw shadow
         painter->drawImage(target, tmp, QRectF(tmp.rect()));
 
@@ -710,7 +711,11 @@ QImage ItemBase::blurShadow(QPainterPath shape, QSize size, qreal radius, qreal 
     QImage blurred(tmp.size(), QImage::Format_ARGB32_Premultiplied);
     blurred.fill(0);
     QPainter blurPainter(&blurred);
-    qt_blurImage(&blurPainter, tmp, radius * lod, false, true);
+
+    if(m_doRender){
+        qt_blurImage(&blurPainter, tmp, radius * lod, QGraphicsBlurEffect::BlurHint::QualityHint, true);
+    }else qt_blurImage(&blurPainter, tmp, radius * lod, QGraphicsBlurEffect::BlurHint::AnimationHint, true);
+
     blurPainter.end();
     tmp = blurred;
 
