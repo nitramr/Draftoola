@@ -600,18 +600,17 @@ void HandleFrame::reset()
 
 
 /*!
- * \brief Return true if selection contains at least one item. If an artboard is fully covered in selection
- *  region it returns true for hasArtboards and \a m_items will contain only artboards.
+ * \brief Returns true if selection contains no items. If an artboard is fully covered in selection
+ *  region it returns false for \a hasNoArtboard and \a m_items will contain only artboards.
  * \return
  */
-bool HandleFrame::checkSelection(bool &hasArtboards)
+bool HandleFrame::selectionIsEmpty()
 {    
     m_items.clear();
-    bool foundArtboard =false;
 
     if(m_scene->selectedItems().isEmpty()){
-        hasArtboards = foundArtboard;
-        return false;
+        m_canRotate = false;
+        return true;
     }
 
     QList<AbstractItemBase*> artboardList = QList<AbstractItemBase*>();
@@ -627,7 +626,7 @@ bool HandleFrame::checkSelection(bool &hasArtboards)
             switch(abItem->type()){
             case AbstractItemBase::Artboard:
                 artboardList.append(abItem);
-                foundArtboard = true;
+                m_canRotate = false;
                 break;
             default:
                 m_items.append(abItem);
@@ -637,10 +636,9 @@ bool HandleFrame::checkSelection(bool &hasArtboards)
     }
 
     // if there is at least 1 artboard override all other items
-    if(foundArtboard) m_items = artboardList;
+    if(!m_canRotate) m_items = artboardList;
 
-    hasArtboards = foundArtboard;
-    return !m_items.isEmpty();
+    return m_items.isEmpty();
 
 }
 
@@ -664,20 +662,20 @@ void HandleFrame::updateHandles()
     m_handles[7]->setPos(rect().left() - offX, rect().center().y() - offY); // Left
     m_handles[8]->setPos(rect().center().x() - offX, rect().top() - offY - handleSize() * 3 / scaleFactor()); // Rotate
 
-//    qreal tollerance = handleSize() * 3 / scaleFactor();
+    //    qreal tollerance = handleSize() * 3 / scaleFactor();
 
     // set visibility of handles
-//    if(this->width() < tollerance || this->height() < tollerance){
-//        m_handles[0]->setVisible(false); // TopLeft
-//        m_handles[2]->setVisible(false); // TopRight
-//        m_handles[4]->setVisible(false); // BottomRight
-//        m_handles[6]->setVisible(false); // BottomLeft
-//    }else{
-        m_handles[0]->setVisible(m_canWidthChange && m_canHeightChange); // TopLeft
-        m_handles[2]->setVisible(m_canWidthChange && m_canHeightChange); // TopRight
-        m_handles[4]->setVisible(m_canWidthChange && m_canHeightChange); // BottomRight
-        m_handles[6]->setVisible(m_canWidthChange && m_canHeightChange); // BottomLeft
-//    }
+    //    if(this->width() < tollerance || this->height() < tollerance){
+    //        m_handles[0]->setVisible(false); // TopLeft
+    //        m_handles[2]->setVisible(false); // TopRight
+    //        m_handles[4]->setVisible(false); // BottomRight
+    //        m_handles[6]->setVisible(false); // BottomLeft
+    //    }else{
+    m_handles[0]->setVisible(m_canWidthChange && m_canHeightChange); // TopLeft
+    m_handles[2]->setVisible(m_canWidthChange && m_canHeightChange); // TopRight
+    m_handles[4]->setVisible(m_canWidthChange && m_canHeightChange); // BottomRight
+    m_handles[6]->setVisible(m_canWidthChange && m_canHeightChange); // BottomLeft
+    //    }
 
     m_handles[1]->setVisible(m_canHeightChange); // Top
     m_handles[5]->setVisible(m_canHeightChange); // Bottom
@@ -726,7 +724,7 @@ void HandleFrame::frameToSelection()
     }else{
 
         // filter Selection
-        if(!checkSelection(m_canRotate)) return;
+        if(selectionIsEmpty()) return;
 
         QRectF selectionBox = selectionRect();
 
@@ -757,7 +755,7 @@ void HandleFrame::frameToSelection()
         this->setRect(QRectF(0,0, selectionBox.width(), selectionBox.height()));
         this->setPos(selectionBox.topLeft());
         this->updateHandles();
-//        this->setRotation(m_items.first()->rotation());
+        //        this->setRotation(m_items.first()->rotation());
         this->setVisible(true);
 
         emit sendActiveItems(m_items);

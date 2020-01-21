@@ -11,7 +11,7 @@ QT += script
 
 #CONFIG += c++14
 
-TARGET = WhiteprintApp
+TARGET = Draftoola
 TEMPLATE = app
 
 SOURCES += src/main.cpp\
