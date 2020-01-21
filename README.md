@@ -1,5 +1,7 @@
-# WhiteprintApp
+# Draftoola
 Open Source UI and UX prototyping tool for designing static and animated layouts.
+
+*Draftoola* is a combination out of "draft" and "tool".
 
 **Note: it is an early development state and not ready to use!**
 
