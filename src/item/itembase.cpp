@@ -11,6 +11,7 @@
 QT_BEGIN_NAMESPACE
 // https://code.woboq.org/qt5/qtbase/src/widgets/effects/qpixmapfilter.cpp.html
 extern Q_WIDGETS_EXPORT void qt_blurImage( QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
+extern Q_WIDGETS_EXPORT void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed = 0);
 QT_END_NAMESPACE
 
 ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(rect, parent)
@@ -40,8 +41,7 @@ ItemBase::ItemBase(const ItemBase &other) : AbstractItemBase(other)
     m_name = other.m_name;
     m_strokePosition = other.m_strokePosition;
     m_renderQuality = other.m_renderQuality;
-    m_shadowMapStroke = other.m_shadowMapStroke;
-    m_shadowMapFill = other.m_shadowMapFill;
+    m_shadowPath = other.m_shadowPath;
     m_renderRect = other.m_renderRect;
     m_fillsList = other.m_fillsList;
     m_strokeList = other.m_strokeList;
@@ -58,8 +58,7 @@ bool ItemBase::operator==(const ItemBase &other) const
             m_name == other.m_name &&
             m_strokePosition == other.m_strokePosition &&
             m_renderQuality == other.m_renderQuality &&
-            m_shadowMapStroke == other.m_shadowMapStroke &&
-            m_shadowMapFill == other.m_shadowMapFill &&
+            m_shadowPath == other.m_shadowPath &&
             m_renderRect == other.m_renderRect &&
             m_fillsList == other.m_fillsList &&
             m_strokeList == other.m_strokeList &&
@@ -300,28 +299,6 @@ void ItemBase::clipsChildrenToShape(bool doClip)
     setFlag(QGraphicsItem::ItemClipsChildrenToShape, doClip);
 }
 
-
-void ItemBase::setShadowMapStroke(const QPainterPath &shape)
-{
-    m_shadowMapStroke = shape;
-}
-
-QPainterPath ItemBase::shadowMapStroke() const
-{
-    return m_shadowMapStroke;
-}
-
-void ItemBase::setShadowMapFill(const QPainterPath &shape)
-{
-    m_shadowMapFill = shape;
-}
-
-QPainterPath ItemBase::shadowMapFill() const
-{
-    return m_shadowMapFill;
-}
-
-
 /***************************************************
  *
  * Members
@@ -377,15 +354,11 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
     qreal buffer = 0; // additional space around the bounding box
     qreal m_offsetX = shadow.offset().x();
     qreal m_offsetY = shadow.offset().y();
-    qreal m_spread = shadow.spread();
     qreal m_radiusShadow = shadow.radius();
     QColor m_color = shadow.color();
 
-    // unite stroke and fill shape to shadow mask
-    QPainterPath shadowMap = pHandler.combine(shadowMapFill(),shadowMapStroke());
-
     // add spread
-    QPainterPath mask = pHandler.scale(shadowMap, m_spread*2);
+    QPainterPath mask = m_shadowPathList.value(shadow.ID());
     mask.setFillRule(Qt::FillRule::WindingFill);
 
     QRectF target(mask.boundingRect().adjusted(-m_radiusShadow - buffer,
@@ -702,9 +675,7 @@ QImage ItemBase::blurShadow(QPainterPath shape, QSize size, qreal radius, qreal 
     QPainter pxPainter(&tmp);
     pxPainter.scale(lod,lod);
     pxPainter.setRenderHint(QPainter::Antialiasing, true);
-    pxPainter.setBrush(QBrush(Qt::black));
-    pxPainter.setPen(Qt::NoPen);
-    pxPainter.drawPath(shape);
+    pxPainter.fillPath(shape, Qt::black);
     pxPainter.end();
 
     // blur the alpha channel
@@ -716,7 +687,6 @@ QImage ItemBase::blurShadow(QPainterPath shape, QSize size, qreal radius, qreal 
         qt_blurImage(&blurPainter, tmp, radius * lod, QGraphicsBlurEffect::BlurHint::QualityHint, true);
     }else qt_blurImage(&blurPainter, tmp, radius * lod, QGraphicsBlurEffect::BlurHint::AnimationHint, true);
 
-    blurPainter.end();
     tmp = blurred;
 
     // tint Shadow
@@ -726,7 +696,6 @@ QImage ItemBase::blurShadow(QPainterPath shape, QSize size, qreal radius, qreal 
     pxPainter.end();
 
     return tmp;
-
 }
 
 
@@ -763,17 +732,37 @@ QRectF ItemBase::ShadowBound(QPainterPath shape) const
 
 void ItemBase::calculateRenderRect()
 {
+    m_shadowPath = QPainterPath();
+
     if(m_hasFills){
-        setShadowMapFill(shape());
-    }else setShadowMapFill(QPainterPath());
+        m_shadowPath = shape();
+    }
 
     if(m_hasStrokes){
-        setShadowMapStroke(strokeShape());
-    }else setShadowMapStroke(QPainterPath());
+        m_shadowPath.addPath(strokeShape());
+    }
 
     // Calculate shadow bounding rect
-    QRectF tmpRect = ShadowBound(shadowMapStroke()).united(ShadowBound(shape()));
-    m_renderRect = m_boundingRect =(tmpRect.isEmpty()) ? shape().boundingRect() : tmpRect;
+    QRectF tmpRect = ShadowBound(m_shadowPath);
+    m_renderRect = m_boundingRect = (tmpRect.isEmpty()) ? shape().boundingRect() : tmpRect;
+
+    // Recalculate Shadow Paths
+    calculateShadowPaths();
+}
+
+void ItemBase::calculateShadowPaths()
+{
+    m_shadowPathList.clear();
+    PathHandler pHandler;
+
+    foreach(Shadow shadow, m_shadowList){
+        // add spread
+        if(shadow.isOn()){
+            QPainterPath mask = pHandler.scale(m_shadowPath, shadow.spread()*2);
+            mask.setFillRule(Qt::FillRule::WindingFill);
+            m_shadowPathList.insert(shadow.ID(),mask);
+        }
+    }
 }
 
 
@@ -785,25 +774,25 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     m_lod = option->levelOfDetailFromTransform( painter->transform());
 
-    bool _hasShadows;
-    bool _hasInnerShadows;
+//    bool _hasShadows;
+//    bool _hasInnerShadows;
 
-    switch(renderQuality()){
-    case RenderQuality::Optimal:
-    case RenderQuality::Performance:
-        _hasShadows = (m_lod < 0.6) ?  false : m_hasShadows;
-        _hasInnerShadows = (m_lod < 0.6) ? false : m_hasInnerShadows;
-        break;
+//    switch(renderQuality()){
+//    case RenderQuality::Optimal:
+//    case RenderQuality::Performance:
+//        _hasShadows = (m_lod < 0.6) ?  false : m_hasShadows;
+//        _hasInnerShadows = (m_lod < 0.6) ? false : m_hasInnerShadows;
+//        break;
 
-    case RenderQuality::Quality:
-        _hasShadows = m_hasShadows;
-        _hasInnerShadows = m_hasInnerShadows;
-        break;
-    }
+//    case RenderQuality::Quality:
+//        _hasShadows = m_hasShadows;
+//        _hasInnerShadows = m_hasInnerShadows;
+//        break;
+//    }
 
 
     // Drop Shadow
-    if(_hasShadows){
+    if(m_hasShadows){
         foreach(Shadow shadow, this->shadowList()) {
             drawShadow(shadow, painter);
         }
@@ -819,7 +808,7 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 
     // Draw InnerShadows
-    if(_hasInnerShadows){
+    if(m_hasInnerShadows){
         foreach(Shadow shadow, this->innerShadowList()) {
             drawInnerShadow(shadow, painter);
         }

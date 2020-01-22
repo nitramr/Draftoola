@@ -70,7 +70,6 @@ public:
     void addItem(AbstractItemBase *item) override;
     void calculateRenderRect();
 
-
     // Events
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
@@ -79,18 +78,18 @@ public:
 private:
 	// Properties
     Stroke::StrokePosition m_strokePosition;
-    QPainterPath m_shadowMapStroke;
-    QPainterPath m_shadowMapFill;
+    QPainterPath m_shadowPath;
     QRectF m_renderRect;
 //    QGraphicsDropShadowEffect * qShadow;
 //    QPixmapCache m_cache;
 //    mutable QPixmapCache::Key m_cacheKey;
 
     // Members
-    QList<Fills>			m_fillsList;
-    QList<Stroke>			m_strokeList;
-    QList<Shadow>			m_shadowList;
-    QList<Shadow>			m_innerShadowList;
+    QList<Fills>                m_fillsList;
+    QList<Stroke>               m_strokeList;
+    QList<Shadow>               m_shadowList;
+    QList<Shadow>               m_innerShadowList;
+    QMap<QString,QPainterPath>  m_shadowPathList;
 
     bool m_hasFills;
     bool m_hasStrokes;
@@ -99,13 +98,6 @@ private:
 
 
     qreal lod();
-
-    void setShadowMapStroke(const QPainterPath &shape);
-    QPainterPath shadowMapStroke() const;
-
-    void setShadowMapFill(const QPainterPath &shape);
-    QPainterPath shadowMapFill() const;
-
     QPainterPath strokeShape() const;
 
     // functions    
@@ -117,6 +109,8 @@ private:
     QRectF drawFills(Fills fills, QPainter *painter);
     QRectF drawStrokes(Stroke stroke, QPainter *painter);
     QRectF drawBlur(qreal radius, QPainter *painter);
+
+    void calculateShadowPaths();
 
 };
 
