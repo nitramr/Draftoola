@@ -90,6 +90,7 @@ private:
     QList<Shadow>               m_shadowList;
     QList<Shadow>               m_innerShadowList;
     QMap<QString,QPainterPath>  m_shadowPathList;
+    QMap<QString,QPainterPath>  m_innerShadowPathList;
 
     bool m_hasFills;
     bool m_hasStrokes;
@@ -102,7 +103,6 @@ private:
 
     // functions    
     QImage blurShadow(QPainterPath shape, QSize size, qreal radius, qreal lod, QPainter::CompositionMode compositionMode, QColor tintColor = Qt::black) const;
-    QRectF ShadowBound(QPainterPath shape) const;
 
     QRectF drawShadow(Shadow shadow, QPainter *painter);
     QRectF drawInnerShadow(Shadow shadow, QPainter *painter);
@@ -110,7 +110,8 @@ private:
     QRectF drawStrokes(Stroke stroke, QPainter *painter);
     QRectF drawBlur(qreal radius, QPainter *painter);
 
-    void calculateShadowPaths();
+    QRectF calculateShadowPaths();
+    void calculateInnerShadowPaths();
 
 };
 

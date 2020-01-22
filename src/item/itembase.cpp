@@ -220,6 +220,7 @@ void ItemBase::addInnerShadow(Shadow shadow)
 {
     m_innerShadowList.append(shadow);
     m_hasInnerShadows = hasInnerShadows();
+    calculateRenderRect();
     setInvalidateCache(true);
     qDebug() << "Invalidate::addInnerShadow()";
 }
@@ -237,6 +238,7 @@ void ItemBase::updateInnerShadow(Shadow shadow)
         if(m_property.ID() == shadow.ID()){
             m_innerShadowList.replace(i,shadow);
             m_hasInnerShadows = hasInnerShadows();
+            calculateRenderRect();
             setInvalidateCache(true);
             qDebug() << "Invalidate::updateInnerShadow()";
             update();
@@ -269,23 +271,22 @@ bool ItemBase::hasInnerShadows() const
  */
 qreal ItemBase::lod()
 {    
-    // m_lod = best render result but slow
-    // 1 = worst render result but fast
-    // returns amount of pixels within 1 pixel
-    //    return (highRenderQuality()) ? m_lod : qMin(2.0, m_lod);
-
     switch(renderQuality()){
-    case RenderQuality::Optimal:
-        return qMin(2.0, m_lod);
-        break;
-    case RenderQuality::Performance:
-        return 1.0;
-        break;
+    // m_lod = best render result but slow
     case RenderQuality::Quality:
         return m_lod;
         break;
-    }
 
+    // 3.0 = mid render quality with good speed
+    case RenderQuality::Balanced:
+        return qMin(3.0, m_lod);
+        break;
+
+    // 1.0 = worst render result but fast
+    case RenderQuality::Performance:
+        return 1.0;
+        break;    
+    }
 }
 
 
@@ -427,12 +428,11 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
     QRectF target(shape().boundingRect());
 
     // plain values
-    qreal m_radiusShadow = shadow.radius() * 2;
-    qreal m_spread = shadow.spread();
+    qreal m_radiusShadow = shadow.radius();
     QColor m_color = shadow.color();
 
     // adjusted Shape
-    QPainterPath mask = pHandler.scale(shape(), -m_radiusShadow / 2 - m_spread);
+    QPainterPath mask = m_innerShadowPathList.value(shadow.ID());
     mask.translate(shadow.offset().x(), shadow.offset().y());
 
     qreal _lod = lod();
@@ -699,37 +699,6 @@ QImage ItemBase::blurShadow(QPainterPath shape, QSize size, qreal radius, qreal 
 }
 
 
-/**
- * @brief Calculates bounding rectangle of all used shadows
- * @param shape
- * @return
- */
-QRectF ItemBase::ShadowBound(QPainterPath shape) const
-{
-    QRectF bound = shape.boundingRect();
-
-    foreach(Shadow shadow, shadowList()) {
-        if(shadow.isOn()){
-            qreal radius = shadow.radius();
-            qreal spread = shadow.spread();
-            QPointF offset = shadow.offset();
-
-            QRectF shadowRect = shape.boundingRect();
-            shadowRect.translate(offset);
-            shadowRect.adjust(-radius - spread,
-                              -radius - spread,
-                              radius + spread,
-                              radius + spread
-                              );
-            bound = bound.united(shadowRect);
-        }
-
-    }
-
-    return bound;
-}
-
-
 void ItemBase::calculateRenderRect()
 {
     m_shadowPath = QPainterPath();
@@ -742,25 +711,48 @@ void ItemBase::calculateRenderRect()
         m_shadowPath.addPath(strokeShape());
     }
 
-    // Calculate shadow bounding rect
-    QRectF tmpRect = ShadowBound(m_shadowPath);
+    // Calculate inner shadow paths
+    calculateInnerShadowPaths();
+
+    // Calculate drop shadow paths
+    QRectF tmpRect = calculateShadowPaths();
     m_renderRect = m_boundingRect = (tmpRect.isEmpty()) ? shape().boundingRect() : tmpRect;
 
-    // Recalculate Shadow Paths
-    calculateShadowPaths();
+
 }
 
-void ItemBase::calculateShadowPaths()
+
+QRectF ItemBase::calculateShadowPaths()
 {
     m_shadowPathList.clear();
     PathHandler pHandler;
+    QRectF bound = m_shadowPath.boundingRect();
 
     foreach(Shadow shadow, m_shadowList){
-        // add spread
         if(shadow.isOn()){
             QPainterPath mask = pHandler.scale(m_shadowPath, shadow.spread()*2);
-            mask.setFillRule(Qt::FillRule::WindingFill);
             m_shadowPathList.insert(shadow.ID(),mask);
+
+            qreal radius = shadow.radius();
+            QRectF shadowRect = mask.boundingRect();
+            shadowRect.translate(shadow.offset());
+            shadowRect.adjust(-radius, -radius, radius, radius);
+            bound = bound.united(shadowRect);
+        }
+    }
+
+    return bound;
+}
+
+void ItemBase::calculateInnerShadowPaths()
+{
+    m_innerShadowPathList.clear();
+    PathHandler pHandler;
+
+    foreach(Shadow shadow, m_innerShadowList){
+        if(shadow.isOn()){
+            QPainterPath mask = pHandler.scale(shape(), -shadow.radius() - shadow.spread());
+            m_innerShadowPathList.insert(shadow.ID(),mask);
         }
     }
 }

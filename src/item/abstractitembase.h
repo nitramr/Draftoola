@@ -40,7 +40,7 @@ public:
     };
 
     enum RenderQuality {
-        Optimal = 0,
+        Balanced = 0,
         Performance = 1,
         Quality = 2
     };

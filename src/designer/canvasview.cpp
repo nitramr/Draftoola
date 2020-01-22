@@ -50,7 +50,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
 
     m_grid = 1;
-    m_renderQuality = AbstractItemBase::Optimal;
+    m_renderQuality = AbstractItemBase::Balanced;
     QColor color(0, 128, 255);
 
     m_handleFrame = new HandleFrame(m_scene, m_grid);

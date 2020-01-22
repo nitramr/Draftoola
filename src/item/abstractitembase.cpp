@@ -14,7 +14,7 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
     m_invaliateCache = true;
     m_doRender = false;
 
-    setRenderQuality(RenderQuality::Optimal);
+    setRenderQuality(RenderQuality::Balanced);
 
     QRandomGenerator *random = QRandomGenerator::global();
     quint32 value32 = random->generate();
