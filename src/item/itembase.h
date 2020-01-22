@@ -1,7 +1,6 @@
 #ifndef ITEMBASE_H
 #define ITEMBASE_H
 
-//#include <QGraphicsObject>
 #include <QPen>
 #include <QBrush>
 #include <QMap>
@@ -15,9 +14,6 @@
 #include <gradient.h>
 #include <shadow.h>
 #include <abstractitembase.h>
-
-//#include <QGraphicsDropShadowEffect>
-
 
 class ItemBase : public AbstractItemBase
 {
@@ -80,9 +76,6 @@ private:
     Stroke::StrokePosition m_strokePosition;
     QPainterPath m_shadowPath;
     QRectF m_renderRect;
-//    QGraphicsDropShadowEffect * qShadow;
-//    QPixmapCache m_cache;
-//    mutable QPixmapCache::Key m_cacheKey;
 
     // Members
     QList<Fills>                m_fillsList;

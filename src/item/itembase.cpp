@@ -1,8 +1,5 @@
 #include <itembase.h>
 #include <QDebug>
-//#include <QGraphicsScene>
-//#include <QPainter>
-//#include <QtWidgets>
 #include <path/pathhandler.h>
 #include <QGraphicsEffect>
 #include <QGraphicsSceneMouseEvent>
@@ -11,7 +8,6 @@
 QT_BEGIN_NAMESPACE
 // https://code.woboq.org/qt5/qtbase/src/widgets/effects/qpixmapfilter.cpp.html
 extern Q_WIDGETS_EXPORT void qt_blurImage( QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
-extern Q_WIDGETS_EXPORT void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed = 0);
 QT_END_NAMESPACE
 
 ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(rect, parent)
@@ -25,9 +21,6 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     m_hasShadows = false;
     m_hasStrokes = false;
     m_hasInnerShadows = false;
-
-    //    m_cache = QPixmapCache();
-    //    m_cache.setCacheLimit(51200); // 50MB
 
     this->setFlag(QGraphicsItem::ItemIsSelectable, true);
     this->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
@@ -766,22 +759,6 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     m_lod = option->levelOfDetailFromTransform( painter->transform());
 
-//    bool _hasShadows;
-//    bool _hasInnerShadows;
-
-//    switch(renderQuality()){
-//    case RenderQuality::Optimal:
-//    case RenderQuality::Performance:
-//        _hasShadows = (m_lod < 0.6) ?  false : m_hasShadows;
-//        _hasInnerShadows = (m_lod < 0.6) ? false : m_hasInnerShadows;
-//        break;
-
-//    case RenderQuality::Quality:
-//        _hasShadows = m_hasShadows;
-//        _hasInnerShadows = m_hasInnerShadows;
-//        break;
-//    }
-
 
     // Drop Shadow
     if(m_hasShadows){
@@ -790,7 +767,6 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         }
     }
 
-
     // Draw Fills
     if(m_hasFills){
         foreach(Fills fills,this->fillsList()) {
@@ -798,14 +774,12 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         }
     }
 
-
     // Draw InnerShadows
     if(m_hasInnerShadows){
         foreach(Shadow shadow, this->innerShadowList()) {
             drawInnerShadow(shadow, painter);
         }
     }
-
 
     // Draw Strokes
     if(m_hasStrokes){

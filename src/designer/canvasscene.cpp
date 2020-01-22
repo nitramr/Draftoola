@@ -21,44 +21,6 @@ CanvasScene::CanvasScene(QObject *parent) : QGraphicsScene(parent)
     m_scaleFactor = 1;
     m_grid = 1;
 
-
-//    TEST: It's a test of item layout (shadow, fills, etc, as single QGraphicsItems
-//    QRectF rect(0,0,100,120);
-
-//    QGraphicsItemGroup *group = new QGraphicsItemGroup();
-//    group->setFlag(QGraphicsItem::ItemIsMovable);
-//    group->setFlag(QGraphicsItem::ItemClipsToShape, true);
-
-//    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect();
-//    shadow->setColor(QColor(0,0,0));
-//    shadow->setXOffset(0);
-//    shadow->setYOffset(2);
-//    shadow->setBlurRadius(10);
-
-//    QGraphicsDropShadowEffect *shadow2 = new QGraphicsDropShadowEffect();
-//    shadow2->setColor(QColor(255,0,0));
-//    shadow2->setXOffset(0);
-//    shadow2->setYOffset(0);
-//    shadow2->setBlurRadius(4);
-
-//    QGraphicsEllipseItem *ellipse = new QGraphicsEllipseItem(rect);
-//    ellipse->setFlag(QGraphicsItem::ItemClipsToShape, true);
-//    ellipse->setBrush(Qt::yellow);
-//    ellipse->setPen(Qt::NoPen);
-//    ellipse->setGraphicsEffect(shadow);
-
-//    QGraphicsEllipseItem *ellipse2 = new QGraphicsEllipseItem(rect);
-//    ellipse2->setFlag(QGraphicsItem::ItemClipsToShape, true);
-//    ellipse2->setBrush(Qt::blue);
-//    ellipse2->setPen(Qt::NoPen);
-//    ellipse2->setGraphicsEffect(shadow2);
-
-//    group->addToGroup(ellipse);
-//    group->addToGroup(ellipse2);
-//    group->setPos(0,-300);
-
-//    this->addItem(group);
-
 }
 
 /***************************************************
@@ -175,7 +137,7 @@ void CanvasScene::saveSVG(AbstractItemBase *bi, const QString outputPath)
     generator.setSize(targetRect.size().toSize());  // Set the dimensions of the working area of the document in millimeters
     generator.setViewBox(targetRect);
     generator.setTitle(bi->name());
-    generator.setDescription(trUtf8("File created by WhitePrint Studio"));
+    generator.setDescription(trUtf8("File created by Draftoola Studio"));
     generator.setResolution(72);
 
     QPainter painter(&generator);
@@ -206,7 +168,7 @@ void CanvasScene::savePDF(AbstractItemBase *bi, const QString outputPath)
     pdfWriter.setTitle(bi->name());
     pdfWriter.setPageMargins(QMargins(0, 0, 0, 0));
     pdfWriter.setResolution(72);
-    pdfWriter.setCreator(trUtf8("File created by WhitePrint Studio"));
+    pdfWriter.setCreator(trUtf8("File created by Draftoola Studio"));
 
     QPainter painter(&pdfWriter);
     painter.translate(bi->renderRect().topLeft().x() * -1, bi->renderRect().topLeft().y() * -1);
@@ -297,7 +259,7 @@ void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 //    m_hoverPath = QPainterPath();
 //    // refresh only foreground layer
-// //   invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+//    invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
 
 //    QPoint mousePos = event->scenePos().toPoint();
 

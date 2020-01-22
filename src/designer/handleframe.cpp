@@ -607,6 +607,7 @@ void HandleFrame::reset()
 bool HandleFrame::selectionIsEmpty()
 {    
     m_items.clear();
+    m_canRotate = true;
 
     if(m_scene->selectedItems().isEmpty()){
         m_canRotate = false;
