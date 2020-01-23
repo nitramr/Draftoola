@@ -505,10 +505,6 @@ bool HandleFrame::canHeightChange()
 
 void HandleFrame::adjustSize(qreal x, qreal y)
 {
-    // respect grid and scale size only by integer
-    x = (static_cast<int>(x) / m_gridSpace) * m_gridSpace;
-    y = (static_cast<int>(y) / m_gridSpace) * m_gridSpace;
-
     m_oldRect = this->rect();
     m_oldPos = this->scenePos();
 
@@ -521,7 +517,7 @@ void HandleFrame::adjustSize(qreal x, qreal y)
             m_width =  m_width + x;
             m_height =  m_width* m_ratio;
 
-        }else if(m_height <= m_width){
+        }else{
             m_height = m_height + y;
             m_width = m_height * m_ratio;
         }
@@ -531,8 +527,6 @@ void HandleFrame::adjustSize(qreal x, qreal y)
         m_width += x;
         m_height += y;
     }
-
-
 
     this->setRect(this->rect().x(),
                   this->rect().y(),
@@ -641,6 +635,15 @@ bool HandleFrame::selectionIsEmpty()
 
     return m_items.isEmpty();
 
+}
+
+
+/*!
+ * \brief Origin value fit in grid space.
+ */
+qreal HandleFrame::fitInGrid(qreal origin)
+{
+    return (static_cast<int>(origin) / m_gridSpace) * m_gridSpace;
 }
 
 
@@ -846,35 +849,33 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
             XaxisSign = 1;
             YaxisSign = 0;
             break;
+        default:
+            XaxisSign = 0;
+            YaxisSign = 0;
+            break;
         }
 
         // if the mouse is being dragged, calculate a new size and also re-position
         // the box to give the appearance of dragging the corner out/in to resize the box
 
-        qreal xMoved = corner->mouseDownX - x;
-        qreal yMoved = corner->mouseDownY - y;
+        qreal deltaWidth = this->rect().width() + ( XaxisSign * (corner->mouseDownX - x));
+        deltaWidth = (deltaWidth < 1) ? 1: fitInGrid(deltaWidth - this->rect().width());
 
-        qreal newWidth = this->rect().width() + ( XaxisSign * xMoved);
-        if ( newWidth < 1 ) newWidth  = 1;
-
-        qreal newHeight = this->rect().height() + (YaxisSign * yMoved) ;
-        if ( newHeight < 1 ) newHeight = 1;
-
-        qreal deltaW  =   newWidth - this->rect().width() ;
-        qreal deltaH =   newHeight - this->rect().height() ;
+        qreal deltaHeight = this->rect().height() + (YaxisSign * (corner->mouseDownY - y)) ;
+        deltaHeight = (deltaHeight < 1) ? 1: fitInGrid(deltaHeight - this->rect().height());
 
         // adjust frame size
-        this->adjustSize(  deltaW ,   deltaH);
+        this->adjustSize(  deltaWidth ,   deltaHeight);
 
-        qreal deltaWidth = deltaW * (-1);
-        qreal deltaHeight = deltaH * (-1);
+        deltaWidth *= (-1);
+        deltaHeight *= (-1);
 
-        qreal newX;
-        qreal newY;
+        qreal newX, newY;
 
         switch( corner->getCorner() ){
         case ItemHandle::TopLeft:{
             if(m_keepAspectRatio){
+
                 if(height() > width()){
                     newX = anchorBottomRight().x() - width() + deltaWidth;
                     newY = anchorBottomRight().y() - height() + deltaWidth * m_ratio;
@@ -883,12 +884,13 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
                     newX = anchorBottomRight().x() - width() + deltaHeight * m_ratio;
                     newY = anchorBottomRight().y() - height() + deltaHeight;
                 }
+
             }else{
                 newX = anchorBottomRight().x() - width() + deltaWidth;
                 newY = anchorBottomRight().y() - height() + deltaHeight;
             }
-            this->setPos(newX,newY);
 
+            this->setPos(newX,newY);
 
             break;
         }
@@ -903,10 +905,10 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
                     newY = anchorBottomRight().y() - height() + deltaHeight;
                 }
 
-
             }else{
                 newY = anchorBottomRight().y() - height() + deltaHeight;
             }
+
             this->setPos(this->pos().x(),newY);
 
             break;
@@ -914,14 +916,17 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
         case ItemHandle::Left:
         case ItemHandle::BottomLeft:{
             if(m_keepAspectRatio){
+
                 if(height() > width()){
                     newX = anchorBottomRight().x() - width() + deltaWidth;
                 }else {
                     newX = anchorBottomRight().x() - width() + deltaHeight * m_ratio;
                 }
+
             }else{
                 newX = anchorBottomRight().x() - width() + deltaWidth;
             }
+
             this->setPos(newX, this->pos().y());
 
             break;

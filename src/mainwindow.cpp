@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->setupUi(this);
 
+    setWindowTitle(QCoreApplication::applicationName());
     showMaximized();
 
     // inizialize widgets

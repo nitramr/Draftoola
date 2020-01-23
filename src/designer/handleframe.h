@@ -191,6 +191,7 @@ private:
     void updateItemsSelection();
     void reset();
     bool selectionIsEmpty();
+    qreal fitInGrid(qreal origin);
 
 protected:
     // Events

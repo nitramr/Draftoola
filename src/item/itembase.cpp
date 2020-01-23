@@ -270,15 +270,15 @@ qreal ItemBase::lod()
         return m_lod;
         break;
 
-    // 3.0 = mid render quality with good speed
+        // 2.0 = mid render quality with good speed
     case RenderQuality::Balanced:
-        return qMin(3.0, m_lod);
+        return qMin(2.0, m_lod);
         break;
 
-    // 1.0 = worst render result but fast
+        // 1.0 = worst render result but fast
     case RenderQuality::Performance:
         return 1.0;
-        break;    
+        break;
     }
 }
 
@@ -405,7 +405,7 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
 
 QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
 {
-    if(!shadow.isOn()) return QRectF();
+    if(!shadow.isOn() || rect().width() == 0 || rect().height() == 0) return QRectF();
 
     PathHandler pHandler;
 
@@ -458,7 +458,7 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
 
 QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
 {
-    if(!fills.isOn()) return QRectF();
+    if(!fills.isOn() || rect().width() == 0 || rect().height() == 0) return QRectF();
 
     painter->save();
     painter->setBrush(Qt::NoBrush);
@@ -503,9 +503,6 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
         break;
     }
     case FillType::LinearGradient:{
-
-        Gradient gr = Gradient( "name", fills.gradient().radial(rect()) );
-        gr.setFocalPoint(QPointF(30,30));
 
         painter->setBrush(QBrush( fills.gradient().linear( QLineF(QPointF(), QPointF(0,rect().bottom())) ) ));
         painter->drawPath(shape());
@@ -629,26 +626,28 @@ QPainterPath ItemBase::strokeShape() const
 {
     QPainterPath strokeShape;
 
-    if(hasStrokes()){
+    if(m_hasStrokes){
         PathHandler pHandler;
         QPainterPath pathMask = shape();
 
         foreach(Stroke stroke, strokeList()) {
-            qreal width = stroke.widthF();
-            switch(stroke.strokePosition()){
-            case Stroke::Inner:
-                pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke), shape(), PathHandler::Booleans::Intersect);
-                break;
-            case Stroke::Outer:{
-                pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke), shape(), PathHandler::Booleans::Subtract);
-                break;
-            }
-            case Stroke::Center:
-                pathMask = scaleStroke(shape(), width, stroke);
-                break;
-            }
+            if(stroke.isOn()){
+                qreal width = stroke.widthF();
+                switch(stroke.strokePosition()){
+                case Stroke::Inner:
+                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke), shape(), PathHandler::Booleans::Intersect);
+                    break;
+                case Stroke::Outer:{
+                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke), shape(), PathHandler::Booleans::Subtract);
+                    break;
+                }
+                case Stroke::Center:
+                    pathMask = scaleStroke(shape(), width, stroke);
+                    break;
+                }
 
-            strokeShape = pHandler.combine(strokeShape, pathMask, PathHandler::Booleans::Unite);
+                strokeShape = pHandler.combine(strokeShape, pathMask, PathHandler::Booleans::Unite);
+            }
         }
     }
 
@@ -676,9 +675,7 @@ QImage ItemBase::blurShadow(QPainterPath shape, QSize size, qreal radius, qreal 
     blurred.fill(0);
     QPainter blurPainter(&blurred);
 
-    if(m_doRender){
-        qt_blurImage(&blurPainter, tmp, radius * lod, QGraphicsBlurEffect::BlurHint::QualityHint, true);
-    }else qt_blurImage(&blurPainter, tmp, radius * lod, QGraphicsBlurEffect::BlurHint::AnimationHint, true);
+    qt_blurImage(&blurPainter, tmp, radius * lod, m_doRender, true);
 
     tmp = blurred;
 
@@ -759,34 +756,25 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     m_lod = option->levelOfDetailFromTransform( painter->transform());
 
-
     // Drop Shadow
-    if(m_hasShadows){
-        foreach(Shadow shadow, this->shadowList()) {
+    if(m_hasShadows)
+        foreach(Shadow shadow, this->shadowList())
             drawShadow(shadow, painter);
-        }
-    }
 
     // Draw Fills
-    if(m_hasFills){
-        foreach(Fills fills,this->fillsList()) {
+    if(m_hasFills)
+        foreach(Fills fills,this->fillsList())
             drawFills(fills, painter);
-        }
-    }
 
     // Draw InnerShadows
-    if(m_hasInnerShadows){
-        foreach(Shadow shadow, this->innerShadowList()) {
+    if(m_hasInnerShadows)
+        foreach(Shadow shadow, this->innerShadowList())
             drawInnerShadow(shadow, painter);
-        }
-    }
 
     // Draw Strokes
-    if(m_hasStrokes){
-        foreach(Stroke stroke, this->strokeList()) {
+    if(m_hasStrokes)
+        foreach(Stroke stroke, this->strokeList())
             drawStrokes(stroke, painter);
-        }
-    }
 
 }
 

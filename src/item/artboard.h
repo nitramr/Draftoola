@@ -14,13 +14,16 @@
 
 class Artboard;
 
-class ArtboardLabel : public QGraphicsSimpleTextItem
+class ArtboardLabel : public QGraphicsTextItem
 {
 public:
     ArtboardLabel(QString name, Artboard *parent);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
+protected:
+    virtual void focusOutEvent (QFocusEvent * event) override;
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event) override;
 };
 
 
@@ -36,7 +39,7 @@ public:
     // Properties
     int type() const override { return Type::Artboard; }
 
-	QGraphicsRectItem *canvas() const;
+    QGraphicsRectItem *canvas() const;
     void setRect(QRectF rect) override;
     QRectF renderRect() const override;
 
@@ -64,11 +67,11 @@ public:
 
 private:
     int m_offset;
-    int m_buffer;    
+    int m_buffer;
     bool m_useBGColor;
     QColor m_backgroundColor;
     ArtboardLabel * m_label;
-	QGraphicsRectItem * m_artboard;
+    QGraphicsRectItem * m_artboard;
 
     void fromObject(AbstractItemBase *obj);
 

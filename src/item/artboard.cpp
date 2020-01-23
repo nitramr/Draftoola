@@ -8,9 +8,10 @@
  *
  *********************/
 
-ArtboardLabel::ArtboardLabel(QString name, Artboard *parent) : QGraphicsSimpleTextItem(name, parent)
+ArtboardLabel::ArtboardLabel(QString name, Artboard *parent) : QGraphicsTextItem(name, parent)
 {
     this->setFlag( QGraphicsItem::ItemIgnoresTransformations, true );
+  //  this->setTextInteractionFlags(Qt::NoTextInteraction);
 }
 
 void ArtboardLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -18,13 +19,31 @@ void ArtboardLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
-    QGraphicsSimpleTextItem::paint(painter, &myOption, widget);
+    QGraphicsTextItem::paint(painter, &myOption, widget);
 }
 
 void ArtboardLabel::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    Q_UNUSED(event)
+
     this->parentItem()->setFlag( QGraphicsItem::ItemIsSelectable, true );
     this->parentItem()->setSelected(true);
+}
+
+void ArtboardLabel::focusOutEvent(QFocusEvent *event)
+{
+    Q_UNUSED(event);
+    setTextInteractionFlags(Qt::NoTextInteraction);
+}
+
+void ArtboardLabel::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+//    Q_UNUSED(event);
+
+    QGraphicsTextItem::mouseDoubleClickEvent(event);
+
+    setTextInteractionFlags(Qt::TextEditorInteraction);
+    setFocus();
 }
 
 
@@ -130,7 +149,7 @@ QList<AbstractItemBase *> Artboard::childItems() const
 
 void Artboard::setName(QString text)
 {
-    m_label->setText(text);
+    m_label->setPlainText(text);
     m_name = text;
 }
 
@@ -169,7 +188,6 @@ bool Artboard::useBackgroundColor() const
 
 void Artboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option);
     Q_UNUSED(widget);
 
     if(m_useBGColor) painter->fillRect(renderRect(), QBrush(m_backgroundColor));
@@ -249,7 +267,7 @@ QDebug operator<<(QDebug dbg, const Artboard &obj)
     dbg << aib <<
            obj.m_useBGColor <<
            obj.m_backgroundColor <<
-           obj.m_label->text();
+           obj.m_label->toPlainText();
 
     return dbg.maybeSpace();
 }
@@ -261,7 +279,7 @@ QDataStream &operator<<(QDataStream &out, const Artboard &obj)
     out << aib <<
            obj.m_useBGColor <<
            obj.m_backgroundColor <<
-           obj.m_label->text();
+           obj.m_label->toPlainText();
 
     return out;
 }

@@ -5,6 +5,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    QCoreApplication::setApplicationName("Draftoola Studio");
+    QCoreApplication::setApplicationVersion("0.1 alpha");
+    QCoreApplication::setOrganizationName("Draftoola Development Team");
+
     qRegisterMetaTypeStreamOperators<AbstractItemProperty>("AbstractItemProperty");
 
     qRegisterMetaType<Shadow>("Shadow");

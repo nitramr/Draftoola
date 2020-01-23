@@ -5,6 +5,7 @@
 #include <QSvgGenerator>
 #include <QPdfWriter>
 
+#include <QCoreApplication>
 #include <handleframe.h>
 
 //#include <QGraphicsItemGroup>
@@ -137,7 +138,7 @@ void CanvasScene::saveSVG(AbstractItemBase *bi, const QString outputPath)
     generator.setSize(targetRect.size().toSize());  // Set the dimensions of the working area of the document in millimeters
     generator.setViewBox(targetRect);
     generator.setTitle(bi->name());
-    generator.setDescription(trUtf8("File created by Draftoola Studio"));
+    generator.setDescription(tr("File created by ") + QCoreApplication::applicationName() );
     generator.setResolution(72);
 
     QPainter painter(&generator);
@@ -168,7 +169,7 @@ void CanvasScene::savePDF(AbstractItemBase *bi, const QString outputPath)
     pdfWriter.setTitle(bi->name());
     pdfWriter.setPageMargins(QMargins(0, 0, 0, 0));
     pdfWriter.setResolution(72);
-    pdfWriter.setCreator(trUtf8("File created by Draftoola Studio"));
+    pdfWriter.setCreator(tr("File created by ") + QCoreApplication::applicationName() );
 
     QPainter painter(&pdfWriter);
     painter.translate(bi->renderRect().topLeft().x() * -1, bi->renderRect().topLeft().y() * -1);
