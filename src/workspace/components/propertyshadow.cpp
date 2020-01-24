@@ -56,6 +56,7 @@ void PropertyShadow::drawShadow(Shadow shadow)
 
 void PropertyShadow::connectSlots()
 {
+    connect(ui->btnDelete, &QToolButton::clicked, this, &PropertyShadow::removeClick);
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
     connect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     connect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
@@ -65,6 +66,7 @@ void PropertyShadow::connectSlots()
 
 void PropertyShadow::disconnectSlots()
 {
+    disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyShadow::removeClick);
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
     disconnect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     disconnect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
@@ -82,4 +84,9 @@ void PropertyShadow::updateShadow()
     m_shadow.setColor(m_shadow.color()); // need real data
 
     emit hasChanged(true);
+}
+
+void PropertyShadow::removeClick()
+{
+    emit remove(this);
 }

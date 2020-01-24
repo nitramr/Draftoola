@@ -38,9 +38,11 @@ private:
 
 private slots:
     void updateStroke();
+    void removeClick();
 
 signals:
     void hasChanged(bool);
+    void remove(PropertyStroke*);
 };
 
 #endif // PROPERTYSTROKE_H

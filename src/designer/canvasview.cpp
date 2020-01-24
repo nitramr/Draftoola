@@ -37,7 +37,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     this->setOptimizationFlag(DontAdjustForAntialiasing, true); // https://doc.qt.io/qt-5/qgraphicsview.html#OptimizationFlag-enum
     this->setOptimizationFlag(DontSavePainterState, true); // restoring painter will handle in item paint event
     //    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // http://doc.qt.io/gt-5/qgraphicsview.html#ViewportUpdateMode-enum
-    this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     this->setBackgroundBrush(QColor(240,240,240));
     //    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
@@ -179,6 +179,7 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
     }
 
 }
+
 
 /***************************************************
  *

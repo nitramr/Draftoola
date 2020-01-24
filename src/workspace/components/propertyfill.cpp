@@ -108,6 +108,7 @@ void PropertyFill::drawFill(Fills fill)
 
 void PropertyFill::connectSlots()
 {
+    connect(ui->btnDelete, &QToolButton::clicked, this, &PropertyFill::removeClick);
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
     connect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateFill);
     connect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateFill);
@@ -115,6 +116,7 @@ void PropertyFill::connectSlots()
 
 void PropertyFill::disconnectSlots()
 {
+    disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyFill::removeClick);
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
     disconnect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateFill);
     disconnect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateFill);
@@ -130,4 +132,9 @@ void PropertyFill::updateFill()
     drawFill(m_fill);
 
     emit hasChanged(true);
+}
+
+void PropertyFill::removeClick()
+{
+    emit remove(this);
 }

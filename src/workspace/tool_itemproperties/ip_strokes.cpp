@@ -105,15 +105,27 @@ void ipStrokes::loadStrokes()
 void ipStrokes::addStroke(PropertyStroke *propertyItem)
 {
     connect(propertyItem, &PropertyStroke::hasChanged, this, &ipStrokes::updateItem);
+    connect(propertyItem, &PropertyStroke::remove, this, &ipStrokes::removeStroke );
     m_propertyItemList->append(propertyItem);
     ui->layout->addWidget(propertyItem);
 }
 
 void ipStrokes::removeStroke(PropertyStroke *propertyItem)
 {
+    if(m_item == nullptr) return;
+
     disconnect(propertyItem, &PropertyStroke::hasChanged, this, &ipStrokes::updateItem);
+    disconnect(propertyItem, &PropertyStroke::remove, this, &ipStrokes::removeStroke );
     m_propertyItemList->removeOne(propertyItem);
+    m_item->removeStroke(propertyItem->stroke());
     ui->layout->removeWidget(propertyItem);
+
+    propertyItem->deleteLater();
+
+    if(m_propertyItemList->count() <= 0){
+        this->setEnabled(false);
+        emit sendCollapse(true);
+    }
 }
 
 void ipStrokes::newStroke()
@@ -126,6 +138,11 @@ void ipStrokes::newStroke()
     m_item->addStroke(m_newProperty);
     m_item->update();
     addStroke(m_newPropertyItem);
+
+    if(m_propertyItemList->count() == 1){
+        this->setEnabled(true);
+        emit sendCollapse(false);
+    }
 }
 
 void ipStrokes::updateItem()

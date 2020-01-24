@@ -87,6 +87,12 @@ void PropertyStroke::drawStroke(Stroke stroke)
 
 void PropertyStroke::connectSlots()
 {
+    connect(ui->btnDelete, &QToolButton::clicked, this, &PropertyStroke::removeClick);
+
+//    connect(ui->btnDelete, &QToolButton::clicked, [this]{
+//        emit remove(this);
+//    });
+
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyStroke::updateStroke);
     connect(ui->sb_width, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
     connect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
@@ -96,6 +102,7 @@ void PropertyStroke::connectSlots()
 
 void PropertyStroke::disconnectSlots()
 {
+    disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyStroke::removeClick);
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyStroke::updateStroke);
     disconnect(ui->sb_width, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
     disconnect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
@@ -118,4 +125,9 @@ void PropertyStroke::updateStroke()
 
 
     emit hasChanged(true);
+}
+
+void PropertyStroke::removeClick()
+{
+    emit remove(this);
 }

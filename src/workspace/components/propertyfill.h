@@ -33,9 +33,11 @@ private:
 
 private slots:
     void updateFill();
+    void removeClick();
 
 signals:
     void hasChanged(bool);
+    void remove(PropertyFill*);
 
 };
 

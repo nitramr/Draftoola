@@ -104,6 +104,7 @@ void ipFills::loadFills()
 void ipFills::addFill(PropertyFill *propertyItem)
 {
     connect(propertyItem, &PropertyFill::hasChanged, this, &ipFills::updateItem);
+    connect(propertyItem, &PropertyFill::remove, this, &ipFills::removeFill );
 
     m_propertyItemList->append(propertyItem);
     ui->layout->addWidget(propertyItem);
@@ -111,10 +112,20 @@ void ipFills::addFill(PropertyFill *propertyItem)
 
 void ipFills::removeFill(PropertyFill *propertyItem)
 {
-    disconnect(propertyItem, &PropertyFill::hasChanged, this, &ipFills::updateItem);
+    if(m_item == nullptr) return;
 
+    disconnect(propertyItem, &PropertyFill::hasChanged, this, &ipFills::updateItem);
+    disconnect(propertyItem, &PropertyFill::remove, this, &ipFills::removeFill );
     m_propertyItemList->removeOne(propertyItem);
+    m_item->removeFills(propertyItem->fill());
     ui->layout->removeWidget(propertyItem);
+
+    propertyItem->deleteLater();
+
+    if(m_propertyItemList->count() <= 0){
+        this->setEnabled(false);
+        emit sendCollapse(true);
+    }
 }
 
 void ipFills::newFill()
@@ -127,6 +138,11 @@ void ipFills::newFill()
     m_item->addFills(m_newProperty);
     m_item->update();
     addFill(m_newPropertyItem);
+
+    if(m_propertyItemList->count() == 1){
+        this->setEnabled(true);
+        emit sendCollapse(false);
+    }
 }
 
 void ipFills::updateItem()

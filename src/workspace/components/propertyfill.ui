@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>228</width>
+    <width>256</width>
     <height>48</height>
    </rect>
   </property>
@@ -53,12 +53,12 @@
         <enum>Qt::Vertical</enum>
        </property>
        <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
+        <enum>QSizePolicy::Maximum</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>1</width>
-         <height>6</height>
+         <height>9</height>
         </size>
        </property>
       </spacer>
@@ -100,7 +100,7 @@
         <string>Color</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
        </property>
       </widget>
      </item>
@@ -132,7 +132,7 @@
         <string>Blending</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
        </property>
       </widget>
      </item>
@@ -164,7 +164,7 @@
         <string>Opacity</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
        </property>
       </widget>
      </item>
@@ -183,6 +183,43 @@
      </property>
     </spacer>
    </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <property name="spacing">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="QToolButton" name="btnDelete">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/icons/icons.qrc">
+         <normaloff>:/icons/dark/delete-24px.svg</normaloff>:/icons/dark/delete-24px.svg</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>1</width>
+         <height>15</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -192,6 +229,8 @@
    <header>src/widgets/colorbutton.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../resources/icons/icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

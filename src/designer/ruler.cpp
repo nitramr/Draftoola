@@ -110,8 +110,7 @@ void QDRuler::mouseMoveEvent(QMouseEvent *event)
 void QDRuler::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    //    painter.setRenderHint(QPainter::TextAntialiasing, true);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
 
     QRectF rulerRect = this->rect();
 

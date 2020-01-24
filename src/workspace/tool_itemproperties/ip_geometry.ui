@@ -88,7 +88,7 @@
         <string>Y</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
        </property>
       </widget>
      </item>
@@ -141,7 +141,7 @@
         <string>Height</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
        </property>
       </widget>
      </item>
@@ -251,7 +251,7 @@
         <string>Width</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
        </property>
       </widget>
      </item>
@@ -307,7 +307,7 @@
         <string>X</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
        </property>
       </widget>
      </item>
@@ -341,10 +341,13 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>0</width>
-         <height>0</height>
+         <height>15</height>
         </size>
        </property>
       </spacer>
@@ -368,10 +371,13 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>0</width>
-         <height>0</height>
+         <height>15</height>
         </size>
        </property>
       </spacer>

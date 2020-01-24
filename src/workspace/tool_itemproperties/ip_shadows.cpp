@@ -105,15 +105,27 @@ void ipShadows::loadShadows()
 void ipShadows::addShadow(PropertyShadow *propertyItem)
 {
     connect(propertyItem, &PropertyShadow::hasChanged, this, &ipShadows::updateItem);
+    connect(propertyItem, &PropertyShadow::remove, this, &ipShadows::removeShadow );
     m_propertyItemList->append(propertyItem);
     ui->layout->addWidget(propertyItem);
 }
 
 void ipShadows::removeShadow(PropertyShadow *propertyItem)
 {
+    if(m_item == nullptr) return;
+
     disconnect(propertyItem, &PropertyShadow::hasChanged, this, &ipShadows::updateItem);
+    disconnect(propertyItem, &PropertyShadow::remove, this, &ipShadows::removeShadow );
     m_propertyItemList->removeOne(propertyItem);
+    m_item->removeShadow(propertyItem->shadow());
     ui->layout->removeWidget(propertyItem);
+
+    propertyItem->deleteLater();
+
+    if(m_propertyItemList->count() <= 0){
+        this->setEnabled(false);
+        emit sendCollapse(true);
+    }
 }
 
 void ipShadows::newShadow()
@@ -126,6 +138,11 @@ void ipShadows::newShadow()
     m_item->addShadow(m_newProperty);
     m_item->update();
     addShadow(m_newPropertyItem);
+
+    if(m_propertyItemList->count() == 1){
+        this->setEnabled(true);
+        emit sendCollapse(false);
+    }
 }
 
 void ipShadows::updateItem()

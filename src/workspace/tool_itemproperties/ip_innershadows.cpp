@@ -103,6 +103,7 @@ void ipInnerShadows::loadShadows()
 void ipInnerShadows::addShadow(PropertyShadow *propertyItem)
 {
     connect(propertyItem, &PropertyShadow::hasChanged, this, &ipInnerShadows::updateItem);
+    connect(propertyItem, &PropertyShadow::remove, this, &ipInnerShadows::removeShadow );
 
     m_propertyItemList->append(propertyItem);
     ui->layout->addWidget(propertyItem);
@@ -110,10 +111,20 @@ void ipInnerShadows::addShadow(PropertyShadow *propertyItem)
 
 void ipInnerShadows::removeShadow(PropertyShadow *propertyItem)
 {
-    disconnect(propertyItem, &PropertyShadow::hasChanged, this, &ipInnerShadows::updateItem);
+    if(m_item == nullptr) return;
 
+    disconnect(propertyItem, &PropertyShadow::hasChanged, this, &ipInnerShadows::updateItem);
+    disconnect(propertyItem, &PropertyShadow::remove, this, &ipInnerShadows::removeShadow );
     m_propertyItemList->removeOne(propertyItem);
+    m_item->removeShadow(propertyItem->shadow());
     ui->layout->removeWidget(propertyItem);
+
+    propertyItem->deleteLater();
+
+    if(m_propertyItemList->count() <= 0){
+        this->setEnabled(false);
+        emit sendCollapse(true);
+    }
 }
 
 void ipInnerShadows::newShadow()
@@ -126,6 +137,11 @@ void ipInnerShadows::newShadow()
     m_item->addInnerShadow(m_newProperty);
     m_item->update();
     addShadow(m_newPropertyItem);
+
+    if(m_propertyItemList->count() == 1){
+        this->setEnabled(true);
+        emit sendCollapse(false);
+    }
 }
 
 void ipInnerShadows::updateItem()

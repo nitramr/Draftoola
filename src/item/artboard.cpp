@@ -8,10 +8,9 @@
  *
  *********************/
 
-ArtboardLabel::ArtboardLabel(QString name, Artboard *parent) : QGraphicsTextItem(name, parent)
+ArtboardLabel::ArtboardLabel(QString name, Artboard *parent) : QGraphicsSimpleTextItem(name, parent)
 {
     this->setFlag( QGraphicsItem::ItemIgnoresTransformations, true );
-  //  this->setTextInteractionFlags(Qt::NoTextInteraction);
 }
 
 void ArtboardLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -19,7 +18,7 @@ void ArtboardLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
-    QGraphicsTextItem::paint(painter, &myOption, widget);
+    QGraphicsSimpleTextItem::paint(painter, &myOption, widget);
 }
 
 void ArtboardLabel::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -28,22 +27,8 @@ void ArtboardLabel::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     this->parentItem()->setFlag( QGraphicsItem::ItemIsSelectable, true );
     this->parentItem()->setSelected(true);
-}
+    this->parentItem()->setFocus();
 
-void ArtboardLabel::focusOutEvent(QFocusEvent *event)
-{
-    Q_UNUSED(event);
-    setTextInteractionFlags(Qt::NoTextInteraction);
-}
-
-void ArtboardLabel::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-//    Q_UNUSED(event);
-
-    QGraphicsTextItem::mouseDoubleClickEvent(event);
-
-    setTextInteractionFlags(Qt::TextEditorInteraction);
-    setFocus();
 }
 
 
@@ -114,6 +99,21 @@ QGraphicsRectItem * Artboard::canvas() const
 
 void Artboard::setRect(QRectF rect)
 {
+
+    switch(frameType()){
+    case AbstractItemBase::FixedWidth:
+        rect.setWidth(this->rect().width());
+        break;
+    case AbstractItemBase::FixedHeight:
+        rect.setHeight(this->rect().height());
+        break;
+    case AbstractItemBase::FixedSize:
+        rect = this->rect();
+        break;
+    case AbstractItemBase::Free:
+        break;
+    }
+
     QPainterPath shape;
     shape.addRect(rect);
     AbstractItemBase::setShape(shape);
@@ -149,7 +149,7 @@ QList<AbstractItemBase *> Artboard::childItems() const
 
 void Artboard::setName(QString text)
 {
-    m_label->setPlainText(text);
+    m_label->setText(text);
     m_name = text;
 }
 
@@ -267,7 +267,7 @@ QDebug operator<<(QDebug dbg, const Artboard &obj)
     dbg << aib <<
            obj.m_useBGColor <<
            obj.m_backgroundColor <<
-           obj.m_label->toPlainText();
+           obj.m_label->text();
 
     return dbg.maybeSpace();
 }
@@ -279,7 +279,7 @@ QDataStream &operator<<(QDataStream &out, const Artboard &obj)
     out << aib <<
            obj.m_useBGColor <<
            obj.m_backgroundColor <<
-           obj.m_label->toPlainText();
+           obj.m_label->text();
 
     return out;
 }

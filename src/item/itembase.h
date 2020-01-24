@@ -31,26 +31,30 @@ public:
 
     // Properties
 	void addStroke(Stroke stroke);
-	Stroke stroke(int id = 0) const;
     void updateStroke(Stroke stroke);
+    void removeStroke(Stroke stroke);
+	Stroke stroke(int id = 0) const;    
 	QList<Stroke> strokeList() const;
     bool hasStrokes() const;
 
 	void addFills(Fills fills);
-	Fills fills(int id = 0) const;
     void updateFills(Fills fills);
+    void removeFills(Fills fills);
+	Fills fills(int id = 0) const;    
     QList<Fills> fillsList() const;
     bool hasFills() const;
 
 	void addShadow(Shadow shadow);
-	Shadow shadow(int id = 0) const;
     void updateShadow(Shadow shadow);
+    void removeShadow(Shadow shadow);
+	Shadow shadow(int id = 0) const;    
 	QList<Shadow> shadowList() const;
     bool hasShadows() const;
 
 	void addInnerShadow(Shadow shadow);
-	Shadow innerShadow(int id = 0) const;
     void updateInnerShadow(Shadow shadow);
+    void removeInnerShadow(Shadow shadow);
+	Shadow innerShadow(int id = 0) const;    
 	QList<Shadow> innerShadowList() const;
     bool hasInnerShadows() const;
 

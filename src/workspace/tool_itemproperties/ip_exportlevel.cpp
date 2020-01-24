@@ -68,7 +68,7 @@ void ipExportLevels::loadProperties()
 void ipExportLevels::resetItems()
 {
 
-    m_exportLevelItemList = new QList<PropertyExportLevel*>();
+    m_propertyItemList = new QList<PropertyExportLevel*>();
 
     this->setEnabled(false);
 
@@ -109,7 +109,7 @@ void ipExportLevels::addExportLevel(PropertyExportLevel *propertyItem)
     connect(propertyItem, &PropertyExportLevel::hasChanged, this, &ipExportLevels::updateItem);
     connect(propertyItem, &PropertyExportLevel::remove, this, &ipExportLevels::removeExportLevel );
 
-    m_exportLevelItemList->append(propertyItem);
+    m_propertyItemList->append(propertyItem);
     ui->lytItems->addWidget(propertyItem);
 
 }
@@ -121,13 +121,13 @@ void ipExportLevels::removeExportLevel(PropertyExportLevel *propertyItem)
     disconnect(propertyItem, &PropertyExportLevel::hasChanged, this, &ipExportLevels::updateItem);
     disconnect(propertyItem, &PropertyExportLevel::remove, this, &ipExportLevels::removeExportLevel );
 
-    m_exportLevelItemList->removeOne(propertyItem);
+    m_propertyItemList->removeOne(propertyItem);
     m_item->removeExportLevel(propertyItem->exportLevel());
     ui->lytItems->removeWidget(propertyItem);
 
     propertyItem->deleteLater();
 
-    if(m_exportLevelItemList->count() <= 0){
+    if(m_propertyItemList->count() <= 0){
         this->setEnabled(false);
         emit sendCollapse(true);
     }
@@ -143,7 +143,7 @@ void ipExportLevels::newExportLevel()
 
     m_item->addExportLevel(newExportLevel->exportLevel());
 
-    if(m_exportLevelItemList->count() == 1){
+    if(m_propertyItemList->count() == 1){
         this->setEnabled(true);
         emit sendCollapse(false);
     }

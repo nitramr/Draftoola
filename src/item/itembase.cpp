@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <path/pathhandler.h>
 #include <QGraphicsEffect>
+#include <QGraphicsBlurEffect>
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
 
@@ -25,6 +26,10 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     this->setFlag(QGraphicsItem::ItemIsSelectable, true);
     this->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
     this->setFlag(QGraphicsItem::ItemContainsChildrenInShape, true);
+
+//    QGraphicsBlurEffect *blur = new QGraphicsBlurEffect();
+//    blur->setBlurRadius(20);
+//    setGraphicsEffect(blur);
 
 }
 
@@ -72,13 +77,6 @@ void ItemBase::addStroke(Stroke stroke)
     m_hasStrokes = hasStrokes();
     calculateRenderRect();
     setInvalidateCache(true);
-    qDebug() << "Invalidate::addStroke()";
-}
-
-Stroke ItemBase::stroke(int id) const
-{
-    id = qMin(m_strokeList.size()-1, qMax(0, id));
-    return m_strokeList.at(id);
 }
 
 void ItemBase::updateStroke(Stroke stroke)
@@ -90,12 +88,27 @@ void ItemBase::updateStroke(Stroke stroke)
             m_hasStrokes = hasStrokes();
             calculateRenderRect();
             setInvalidateCache(true);
-            qDebug() << "Invalidate::updateStroke()";
             update();
             return;
         }
     }
 }
+
+void ItemBase::removeStroke(Stroke stroke)
+{
+    m_strokeList.removeOne(stroke);
+    m_hasStrokes = hasStrokes();
+    calculateRenderRect();
+    setInvalidateCache(true);
+    update();
+}
+
+Stroke ItemBase::stroke(int id) const
+{
+    id = qMin(m_strokeList.size()-1, qMax(0, id));
+    return m_strokeList.at(id);
+}
+
 
 QList<Stroke> ItemBase::strokeList() const
 {
@@ -119,13 +132,6 @@ void ItemBase::addFills(Fills fills)
     m_hasFills = hasFills();
     calculateRenderRect();
     setInvalidateCache(true);
-    qDebug() << "Invalidate::addFills()";
-}
-
-Fills ItemBase::fills(int id) const
-{
-    id = qMin(m_fillsList.size()-1, qMax(0, id));
-    return m_fillsList.at(id);
 }
 
 void ItemBase::updateFills(Fills fills)
@@ -137,11 +143,25 @@ void ItemBase::updateFills(Fills fills)
             m_hasFills = hasFills();
             calculateRenderRect();
             setInvalidateCache(true);
-            qDebug() << "Invalidate::updateFills()";
             update();
             return;
         }
     }
+}
+
+void ItemBase::removeFills(Fills fills)
+{
+    m_fillsList.removeOne(fills);
+    m_hasFills = hasFills();
+    calculateRenderRect();
+    setInvalidateCache(true);
+    update();
+}
+
+Fills ItemBase::fills(int id) const
+{
+    id = qMin(m_fillsList.size()-1, qMax(0, id));
+    return m_fillsList.at(id);
 }
 
 QList<Fills> ItemBase::fillsList() const
@@ -167,13 +187,6 @@ void ItemBase::addShadow(Shadow shadow)
     m_hasShadows = hasShadows();
     calculateRenderRect();
     setInvalidateCache(true);
-    qDebug() << "Invalidate::addShadow()";
-}
-
-Shadow ItemBase::shadow(int id) const
-{
-    id = qMin(m_shadowList.size()-1, qMax(0, id));
-    return m_shadowList.at(id);
 }
 
 void ItemBase::updateShadow(Shadow shadow)
@@ -185,11 +198,25 @@ void ItemBase::updateShadow(Shadow shadow)
             m_hasShadows = hasShadows();
             calculateRenderRect();
             setInvalidateCache(true);
-            qDebug() << "Invalidate::updateShadow()";
             update();
             return;
         }
     }
+}
+
+void ItemBase::removeShadow(Shadow shadow)
+{
+    m_shadowList.removeOne(shadow);
+    m_hasShadows = hasShadows();
+    calculateRenderRect();
+    setInvalidateCache(true);
+    update();
+}
+
+Shadow ItemBase::shadow(int id) const
+{
+    id = qMin(m_shadowList.size()-1, qMax(0, id));
+    return m_shadowList.at(id);
 }
 
 QList<Shadow> ItemBase::shadowList() const
@@ -215,13 +242,6 @@ void ItemBase::addInnerShadow(Shadow shadow)
     m_hasInnerShadows = hasInnerShadows();
     calculateRenderRect();
     setInvalidateCache(true);
-    qDebug() << "Invalidate::addInnerShadow()";
-}
-
-Shadow ItemBase::innerShadow(int id) const
-{
-    id = qMin(m_innerShadowList.size()-1, qMax(0, id));
-    return m_innerShadowList.at(id);
 }
 
 void ItemBase::updateInnerShadow(Shadow shadow)
@@ -233,11 +253,25 @@ void ItemBase::updateInnerShadow(Shadow shadow)
             m_hasInnerShadows = hasInnerShadows();
             calculateRenderRect();
             setInvalidateCache(true);
-            qDebug() << "Invalidate::updateInnerShadow()";
             update();
             return;
         }
     }
+}
+
+void ItemBase::removeInnerShadow(Shadow shadow)
+{
+    m_innerShadowList.removeOne(shadow);
+    m_hasInnerShadows = hasInnerShadows();
+    calculateRenderRect();
+    setInvalidateCache(true);
+    update();
+}
+
+Shadow ItemBase::innerShadow(int id) const
+{
+    id = qMin(m_innerShadowList.size()-1, qMax(0, id));
+    return m_innerShadowList.at(id);
 }
 
 QList<Shadow> ItemBase::innerShadowList() const

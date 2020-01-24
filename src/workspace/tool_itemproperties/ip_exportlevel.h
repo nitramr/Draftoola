@@ -30,7 +30,7 @@ private:
     Ui::ipExportLevel *ui;
 
     AbstractItemBase *m_item;
-    QList<PropertyExportLevel*>*m_exportLevelItemList;
+    QList<PropertyExportLevel*>*m_propertyItemList;
 
     void loadProperties();
     void resetItems();

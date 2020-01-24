@@ -14,16 +14,14 @@
 
 class Artboard;
 
-class ArtboardLabel : public QGraphicsTextItem
+class ArtboardLabel : public QGraphicsSimpleTextItem
 {
 public:
     ArtboardLabel(QString name, Artboard *parent);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
 protected:
-    virtual void focusOutEvent (QFocusEvent * event) override;
-    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 };
 
 

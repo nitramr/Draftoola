@@ -33,9 +33,11 @@ private:
 
 private slots:
     void updateShadow();
+    void removeClick();
 
 signals:
     void hasChanged(bool);
+    void remove(PropertyShadow*);
 };
 
 #endif // PROPERTYSHADOW_H

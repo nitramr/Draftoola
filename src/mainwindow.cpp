@@ -212,8 +212,6 @@ void MainWindow::tmpSetup(int offsetX, int offsetY)
     m_canvas->addItem(artboard, 0+offsetX, 0+offsetY);
 //    m_outliner->addNode(artboard);
 
-
-    qDebug() << artboard;
     QByteArray ar;
     QDataStream stream(&ar, QIODevice::ReadWrite);
     stream << artboard;

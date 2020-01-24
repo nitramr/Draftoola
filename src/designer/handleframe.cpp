@@ -255,7 +255,8 @@ void HandleFrame::setup(){
 QRectF HandleFrame::boundingRect() const
 {
     return rect().adjusted( -handleSize() / scaleFactor(),
-                            -(m_rotationHandleDistance + handleSize()) / scaleFactor(),
+                            -( m_rotationHandleDistance + handleSize() ) / scaleFactor(),
+       //                     -( (m_canRotate) ? m_rotationHandleDistance + handleSize() : handleSize() ) / scaleFactor(),
                             handleSize() / scaleFactor(),
                             handleSize() / scaleFactor()
                             );
@@ -652,8 +653,8 @@ qreal HandleFrame::fitInGrid(qreal origin)
  */
 void HandleFrame::updateHandles()
 {
-    qreal offX = handleSize() / 2 / m_scaleFactor;
-    qreal offY = handleSize() / 2 / m_scaleFactor;
+    qreal offX = handleSize() / 2 / scaleFactor();
+    qreal offY = handleSize() / 2 / scaleFactor();
 
     // set position of handles
     m_handles[0]->setPos(rect().left() - offX, rect().top() - offY); // TopLeft
@@ -994,6 +995,8 @@ void HandleFrame::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
 
+    Q_UNUSED(option)
+
     painter->save();
 
     QPen pen = this->pen();
@@ -1016,6 +1019,9 @@ void HandleFrame::paint (QPainter *painter, const QStyleOptionGraphicsItem *opti
                           QPointF(rect().center().x(), rect().top()));
 
     }
+
+//    painter->setPen(QPen(QColor(255,0,255)));
+//    painter->drawRect(this->boundingRect());
 
     painter->restore();
 
