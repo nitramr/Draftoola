@@ -458,8 +458,9 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
     qreal m_radiusShadow = shadow.radius();
     QColor m_color = shadow.color();
 
+
     // adjusted Shape
-    QPainterPath mask = m_innerShadowPathList.value(shadow.ID());
+    QPainterPath mask = m_innerShadowPathList.value(shadow.ID());    
     mask.translate(shadow.offset().x(), shadow.offset().y());
 
     qreal _lod = lod();
@@ -468,6 +469,10 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
 
         qreal m_width = shape().boundingRect().width() * _lod;
         qreal m_height = shape().boundingRect().height() * _lod;
+
+        // adjust offset if shape top left point doesn't match rect top left point
+        QPointF shapeOffset = mapToItem(this, shape().boundingRect().topLeft());
+        mask.translate(-shapeOffset.x(), -shapeOffset.y());
 
         // Blur shadow
         QImage tmp = blurShadow(mask,
@@ -771,7 +776,7 @@ QRectF ItemBase::calculateShadowPaths()
 void ItemBase::calculateInnerShadowPaths()
 {
     m_innerShadowPathList.clear();
-    PathHandler pHandler;
+    PathHandler pHandler;   
 
     foreach(Shadow shadow, m_innerShadowList){
         if(shadow.isOn()){

@@ -258,39 +258,39 @@ void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mouseMoveEvent(event);
 
 
-//    m_hoverPath = QPainterPath();
-//    // refresh only foreground layer
-//    invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+    m_hoverPath = QPainterPath();
+    // refresh only foreground layer
+    invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
 
-//    QPoint mousePos = event->scenePos().toPoint();
+    QPoint mousePos = event->scenePos().toPoint();
 
-//    QList<QGraphicsItem*> list = this->items(mousePos,Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform() );
+    QList<QGraphicsItem*> list = this->items(mousePos,Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform() );
 
-//    if(list.isEmpty()) return;
+    if(list.isEmpty()) return;
 
-//    QGraphicsItem * cgItem = list.first();
+    QGraphicsItem * cgItem = list.first();
 
-//    if(cgItem->type() == HandleFrame::Type::Handle && list.count() >1){
-//        cgItem = list[1];
-//    }
+    if(cgItem->type() == HandleFrame::Type::Handle && list.count() >1){
+        cgItem = list[1];
+    }
 
-//    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( cgItem );
+    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( cgItem );
 
-//    // get hover path from item under mouse and respect item shape
-//    if(item ){
+    // get hover path from item under mouse and respect item shape
+    if(item ){
 
-//        if(item->shape().contains(item->mapFromScene(mousePos)) ){
-//            QPainterPath shape = m_hoverPath;
-//            m_hoverPath = item->shape();
-//            m_hoverPoint = item->scenePos();
-//            m_hoverTransform = item->transform();
-//            m_hoverRotation = item->rotation();
+        if(item->shape().contains(item->mapFromScene(mousePos)) ){
+            QPainterPath shape = m_hoverPath;
+            m_hoverPath = item->shape();
+            m_hoverPoint = item->scenePos();
+            m_hoverTransform = item->transform();
+            m_hoverRotation = item->rotation();
 
-//            if(m_hoverPath != shape){
-//                invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
-//            }
-//        }
-//    }
+            if(m_hoverPath != shape){
+                invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+            }
+        }
+    }
 
 }
 
