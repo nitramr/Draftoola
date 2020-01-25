@@ -32,14 +32,14 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
     //    this->setRenderHint(QPainter::Antialiasing, true);
     //    this->setRenderHint( QPainter::SmoothPixmapTransform, true );
-    this->setDragMode(QGraphicsView::RubberBandDrag);
+    setDragMode(QGraphicsView::RubberBandDrag);
     //    this->setCacheMode(QGraphicsView::CacheBackground);
-    this->setOptimizationFlag(DontAdjustForAntialiasing, true); // https://doc.qt.io/qt-5/qgraphicsview.html#OptimizationFlag-enum
-    this->setOptimizationFlag(DontSavePainterState, true); // restoring painter will handle in item paint event
+    setOptimizationFlag(DontAdjustForAntialiasing, true); // https://doc.qt.io/qt-5/qgraphicsview.html#OptimizationFlag-enum
+    setOptimizationFlag(DontSavePainterState, true); // restoring painter will handle in item paint event
     //    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // http://doc.qt.io/gt-5/qgraphicsview.html#ViewportUpdateMode-enum
-    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-    this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    this->setBackgroundBrush(QColor(240,240,240));
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    setBackgroundBrush(QColor(240,240,240));
     //    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
     //    this->setMouseTracking(true);
 
@@ -78,20 +78,21 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     gridLayout->addWidget(m_VRuler,1,0);
     gridLayout->addWidget(this->viewport(),1,1);
 
-    this->setLayout(gridLayout);
-    this->setScene(m_scene);
+    setLayout(gridLayout);
+    setScene(m_scene);
 
 
     timer = new QTimer(this);
-    this->connect(timer, &QTimer::timeout, this, &CanvasView::resetItemCache);
-    this->connect(this, &CanvasView::rubberBandChanged, this, &CanvasView::filterSelection);
+    connect(timer, &QTimer::timeout, this, &CanvasView::resetItemCache);
 
+    connect(this, &CanvasView::rubberBandChanged, this, &CanvasView::filterSelection);
 
-    this->connect(this->verticalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateVRuler);
-    this->connect(this->horizontalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateHRuler);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateVRulerPosition);
+    connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateHRulerPosition);
 
-    this->connect(m_scene, SIGNAL(selectionChanged()), m_handleFrame,SLOT(frameToSelection()));
-    this->connect(m_handleFrame, &HandleFrame::geometryChanged, this, &CanvasView::updateRulerMarker);
+    connect(m_scene, &CanvasScene::selectionChanged, m_handleFrame, &HandleFrame::frameToSelection);
+
+    connect(m_handleFrame, &HandleFrame::geometryChanged, this, &CanvasView::setRulerToSelection);
 
 }
 
@@ -109,7 +110,7 @@ HandleFrame *CanvasView::handleFrame() const
 
 void CanvasView::resetItemCache()
 {
-    QRectF _viewFrame = this->mapToScene( this->viewport()->geometry() ).boundingRect();
+    QRectF _viewFrame = mapToScene( viewport()->geometry() ).boundingRect();
 
     foreach(QGraphicsItem *item, m_scene->items(_viewFrame)){
 
@@ -123,23 +124,31 @@ void CanvasView::resetItemCache()
 
 }
 
-void CanvasView::updateVRuler()
+
+/*!
+ * \brief Update origin position of vertical ruler.
+ */
+void CanvasView::updateVRulerPosition()
 {
     qreal offset = (m_activeArtboard) ? m_activeArtboard->scenePos().toPoint().y() : 0;
-    m_VRuler->setOrigin( -mapToScene(this->rect().topLeft()).y() + offset);
-}
-
-void CanvasView::updateHRuler()
-{        
-    qreal offset = (m_activeArtboard) ? m_activeArtboard->scenePos().toPoint().x() : 0;
-    m_HRuler->setOrigin( -mapToScene(this->rect().topLeft()).x() + offset);
+    m_VRuler->setOrigin( -mapToScene(rect().topLeft()).y() + offset);
 }
 
 
 /*!
- * \brief Update Canvas View if the selection has changed
+ * \brief Update origin position of horizontal ruler.
  */
-void CanvasView::updateRulerMarker()
+void CanvasView::updateHRulerPosition()
+{        
+    qreal offset = (m_activeArtboard) ? m_activeArtboard->scenePos().toPoint().x() : 0;
+    m_HRuler->setOrigin( -mapToScene(rect().topLeft()).x() + offset);
+}
+
+
+/*!
+ * \brief Set ruler origin to active artboard and set item marker
+ */
+void CanvasView::setRulerToSelection()
 {
 
     QRectF marker;
@@ -147,10 +156,8 @@ void CanvasView::updateRulerMarker()
 
     if(!m_scene->selectedItems().isEmpty()){
 
-        QGraphicsItem * item = m_scene->selectedItems().first();
-
         // Find top level Artboard
-        m_activeArtboard = getTopLevelArtboard(item);
+        m_activeArtboard = getTopLevelArtboard(m_scene->selectedItems().first());
 
         if(m_activeArtboard){
             offset = m_handleFrame->mapToItem(m_activeArtboard, QPointF());
@@ -159,8 +166,8 @@ void CanvasView::updateRulerMarker()
 
     }else m_activeArtboard = nullptr;
 
-    updateHRuler();
-    updateVRuler();
+    updateHRulerPosition();
+    updateVRulerPosition();
 
     m_HRuler->setMarkerRange(offset.x() + marker.left(),
                              offset.x() + marker.right());
@@ -180,7 +187,7 @@ void CanvasView::updateRulerMarker()
 void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPointF toScenePoint )
 {
 
-    if(this->rubberBandRect().isNull()) return;
+    if(rubberBandRect().isNull()) return;
 
     // Based on from which direction the rubberband have been created we have to calculate TL pos differently.
     QPointF posRubberbandTL(
@@ -196,7 +203,7 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
 
     QRectF rubberBand(posRubberbandTL, posRubberbandBR);
 
-    QList<QGraphicsItem *> selectedItems = m_scene->items(rubberBand, Qt::IntersectsItemShape, Qt::AscendingOrder, this->transform());
+    QList<QGraphicsItem *> selectedItems = m_scene->items(rubberBand, Qt::IntersectsItemShape, Qt::AscendingOrder, transform());
 
     foreach(QGraphicsItem *selectedItem, selectedItems) {
 
