@@ -127,7 +127,6 @@ void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QStrin
 /**
  * @brief Convert object as SVG and save it under given output path.
  * @param bi
- * @param multiplier
  * @param outputPath
  */
 void CanvasScene::saveSVG(AbstractItemBase *bi, const QString outputPath)
@@ -158,7 +157,6 @@ void CanvasScene::saveSVG(AbstractItemBase *bi, const QString outputPath)
 /**
  * @brief Render object as PDF and save it under given output path.
  * @param bi
- * @param multiplier
  * @param outputPath
  */
 void CanvasScene::savePDF(AbstractItemBase *bi, const QString outputPath)

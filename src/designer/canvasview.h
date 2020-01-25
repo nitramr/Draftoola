@@ -42,7 +42,7 @@ private:
     int          m_handleBuffer;
     qreal        m_grid;
     QTimer      *timer;
-
+    Artboard    *m_activeArtboard;
     QDRuler     *m_HRuler;
     QDRuler     *m_VRuler;
 
@@ -53,6 +53,8 @@ private:
 
     ItemGroup *createItemGroup(const QList<QGraphicsItem *> &items);
     QList<AbstractItemBase*> m_copyCache;
+
+    Artboard *getTopLevelArtboard(QGraphicsItem *item);
 
 
 signals:

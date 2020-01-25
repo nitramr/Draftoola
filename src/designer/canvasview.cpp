@@ -51,6 +51,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
     m_grid = 1;
     m_renderQuality = AbstractItemBase::Balanced;
+    m_activeArtboard = nullptr;
     QColor color(0, 128, 255);
 
     m_handleFrame = new HandleFrame(m_scene, m_grid);
@@ -124,14 +125,14 @@ void CanvasView::resetItemCache()
 
 void CanvasView::updateVRuler()
 {
-    qreal vPos = -mapToScene(this->rect().topLeft()).y();
-    m_VRuler->setOrigin(vPos);
+    qreal offset = (m_activeArtboard) ? m_activeArtboard->scenePos().toPoint().y() : 0;
+    m_VRuler->setOrigin( -mapToScene(this->rect().topLeft()).y() + offset);
 }
 
 void CanvasView::updateHRuler()
-{
-    qreal hPos = -mapToScene(this->rect().topLeft()).x();
-    m_HRuler->setOrigin(hPos);
+{        
+    qreal offset = (m_activeArtboard) ? m_activeArtboard->scenePos().toPoint().x() : 0;
+    m_HRuler->setOrigin( -mapToScene(this->rect().topLeft()).x() + offset);
 }
 
 
@@ -145,9 +146,21 @@ void CanvasView::updateRulerMarker()
     QPointF offset;
 
     if(!m_scene->selectedItems().isEmpty()){
-        offset = m_handleFrame->scenePos().toPoint();
-        marker = m_handleFrame->rect();
-    }
+
+        QGraphicsItem * item = m_scene->selectedItems().first();
+
+        // Find top level Artboard
+        m_activeArtboard = getTopLevelArtboard(item);
+
+        if(m_activeArtboard){
+            offset = m_handleFrame->mapToItem(m_activeArtboard, QPointF());
+            marker = m_handleFrame->rect();
+        }
+
+    }else m_activeArtboard = nullptr;
+
+    updateHRuler();
+    updateVRuler();
 
     m_HRuler->setMarkerRange(offset.x() + marker.left(),
                              offset.x() + marker.right());
@@ -155,6 +168,7 @@ void CanvasView::updateRulerMarker()
     m_VRuler->setMarkerRange(offset.y() + marker.top(),
                              offset.y() + marker.bottom());
 }
+
 
 
 /*!
@@ -517,6 +531,15 @@ ItemGroup *CanvasView::createItemGroup(const QList<QGraphicsItem *> &items)
     }
 
     return group;
+}
+
+Artboard *CanvasView::getTopLevelArtboard(QGraphicsItem *item)
+{
+    if(!item) return nullptr;
+
+    Artboard *artboard = dynamic_cast<Artboard*>(item->topLevelItem());
+    return (artboard) ? artboard : nullptr;
+
 }
 
 /***************************************************

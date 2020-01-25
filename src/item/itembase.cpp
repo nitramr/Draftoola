@@ -818,19 +818,6 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         foreach(Stroke stroke, this->strokeList())
             drawStrokes(stroke, painter);
         }
-
-//    if(m_isHovered){
-//        painter->save();
-//        QPen highlightPen(QColor(0, 128, 255));
-//        highlightPen.setWidthF(2/m_lod);
-
-//        painter->setRenderHint(QPainter::Antialiasing, true);
-//        painter->setPen(highlightPen);
-//        painter->setBrush(Qt::NoBrush);
-//        painter->drawPath(shape());
-//        painter->restore();
-//    }
-
 }
 
 void ItemBase::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
