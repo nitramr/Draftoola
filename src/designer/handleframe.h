@@ -190,6 +190,7 @@ private:
     void updateItemGeometry(AbstractItemBase *item);
     void updateItemsSelection();
     void reset();
+    void sendSignals();
     bool selectionIsEmpty();
     qreal fitInGrid(qreal origin);
 
@@ -211,6 +212,7 @@ public slots:
 
 signals:
     void sendActiveItems(QList<AbstractItemBase *> items);
+    void geometryChanged();
 
 };
 

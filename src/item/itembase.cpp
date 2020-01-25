@@ -374,7 +374,7 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, (renderQuality() == RenderQuality::Quality) ? true : false);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, (renderQuality() == RenderQuality::Performance) ? false : true );
     painter->setCompositionMode(shadow.blendMode());
 
 
@@ -447,7 +447,7 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, (renderQuality() == RenderQuality::Quality) ? true : false);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, (renderQuality() == RenderQuality::Performance) ? false : true);
     painter->setCompositionMode(shadow.blendMode());
     painter->setClipPath(shape(), Qt::ClipOperation::IntersectClip);
 
@@ -796,24 +796,40 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     m_lod = option->levelOfDetailFromTransform( painter->transform());
 
     // Drop Shadow
-    if(m_hasShadows)
+    if(m_hasShadows){
         foreach(Shadow shadow, this->shadowList())
             drawShadow(shadow, painter);
+    }
 
     // Draw Fills
-    if(m_hasFills)
+    if(m_hasFills){
         foreach(Fills fills,this->fillsList())
             drawFills(fills, painter);
+    }
 
     // Draw InnerShadows
-    if(m_hasInnerShadows)
+    if(m_hasInnerShadows){
         foreach(Shadow shadow, this->innerShadowList())
             drawInnerShadow(shadow, painter);
+    }
 
     // Draw Strokes
-    if(m_hasStrokes)
+    if(m_hasStrokes){
         foreach(Stroke stroke, this->strokeList())
             drawStrokes(stroke, painter);
+        }
+
+//    if(m_isHovered){
+//        painter->save();
+//        QPen highlightPen(QColor(0, 128, 255));
+//        highlightPen.setWidthF(2/m_lod);
+
+//        painter->setRenderHint(QPainter::Antialiasing, true);
+//        painter->setPen(highlightPen);
+//        painter->setBrush(Qt::NoBrush);
+//        painter->drawPath(shape());
+//        painter->restore();
+//    }
 
 }
 

@@ -33,6 +33,7 @@ public slots:
     void setMouseTrack(const bool track);
     void setScaleFactor(qreal scaleFactor);
     void setMarkerColor(const QColor color);
+    void setMarkerRange(qreal start, qreal stop);
 
 protected:
     void mouseMoveEvent(QMouseEvent* event);
@@ -42,6 +43,7 @@ private:
     void drawAScaleMeter(QPainter* painter, QRectF rulerRect, qreal scaleMeter, qreal startPositionLine, bool drawNumber = false);
     void drawFromOriginTo(QPainter* painter, QRectF rulerRect, qreal startMark, qreal endMark, int startTickNo, qreal step, qreal startPositionLine, bool drawNumber);
     void drawMousePosTick(QPainter* painter);
+    void drawMarkerRange(QPainter* painter);
 
     RulerType m_RulerType;
     qreal m_Origin;
@@ -49,6 +51,8 @@ private:
     bool m_MouseTracking;
     qreal m_scaleFactor;
     QColor m_color;
+    qreal m_markerStart;
+    qreal m_markerStop;
 };
 
 #endif // RULER_H

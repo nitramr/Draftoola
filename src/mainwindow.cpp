@@ -339,5 +339,5 @@ void MainWindow::addNewItem()
 
 void MainWindow::zoomHasChanged(qreal zoomFactor)
 {
-    ui->statusBar->showMessage(QString::number(zoomFactor * 100) + "%");
+    ui->statusBar->showMessage(QString::number(zoomFactor * 100) + "%" + "(" + QString::number(zoomFactor) + ")");
 }

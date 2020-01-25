@@ -1,6 +1,7 @@
 #include <artboard.h>
 #include <QDebug>
 #include <QFont>
+#include <QGraphicsDropShadowEffect>
 
 /*********************
  *

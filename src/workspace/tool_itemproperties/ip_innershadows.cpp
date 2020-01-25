@@ -116,7 +116,7 @@ void ipInnerShadows::removeShadow(PropertyShadow *propertyItem)
     disconnect(propertyItem, &PropertyShadow::hasChanged, this, &ipInnerShadows::updateItem);
     disconnect(propertyItem, &PropertyShadow::remove, this, &ipInnerShadows::removeShadow );
     m_propertyItemList->removeOne(propertyItem);
-    m_item->removeShadow(propertyItem->shadow());
+    m_item->removeInnerShadow(propertyItem->shadow());
     ui->layout->removeWidget(propertyItem);
 
     propertyItem->deleteLater();

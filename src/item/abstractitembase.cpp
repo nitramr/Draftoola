@@ -13,8 +13,10 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
     m_frameType = FrameType::Free;
     m_invaliateCache = true;
     m_doRender = false;
+    m_isHovered = false;
 
     setRenderQuality(RenderQuality::Balanced);
+    setAcceptHoverEvents(true);
 
     QRandomGenerator *random = QRandomGenerator::global();
     quint32 value32 = random->generate();
@@ -28,6 +30,7 @@ AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : Q
 
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
     this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
+
 
 }
 
@@ -304,7 +307,30 @@ void AbstractItemBase::render(QPainter *painter)
         }
     }
 
-//    painter->restore();
+    //    painter->restore();
+}
+
+void AbstractItemBase::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+
+}
+
+void AbstractItemBase::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+//    m_isHovered = false;
+//    update();
+//    // emit isHovered(m_isHovered);
+}
+
+void AbstractItemBase::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+//    QPoint mousePos = event->scenePos().toPoint();
+//    qDebug() << "Screen Pos" << mousePos;
+//    qDebug() << "Pos" << event->pos();
+
+//    m_isHovered = (shape().contains(mapFromScene(mousePos)) ) ? true : false;
+//    update();
+//    // emit isHovered(m_isHovered);
 }
 
 /***************************************************

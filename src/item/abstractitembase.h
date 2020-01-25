@@ -114,6 +114,9 @@ public:
 
     // Events
     virtual void render(QPainter *painter);
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+    virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
 
 //public slots:
     void setRenderQuality(RenderQuality qualityLevel);
@@ -132,11 +135,13 @@ private:
     RenderQuality m_renderQuality;
     QPainterPath m_shape;
     bool m_doRender;
-//    QPixmap m_cache;
-
+    bool m_isHovered;
 
     // Members
     QList<ExportLevel>	m_exportFactorList;
+
+signals:
+  //  void isHovered(bool);
 
 };
 

@@ -84,10 +84,12 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     this->connect(timer, &QTimer::timeout, this, &CanvasView::resetItemCache);
     this->connect(this, &CanvasView::rubberBandChanged, this, &CanvasView::filterSelection);
 
+
     this->connect(this->verticalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateVRuler);
     this->connect(this->horizontalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateHRuler);
 
     this->connect(m_scene, SIGNAL(selectionChanged()), m_handleFrame,SLOT(frameToSelection()));
+    this->connect(m_handleFrame, &HandleFrame::geometryChanged, this, &CanvasView::updateRulerMarker);
 
 }
 
@@ -130,6 +132,29 @@ void CanvasView::updateHRuler()
     qreal hPos = -mapToScene(this->rect().topLeft()).x();
     m_HRuler->setOrigin(hPos);
 }
+
+
+/*!
+ * \brief Update Canvas View if the selection has changed
+ */
+void CanvasView::updateRulerMarker()
+{
+
+    QRectF marker;
+    QPointF offset;
+
+    if(!m_scene->selectedItems().isEmpty()){
+        offset = m_handleFrame->scenePos().toPoint();
+        marker = m_handleFrame->rect();
+    }
+
+    m_HRuler->setMarkerRange(offset.x() + marker.left(),
+                             offset.x() + marker.right());
+
+    m_VRuler->setMarkerRange(offset.y() + marker.top(),
+                             offset.y() + marker.bottom());
+}
+
 
 /*!
  * \brief If an Artboard is fully covered it will remove all other items from selection.

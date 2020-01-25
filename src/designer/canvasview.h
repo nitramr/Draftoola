@@ -71,7 +71,9 @@ private slots:
     void resetItemCache();
     void updateVRuler();
     void updateHRuler();
+    void updateRulerMarker();
     void filterSelection(QRect viewportRect, QPointF fromScenePoint, QPointF toScenePoint);
+
 
 };
 

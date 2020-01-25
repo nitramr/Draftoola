@@ -13,7 +13,7 @@
  ***************************************************/
 
 QDRuler::QDRuler(QDRuler::RulerType rulerType, QWidget *parent): QWidget(parent),
-    m_RulerType(rulerType), m_Origin(0.), m_MouseTracking(true), m_scaleFactor(1.), m_color(QColor())
+    m_RulerType(rulerType), m_Origin(0.), m_MouseTracking(true), m_scaleFactor(1.), m_color(QColor() ), m_markerStart(0.), m_markerStop(0.)
 {
     setMouseTracking(true);
     QFont txtFont(this->font());
@@ -94,6 +94,20 @@ void QDRuler::setMarkerColor(const QColor color)
     }
 }
 
+/*!
+ * \brief [SLOT] Set a marker range that will drawn on ruler
+ * \param start
+ * \param stop
+ */
+void QDRuler::setMarkerRange(qreal start, qreal stop)
+{
+    if (m_markerStart != start || m_markerStop != stop){
+        m_markerStart = start;
+        m_markerStop = stop;
+        update();
+    }
+}
+
 /***************************************************
  *
  * Events
@@ -110,47 +124,46 @@ void QDRuler::mouseMoveEvent(QMouseEvent *event)
 void QDRuler::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    painter.setRenderHint(QPainter::TextAntialiasing, true);
-
     QRectF rulerRect = this->rect();
 
-    // at first fill the rect
     painter.fillRect(rulerRect,QColor(255,255,255));
 
-
-    if(scaleFactor() >=8){
+    // 10 steps at 400%
+    if(scaleFactor() >=4){
         drawAScaleMeter(&painter,rulerRect,1,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/1.5);
-        drawAScaleMeter(&painter,rulerRect,5,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/2);
         drawAScaleMeter(&painter,rulerRect,10,0, true);
     }
 
-    if(scaleFactor() >=4 && scaleFactor() < 8){
-        drawAScaleMeter(&painter,rulerRect,1,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/1.5);
-        drawAScaleMeter(&painter,rulerRect,10,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/2);
+    // 20 steps at 200%
+    if(scaleFactor() >=2 && scaleFactor() < 4){
+        drawAScaleMeter(&painter,rulerRect,2,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/1.5);
         drawAScaleMeter(&painter,rulerRect,20,0, true);
     }
 
-    if(scaleFactor() >=1 && scaleFactor() < 4){
-        drawAScaleMeter(&painter,rulerRect,4,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/1.5);
-        drawAScaleMeter(&painter,rulerRect,20,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/2);
-        drawAScaleMeter(&painter,rulerRect,40,0, true);
+    // 50 steps at 100%
+    if(scaleFactor() >=1 && scaleFactor() < 2){
+        drawAScaleMeter(&painter,rulerRect,5,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/1.5);
+        drawAScaleMeter(&painter,rulerRect,50,0, true);
     }
 
-    if(scaleFactor() >=0.4 && scaleFactor() < 1){
-        drawAScaleMeter(&painter,rulerRect,8,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/1.5);
-        drawAScaleMeter(&painter,rulerRect,40,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/2);
-        drawAScaleMeter(&painter,rulerRect,80,0, true);
+    // 100 steps at 50%
+    if(scaleFactor() >=0.5 && scaleFactor() < 1){
+        drawAScaleMeter(&painter,rulerRect,10,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/1.5);
+        drawAScaleMeter(&painter,rulerRect,100,0, true);
     }
 
-    if(scaleFactor() >=0.2 && scaleFactor() < 0.4){
-        drawAScaleMeter(&painter,rulerRect,80,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/2);
-        drawAScaleMeter(&painter,rulerRect,160,0, true);
+    // 200 steps at 25%
+    if(scaleFactor() >=0.25 && scaleFactor() < 0.5){
+        drawAScaleMeter(&painter,rulerRect,20,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/1.5);
+        drawAScaleMeter(&painter,rulerRect,200,0, true);
     }
 
-    if(scaleFactor() < 0.2){
-        drawAScaleMeter(&painter,rulerRect,320,0, true);
+    // flexible steps lower than 25%
+    if(scaleFactor() < 0.25){
+        qreal flexScale = 50 / scaleFactor();
+        drawAScaleMeter(&painter,rulerRect,flexScale/10,(Horizontal == m_RulerType ? rulerRect.height() : rulerRect.width())/1.5);
+        drawAScaleMeter(&painter,rulerRect,flexScale,0, true);
     }
-
 
 
     // drawing the current mouse position indicator
@@ -163,6 +176,10 @@ void QDRuler::paintEvent(QPaintEvent *)
                                               : rulerRect.bottomRight();
     painter.setPen(QPen(Qt::gray,2));
     painter.drawLine(starPt,endPt);
+
+    // draw marker range
+    drawMarkerRange(&painter);
+
 }
 
 /***************************************************
@@ -229,6 +246,7 @@ void QDRuler::drawFromOriginTo(QPainter *painter, QRectF rulerRect, qreal startM
         {
 
             painter->setPen(Qt::black);
+            painter->setRenderHint(QPainter::TextAntialiasing, true);
 
             //           painter->drawText(QPointF(x1 + 1, y1 + (isHorzRuler ? 7 : -2)), QString::number(int(step/m_scaleFactor) * startTickNo++) );
 
@@ -266,5 +284,27 @@ void QDRuler::drawMousePosTick(QPainter *painter)
         }
         painter->setPen(QPen(m_color));
         painter->drawLine(starPt,endPt);
+    }
+}
+
+void QDRuler::drawMarkerRange(QPainter *painter)
+{
+    if(m_markerStart != m_markerStop){
+
+        bool isHorzRuler = Horizontal == m_RulerType;
+
+        qreal m_OriginOffset = m_Origin * m_scaleFactor;
+        qreal start = m_OriginOffset + m_markerStart * m_scaleFactor;
+        qreal stop = m_OriginOffset + m_markerStop * m_scaleFactor;
+
+        QRectF marker(isHorzRuler ? start : 0,
+                      isHorzRuler ? 0 : start,
+                      isHorzRuler ? stop - start : RULER_SIZE,
+                      isHorzRuler ? RULER_SIZE : stop - start);
+
+        QColor markerRangeColor = m_color;
+        markerRangeColor.setAlpha(100);
+        painter->fillRect(marker, QBrush(markerRangeColor));
+
     }
 }

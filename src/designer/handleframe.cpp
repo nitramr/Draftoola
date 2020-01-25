@@ -23,7 +23,7 @@ ItemHandle::ItemHandle(QGraphicsItem *parent,  Handle corner, int handleSize, QC
 
     QGraphicsDropShadowEffect *m_shadow = new QGraphicsDropShadowEffect();
     m_shadow->setOffset(0,0);
-    m_shadow->setColor(QColor(0,0,0));
+    m_shadow->setColor(QColor(0,0,0, 128));
     m_shadow->setBlurRadius(4);
     this->setGraphicsEffect(m_shadow);
 
@@ -300,7 +300,7 @@ void HandleFrame::moveBy(qreal dx, qreal dy)
         item->moveBy(dx,dy);
     }
 
-    emit sendActiveItems(m_items);
+    sendSignals();
 
 }
 
@@ -577,7 +577,7 @@ void HandleFrame::updateItemsSelection()
         updateItemGeometry(item);
     }
 
-    emit sendActiveItems(m_items);
+    sendSignals();
 }
 
 
@@ -590,7 +590,13 @@ void HandleFrame::reset()
     this->setRotation(0);
     m_items.clear();
 
+    sendSignals();
+}
+
+void HandleFrame::sendSignals()
+{
     emit sendActiveItems(m_items);
+    emit geometryChanged();
 }
 
 
@@ -763,7 +769,7 @@ void HandleFrame::frameToSelection()
         //        this->setRotation(m_items.first()->rotation());
         this->setVisible(true);
 
-        emit sendActiveItems(m_items);
+        sendSignals();
     }
 
 }
@@ -948,7 +954,6 @@ bool HandleFrame::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
         updateItemsSelection();
 
         this->update();
-
     }
 
     return true;// true => do not send event to watched - we are finished with this event
