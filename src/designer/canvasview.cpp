@@ -41,7 +41,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     this->setBackgroundBrush(QColor(240,240,240));
     //    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
-
+    //    this->setMouseTracking(true);
 
 
     m_scene = new CanvasScene();
@@ -79,6 +79,7 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
 
     this->setLayout(gridLayout);
     this->setScene(m_scene);
+
 
     timer = new QTimer(this);
     this->connect(timer, &QTimer::timeout, this, &CanvasView::resetItemCache);
@@ -253,6 +254,7 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
         }
 
     }
+
 }
 
 

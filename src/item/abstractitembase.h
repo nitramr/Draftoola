@@ -13,6 +13,8 @@
 class AbstractItemBase : public QGraphicsObject
 {
 
+    Q_OBJECT
+
     friend class ItemBase;
     friend class Artboard;
     friend class ItemPolygon;
@@ -21,15 +23,15 @@ class AbstractItemBase : public QGraphicsObject
 public:
 
     // Enums
-    enum Type { Artboard = UserType + 2,
-           Rect = UserType + 3,
-           Oval = UserType + 4,
-           Polygon = UserType + 5,
-           Path = UserType + 6,
-           Line = UserType + 7,
-           Text = UserType + 8,
-           Instance = UserType + 9,
-           Group = UserType + 10
+    enum Type { Artboard = UserType + 10,
+           Rect = UserType + 11,
+           Oval = UserType + 12,
+           Polygon = UserType + 13,
+           Path = UserType + 14,
+           Line = UserType + 15,
+           Text = UserType + 16,
+           Instance = UserType + 17,
+           Group = UserType + 18
          };
 
     enum FrameType {
@@ -114,9 +116,6 @@ public:
 
     // Events
     virtual void render(QPainter *painter);
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-    virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
 
 //public slots:
     void setRenderQuality(RenderQuality qualityLevel);
@@ -139,9 +138,6 @@ private:
 
     // Members
     QList<ExportLevel>	m_exportFactorList;
-
-signals:
-  //  void isHovered(bool);
 
 };
 

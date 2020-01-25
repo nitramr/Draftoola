@@ -101,6 +101,7 @@ void CanvasScene::exportItem(AbstractItemBase *item)
     }
 }
 
+
 /**
  * @brief Render object as Image and save it under given output path.
  * @param bi
@@ -191,14 +192,14 @@ void CanvasScene::savePDF(AbstractItemBase *bi, const QString outputPath)
  ***************************************************/
 
 
-void CanvasScene::keyPressEvent(QKeyEvent *e)
+void CanvasScene::keyPressEvent(QKeyEvent *event)
 {
-    QGraphicsScene::keyPressEvent(e);
+    QGraphicsScene::keyPressEvent(event);
 }
 
-void CanvasScene::keyReleaseEvent(QKeyEvent *e)
+void CanvasScene::keyReleaseEvent(QKeyEvent *event)
 {
-    QGraphicsScene::keyReleaseEvent(e);
+    QGraphicsScene::keyReleaseEvent(event);
 }
 
 void CanvasScene::drawBackground(QPainter *painter, const QRectF &rect)
@@ -231,24 +232,24 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
     }
 
 
-//    // hover highlight
-//    if(!m_hoverPath.isEmpty()){
+    // hover highlight
+    if(!m_hoverPath.isEmpty()){
 
-//        painter->save();
+        painter->save();
 
-//        QPen highlightPen(QColor(0, 128, 255));
-//        highlightPen.setWidthF(2/scaleFactor());
+        QPen highlightPen(QColor(0, 128, 255));
+        highlightPen.setWidthF(2/scaleFactor());
 
-//        painter->setRenderHint(QPainter::Antialiasing, true);
-//        painter->setPen(highlightPen);
-//        painter->setBrush(Qt::NoBrush);
-////        painter->setTransform(m_hoverTransform);
-//        painter->translate(m_hoverPoint);
-//        painter->rotate(m_hoverRotation);
-//        painter->drawPath(m_hoverPath);
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->setPen(highlightPen);
+        painter->setBrush(Qt::NoBrush);
+        //        painter->setTransform(m_hoverTransform);
+        painter->translate(m_hoverPoint);
+        painter->rotate(m_hoverRotation);
+        painter->drawPath(m_hoverPath);
 
-//        painter->restore();
-//    }
+        painter->restore();
+    }
 
 
 }
@@ -257,40 +258,47 @@ void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mouseMoveEvent(event);
 
+    QPoint mousePos = event->scenePos().toPoint();
 
-//    m_hoverPath = QPainterPath();
-//    // refresh only foreground layer
-//    invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+    QList<QGraphicsItem*> list = this->items(mousePos,Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform() );
 
-//    QPoint mousePos = event->scenePos().toPoint();
+    if(m_hoverPath != QPainterPath()){
+        m_hoverPath = QPainterPath();
+        invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+    }
 
-//    QList<QGraphicsItem*> list = this->items(mousePos,Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform() );
+    if(list.isEmpty()) return;
 
-//    if(list.isEmpty()) return;
+    QGraphicsItem * cgItem = list.first();
 
-//    QGraphicsItem * cgItem = list.first();
+    if(cgItem->type() == HandleFrame::Type::Handle && list.count() >1){
+        cgItem = list[1]; // skip handleFrame
+    }
 
-//    if(cgItem->type() == HandleFrame::Type::Handle && list.count() >1){
-//        cgItem = list[1];
-//    }
+    if(cgItem->type() == ArtboardCanvas::Type::Canvas){
+        Artboard * artboard = dynamic_cast<Artboard*>(cgItem->parentItem());
+        if(artboard && cgItem->childItems().isEmpty()){
+            cgItem = cgItem->parentItem(); // get Artboard instead of canvas
+        }
 
-//    AbstractItemBase *item = dynamic_cast<AbstractItemBase*>( cgItem );
+    }
 
-//    // get hover path from item under mouse and respect item shape
-//    if(item ){
+    AbstractItemBase * item = dynamic_cast<AbstractItemBase*>(cgItem);
 
-//        if(item->shape().contains(item->mapFromScene(mousePos)) ){
-//            QPainterPath shape = m_hoverPath;
-//            m_hoverPath = item->shape();
-//            m_hoverPoint = item->scenePos();
-//            m_hoverTransform = item->transform();
-//            m_hoverRotation = item->rotation();
+    if(item){
 
-//            if(m_hoverPath != shape){
-//                invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
-//            }
-//        }
-//    }
+        if(item->shape().contains(item->mapFromScene(mousePos)) ){
+            QPainterPath shape = m_hoverPath;
+            m_hoverPath = item->shape();
+            m_hoverPoint = item->scenePos();
+            m_hoverTransform = item->transform();
+            m_hoverRotation = item->rotation();
+
+            if(m_hoverPath != shape){
+                invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+            }
+        }
+    }
 
 }
 

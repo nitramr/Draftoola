@@ -1,5 +1,5 @@
-#ifndef WASCENE_H
-#define WASCENE_H
+#ifndef CANVASSCENE_H
+#define CANVASSCENE_H
 
 #include <QGraphicsScene>
 #include <QKeyEvent>
@@ -33,12 +33,12 @@ private:
     void savePDF(AbstractItemBase *bi, const QString outputPath);
 
 protected:
-	void keyPressEvent(QKeyEvent *e);
-	void keyReleaseEvent(QKeyEvent * e);
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent * event);
     void drawBackground(QPainter *painter, const QRectF &rect);
 	void drawForeground(QPainter *painter, const QRectF &rect);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 };
 
-#endif // WASCENE_H
+#endif // CANVASSCENE_H

@@ -25,6 +25,26 @@ protected:
 };
 
 
+class ArtboardCanvas : public QGraphicsRectItem
+{
+
+public:
+   //enum { Type = UserType + 1 };
+    enum Type {
+        Canvas = UserType + 1
+    };
+
+   int type() const override
+   {
+       // Enable the use of qgraphicsitem_cast with this item.
+       return Type::Canvas;
+   }
+
+   inline ArtboardCanvas(QRectF rect, QGraphicsItem *parent) : QGraphicsRectItem(rect, parent){}
+
+};
+
+
 class Artboard : public AbstractItemBase
 {
 public:
@@ -38,6 +58,7 @@ public:
     int type() const override { return Type::Artboard; }
 
     QGraphicsRectItem *canvas() const;
+
     void setRect(QRectF rect) override;
     QRectF renderRect() const override;
 
@@ -69,7 +90,7 @@ private:
     bool m_useBGColor;
     QColor m_backgroundColor;
     ArtboardLabel * m_label;
-    QGraphicsRectItem * m_artboard;
+    ArtboardCanvas * m_artboard;
 
     void fromObject(AbstractItemBase *obj);
 

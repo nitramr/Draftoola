@@ -111,7 +111,7 @@ class HandleFrame : public QObject, public QGraphicsItem
 public:
     HandleFrame(CanvasScene *scene, qreal grid = 1, int handleSize = 6);
 
-    enum Type { Handle = UserType + 1 };
+    enum Type { Handle = UserType + 2 };
 
     // Properties
     int type() const { return Handle; }

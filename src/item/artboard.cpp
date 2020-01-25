@@ -32,7 +32,6 @@ void ArtboardLabel::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 }
 
-
 /*******************************************************************************************************************************/
 
 /*********************
@@ -51,7 +50,7 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
     m_backgroundColor = Qt::white;
     m_useBGColor = true;
 
-    m_artboard = new QGraphicsRectItem(rect);
+    m_artboard = new ArtboardCanvas(rect, this);
     m_artboard->setFlags(
                 QGraphicsItem::ItemClipsChildrenToShape /*|
                                                                 QGraphicsItem::ItemContainsChildrenInShape |
@@ -60,7 +59,7 @@ Artboard::Artboard(QString name, QRectF rect, QGraphicsItem *parent) : AbstractI
                 );
     m_artboard->setPen(Qt::NoPen);
     m_artboard->setBrush(Qt::NoBrush);
-    m_artboard->setParentItem(this);
+    m_artboard->setFocusProxy(this);
 
     m_label = new ArtboardLabel(name, this);
 
@@ -301,3 +300,4 @@ QDataStream &operator>>(QDataStream &in, Artboard &obj)
 
     return in;
 }
+

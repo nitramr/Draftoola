@@ -126,7 +126,6 @@
        <property name="font">
         <font>
          <pointsize>9</pointsize>
-         <kerning>true</kerning>
         </font>
        </property>
        <property name="text">
