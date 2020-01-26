@@ -26,6 +26,7 @@
 #include <QWidget>
 
 #include <color.h>
+#include <colormap.h>
 
 namespace Ui {
 class TabColor;
@@ -45,6 +46,7 @@ public:
 private:
     Ui::TabColor *ui;
 
+    ColorMap *m_colorMap;
     Color m_color;
     qreal m_alpha;
 

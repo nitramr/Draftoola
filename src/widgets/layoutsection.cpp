@@ -29,6 +29,11 @@
 #include "layoutsection.h"
 #include <popupmenu.h>
 
+/*********************
+ *
+ * LayoutSectionHeader
+ *
+ *********************/
 
 LayoutSectionHeader::LayoutSectionHeader( QString text, QWidget *menu, bool toggle, QWidget *parent ) : QWidget( parent ){
     QFont m_font(this->font());
@@ -131,15 +136,25 @@ void LayoutSectionHeader::removeButton( QToolButton *button ){
 }
 
 
+/*******************************************************************************************************************************/
+
+/*********************
+ *
+ * LayoutSection
+ *
+ *********************/
+
+
+LayoutSection::LayoutSection(QWidget *parent) : LayoutSection(QString(), nullptr, true, parent){}
 LayoutSection::LayoutSection(QString text, QWidget *menu, bool toggle, QWidget *parent) : QWidget(parent){
 
     QSizePolicy sizePol = QSizePolicy( QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding );
 
-    m_flowLayout = new QVBoxLayout();
-    m_flowLayout->setContentsMargins( 0,0,0,0 );
+    m_layout = new QVBoxLayout();
+    m_layout->setContentsMargins( 0,0,0,0 );
     m_header = new LayoutSectionHeader( text, menu, toggle );
     m_drawer = new QWidget();
-    m_drawer->setLayout(m_flowLayout);
+    m_drawer->setLayout(m_layout);
     m_drawer->setSizePolicy(sizePol);
 
     QVBoxLayout * m_mainLayout = new QVBoxLayout();
@@ -156,7 +171,7 @@ LayoutSection::LayoutSection(QString text, QWidget *menu, bool toggle, QWidget *
 
 void LayoutSection::addWidget(QWidget * item){
 
-    m_flowLayout->addWidget(item);
+    m_layout->addWidget(item);
 
 }
 
@@ -166,6 +181,16 @@ void LayoutSection::addButton(QToolButton *button){
 
 void LayoutSection::removeButton(QToolButton *button){
     m_header->removeButton(button);
+}
+
+void LayoutSection::setText(QString text)
+{
+    m_header->m_caption->setText(text);
+}
+
+QString LayoutSection::text() const
+{
+    return m_header->m_caption->text();
 }
 
 

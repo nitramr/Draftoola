@@ -23,11 +23,17 @@
 #include "tabcolor.h"
 #include "ui_tabcolor.h"
 
+#include <QDebug>
+
 TabColor::TabColor(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::TabColor)
 {
     ui->setupUi(this);
+
+    m_colorMap = new ColorMap();
+    ui->sectionColorMap->setText(tr("Color Map"));
+    ui->sectionColorMap->addWidget(m_colorMap);
 
     connectSlots();
 }
@@ -50,12 +56,14 @@ qreal TabColor::alpha() const
 void TabColor::connectSlots()
 {
     connect(ui->colorInput, &ColorInput::colorChanged, this, &TabColor::updateColor);
+    connect(m_colorMap, &ColorMap::newColor, this, &TabColor::updateColor);
 }
 
 
 void TabColor::disconnectSlots()
 {
     disconnect(ui->colorInput, &ColorInput::colorChanged, this, &TabColor::updateColor);
+    disconnect(m_colorMap, &ColorMap::newColor, this, &TabColor::updateColor);
 }
 
 void TabColor::setColor(Color color, qreal alpha)
@@ -65,6 +73,7 @@ void TabColor::setColor(Color color, qreal alpha)
 
     disconnectSlots();
 
+    m_colorMap->setColor(m_color, m_alpha);
     ui->colorInput->setColor(m_color, m_alpha);
 
     connectSlots();
@@ -73,8 +82,7 @@ void TabColor::setColor(Color color, qreal alpha)
 
 void TabColor::updateColor(QColor color, qreal alpha)
 {
-    m_color = color;
-    m_alpha = alpha;
+    setColor(color, alpha);
 
     emit colorChanged();
 }

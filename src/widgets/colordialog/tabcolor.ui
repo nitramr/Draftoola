@@ -30,6 +30,9 @@
     <number>0</number>
    </property>
    <item>
+    <widget class="LayoutSection" name="sectionColorMap" native="true"/>
+   </item>
+   <item>
     <widget class="ColorInput" name="colorInput" native="true"/>
    </item>
   </layout>
@@ -39,6 +42,12 @@
    <class>ColorInput</class>
    <extends>QWidget</extends>
    <header>src/widgets/colordialog/colorinput.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LayoutSection</class>
+   <extends>QWidget</extends>
+   <header>src/widgets/layoutsection.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

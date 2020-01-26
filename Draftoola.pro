@@ -43,6 +43,7 @@ SOURCES += src/main.cpp\
     src/widgets/colorbutton.cpp \
     src/widgets/colordialog/colordialog.cpp \
     src/widgets/colordialog/colorinput.cpp \
+    src/widgets/colordialog/colormap.cpp \
     src/widgets/colordialog/tabcolor.cpp \
     src/widgets/flowlayout.cpp \
     src/widgets/intelligentspinbox.cpp \
@@ -91,6 +92,7 @@ HEADERS  +=     src/mainwindow.h \
     src/widgets/colorbutton.h \
     src/widgets/colordialog/colordialog.h \
     src/widgets/colordialog/colorinput.h \
+    src/widgets/colordialog/colormap.h \
     src/widgets/colordialog/tabcolor.h \
     src/widgets/flowlayout.h \
     src/widgets/intelligentspinbox.h \

@@ -32,13 +32,12 @@ class LayoutSectionHeader : public QWidget
 {
 	Q_OBJECT
 
-//friend class LayoutSection;
+friend class LayoutSection;
 
 public:
     LayoutSectionHeader(QString text, QWidget *menu = nullptr, bool toggle = false, QWidget *parent = nullptr);
     void addButton(QToolButton *button);
     void removeButton(QToolButton *button);
-    void setCollapsed(bool isCollapsed);
 
 private:
 	void paintEvent(QPaintEvent *);
@@ -51,22 +50,33 @@ private:
 signals:
     void sendCollapsedState(bool);
 
+public slots:
+    void setCollapsed(bool isCollapsed);
+
 private slots:
-    void setCollapsedState();
+    void setCollapsedState();    
 };
 
 
 class LayoutSection : public QWidget
 {
+
+    Q_PROPERTY(QString text READ text WRITE setText)
+    Q_CLASSINFO("Version", "1.0.0")
+
 	Q_OBJECT
 public:
+    LayoutSection(QWidget *parent = nullptr);
     LayoutSection(QString text, QWidget *menu = nullptr, bool toggle = false, QWidget *parent = nullptr);
 	void addWidget(QWidget * item);
     void addButton(QToolButton *button);
     void removeButton(QToolButton *button);
 
+    void setText(QString text);
+    QString text() const;
+
 private:
-    QVBoxLayout *m_flowLayout;
+    QVBoxLayout *m_layout;
     LayoutSectionHeader * m_header;
     QWidget * m_drawer;
 
