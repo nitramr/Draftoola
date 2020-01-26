@@ -27,6 +27,7 @@
 ColorButton::ColorButton(QWidget *parent) : QToolButton(parent)
 {
     setPopupMode(QToolButton::InstantPopup);
+    setStyleSheet("QToolButton::menu-indicator { image: none; }");
 }
 
 void ColorButton::setIcon(const QPixmap &pixmap)

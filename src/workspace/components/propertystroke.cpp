@@ -25,7 +25,8 @@
 
 #include <QPainter>
 #include <QDebug>
-#include <utilities.h>
+
+#include <popupmenu.h>
 
 PropertyStroke::PropertyStroke(QWidget *parent) : PropertyStroke(Stroke("tmpFill", QColor(0,0,0) ), parent){}
 
@@ -35,9 +36,14 @@ PropertyStroke::PropertyStroke(Stroke stroke, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    m_colorDialog = new ColorDialog;
+
+    PopupMenu * m_colorMenu = new PopupMenu(m_colorDialog);
+
     QPixmap pixmap(ui->btn_color->iconSize());
-    pixmap.fill(Qt::black);
+    pixmap.fill(stroke.color());
     ui->btn_color->setIcon(pixmap);
+    ui->btn_color->setMenu(m_colorMenu);
 
     btn_center = new ButtonGroupButton();
     btn_center->setText("C");
@@ -71,6 +77,7 @@ void PropertyStroke::setStroke(Stroke stroke)
     m_stroke = stroke;
     ui->cb_active->setChecked(stroke.isOn());
     ui->sb_width->setValue(stroke.widthF());
+    m_colorDialog->setProperty(&m_stroke);
 
     switch(stroke.strokePosition()){
     case Stroke::Center:
@@ -85,7 +92,7 @@ void PropertyStroke::setStroke(Stroke stroke)
 
     }
 
-    drawStroke(stroke);
+    drawPreview(stroke);
 
     connectSlots();
 }
@@ -96,7 +103,7 @@ Stroke PropertyStroke::stroke() const
 }
 
 
-void PropertyStroke::drawStroke(Stroke stroke)
+void PropertyStroke::drawPreview(Stroke stroke)
 {
     QPixmap pixmap(ui->btn_color->iconSize());
     pixmap.fill(Qt::white);
@@ -120,6 +127,7 @@ void PropertyStroke::connectSlots()
     connect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
     connect(btn_inner, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
     connect(btn_outer, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
+    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyStroke::updateStroke);
 }
 
 void PropertyStroke::disconnectSlots()
@@ -130,10 +138,12 @@ void PropertyStroke::disconnectSlots()
     disconnect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
     disconnect(btn_inner, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
     disconnect(btn_outer, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
+    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyStroke::updateStroke);
 }
 
 void PropertyStroke::updateStroke()
 {
+    m_stroke = *m_colorDialog->stroke();
     m_stroke.setIsOn(ui->cb_active->isChecked());
     m_stroke.setBlendMode(m_stroke.blendMode());  // need real data
     m_stroke.setBrush(m_stroke.brush()); // need real data (use brush for solid color too)
@@ -145,6 +155,8 @@ void PropertyStroke::updateStroke()
         m_stroke.setStrokePosition(Stroke::Inner);
     }else m_stroke.setStrokePosition(Stroke::Center);
 
+    // update preview
+    drawPreview(m_stroke);
 
     emit hasChanged(true);
 }

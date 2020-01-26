@@ -72,48 +72,65 @@ ColorDialog::Mode ColorDialog::mode() const
 
 void ColorDialog::setProperty(AbstractItemProperty *property)
 {
+     if(!property) return;
+
     m_property = property;
 
-    // Fill ****************************************************
-    Fills *fill = static_cast<Fills*>(property);
+    switch(m_property->type()){
+    case AbstractItemProperty::Fill:{
+        // Fill ****************************************************
+        Fills *fill = static_cast<Fills*>(m_property);
 
-    if(fill){
+        if(fill){
 
-        m_fillType = fill->fillType();
-
-        switch(fill->fillType()){
-        case FillType::Color:
             ui->tabColor->setColor(fill->color(), fill->opacity());
-            break;
-        case FillType::Image:
-            break;
-        case FillType::LinearGradient:
-            break;
-        case FillType::RadialGradient:
-            break;
-        case FillType::ConicalGradient:
-            break;
-        case FillType::Pattern:
-            break;
+
+//            m_fillType = fill->fillType();
+
+//            switch(fill->fillType()){
+//            case FillType::Color:
+//                ui->tabColor->setColor(fill->color(), fill->opacity());
+//                break;
+//            case FillType::Image:
+//                break;
+//            case FillType::LinearGradient:
+//                break;
+//            case FillType::RadialGradient:
+//                break;
+//            case FillType::ConicalGradient:
+//                break;
+//            case FillType::Pattern:
+//                break;
+//            }
+
+            m_mode = Mode::FillLayout;
         }
 
-        m_mode = Mode::FillLayout;
+        break;
     }
+    case AbstractItemProperty::Stroke:{
+        // Stroke ****************************************************
+        Stroke *stroke = static_cast<Stroke*>(m_property);
 
-    // Stroke ****************************************************
-    Stroke *stroke = static_cast<Stroke*>(m_property);
+        if(stroke){
 
-    if(stroke){
+            ui->tabColor->setColor(stroke->color(), stroke->color().alphaF());
+            m_mode = Mode::StrokeLayout;
+        }
 
-        m_mode = Mode::StrokeLayout;
+        break;
     }
+    case AbstractItemProperty::Shadow:{
+        // Shadow ****************************************************
+        Shadow *shadow = static_cast<Shadow*>(m_property);
 
-    // Shadow ****************************************************
-    Shadow *shadow = static_cast<Shadow*>(m_property);
+        if(shadow){
 
-    if(shadow){
-
-        m_mode = Mode::ShadowLayout;
+            ui->tabColor->setColor(shadow->color(), shadow->color().alphaF());
+            m_mode = Mode::ShadowLayout;
+        }
+        break;
+    }
     }
 
 }
@@ -151,12 +168,12 @@ void ColorDialog::updateProperty()
 
     switch(m_property->type()){
     case AbstractItemProperty::Fill:{
-        Fills *fill = static_cast<Fills*>(m_property);
+        Fills *property = static_cast<Fills*>(m_property);
 
-        switch(fill->fillType()){
+        switch(property->fillType()){
         case FillType::Color:
-            fill->setColor( ui->tabColor->color() );
-            fill->setOpacity( ui->tabColor->alpha() );
+            property->setColor( ui->tabColor->color() );
+            property->setOpacity( ui->tabColor->alpha() );
             break;
         default:
 
@@ -166,10 +183,21 @@ void ColorDialog::updateProperty()
         break;
     }
     case AbstractItemProperty::Stroke:{
+        Stroke *property = static_cast<Stroke*>(m_property);
+
+        QColor color = ui->tabColor->color();
+        color.setAlphaF( ui->tabColor->alpha() );
+        property->setColor( color );
 
         break;
     }
     case AbstractItemProperty::Shadow:{
+
+        Shadow *property = static_cast<Shadow*>(m_property);
+
+        QColor color = ui->tabColor->color();
+        color.setAlphaF( ui->tabColor->alpha() );
+        property->setColor( color );
 
         break;
     }

@@ -71,7 +71,7 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="QToolButton" name="btn_color">
+      <widget class="ColorButton" name="btn_color">
        <property name="text">
         <string/>
        </property>
@@ -210,6 +210,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ColorButton</class>
+   <extends>QToolButton</extends>
+   <header location="global">src/widgets/colorbutton.h</header>
+  </customwidget>
   <customwidget>
    <class>IntelligentSpinBox</class>
    <extends>QDoubleSpinBox</extends>

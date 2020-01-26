@@ -25,7 +25,7 @@
 
 #include <QPainter>
 #include <QDebug>
-#include <utilities.h>
+
 #include <popupmenu.h>
 
 
@@ -112,7 +112,6 @@ void PropertyFill::drawFill(Fills fill)
 
     switch (fill.fillType()) {
     case FillType::Color:{
-      //  painter.setOpacity(1.0); // opacity is definied by color alpha channel
         painter.fillRect(pixmap.rect(), QBrush(fill.color()));
         break;
     }
@@ -159,13 +158,6 @@ void PropertyFill::updateFill()
 {
     m_fill.setIsOn(ui->cb_active->isChecked());
     m_fill.setBlendMode(static_cast<QPainter::CompositionMode>(ui->combo_blending->currentData().toInt()) );
-
-//    qDebug() << "PropertyFill::updateFill()" << ui->sb_opacity->value()/100.0;
-//    qDebug() << "PropertyFill opacity" << m_fill.opacity();
-
-//    disconnectSlots();
-//    m_colorDialog->setProperty(&m_fill);
-//    connectSlots();
 
     // update preview
     drawFill(m_fill);

@@ -28,6 +28,7 @@
 
 #include <buttongroup.h>
 #include <stroke.h>
+#include <colordialog.h>
 
 namespace Ui {
 class propertyStroke;
@@ -49,12 +50,14 @@ private:
     Ui::propertyStroke *ui;
 
     Stroke m_stroke;
+    ColorDialog * m_colorDialog;
+
     ButtonGroup *m_position;
     ButtonGroupButton * btn_center;
     ButtonGroupButton * btn_outer;
     ButtonGroupButton * btn_inner;
 
-    void drawStroke(Stroke stroke);
+    void drawPreview(Stroke stroke);
     void connectSlots();
     void disconnectSlots();
 

@@ -25,6 +25,7 @@
 
 #include <QWidget>
 #include <QPixmap>
+#include <colordialog.h>
 
 #include <shadow.h>
 
@@ -49,7 +50,9 @@ private:
 
     Shadow m_shadow;
 
-    void drawShadow(Shadow shadow);
+    ColorDialog * m_colorDialog;
+
+    void drawPreview(Shadow shadow);
     void connectSlots();
     void disconnectSlots();
 

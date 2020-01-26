@@ -23,6 +23,8 @@
 #include "propertyshadow.h"
 #include "ui_propertyshadow.h"
 
+#include <popupmenu.h>
+
 PropertyShadow::PropertyShadow(QWidget *parent) : PropertyShadow(Shadow(), parent){}
 
 PropertyShadow::PropertyShadow(Shadow shadow, QWidget *parent) :
@@ -31,9 +33,14 @@ PropertyShadow::PropertyShadow(Shadow shadow, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    m_colorDialog = new ColorDialog;
+
+    PopupMenu * m_colorMenu = new PopupMenu(m_colorDialog);
+
     QPixmap pixmap(ui->btn_color->iconSize());
-    pixmap.fill(Qt::black);
+    pixmap.fill(shadow.color());
     ui->btn_color->setIcon(pixmap);
+    ui->btn_color->setMenu(m_colorMenu);
 
     setShadow(shadow);
 }
@@ -54,8 +61,9 @@ void PropertyShadow::setShadow(Shadow shadow)
     ui->sb_yOffset->setValue(shadow.offset().y());
     ui->sb_blur->setValue(shadow.radius());
     ui->sb_spread->setValue(shadow.spread());
+    m_colorDialog->setProperty(&m_shadow);
 
-    drawShadow(shadow);
+    drawPreview(shadow);
 
     connectSlots();
 }
@@ -65,7 +73,7 @@ Shadow PropertyShadow::shadow() const
     return m_shadow;
 }
 
-void PropertyShadow::drawShadow(Shadow shadow)
+void PropertyShadow::drawPreview(Shadow shadow)
 {
     QPixmap pixmap(ui->btn_color->iconSize());
     pixmap.fill(Qt::white);
@@ -84,6 +92,7 @@ void PropertyShadow::connectSlots()
     connect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     connect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     connect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateShadow);
 }
 
 void PropertyShadow::disconnectSlots()
@@ -94,16 +103,20 @@ void PropertyShadow::disconnectSlots()
     disconnect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     disconnect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     disconnect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
+    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateShadow);
 }
 
 void PropertyShadow::updateShadow()
 {
+    m_shadow = *m_colorDialog->shadow();
     m_shadow.setIsOn(ui->cb_active->isChecked());
     m_shadow.setOffset(QPointF(ui->sb_xOffset->value(), ui->sb_yOffset->value()));
     m_shadow.setRadius(ui->sb_blur->value());
     m_shadow.setSpread(ui->sb_spread->value());
     m_shadow.setBlendMode(m_shadow.blendMode()); // need real data
-    m_shadow.setColor(m_shadow.color()); // need real data
+
+    // update preview
+    drawPreview(m_shadow);
 
     emit hasChanged(true);
 }

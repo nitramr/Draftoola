@@ -66,7 +66,7 @@ void ColorInput::setColor(const QColor color, qreal alpha)
         ui->sbRed->setValue( color.red() );
         ui->sbGreen->setValue( color.green() );
         ui->sbBlue->setValue( color.blue() );
-        ui->sbAlpha->setValue( alpha * 100 );
+        ui->sbAlpha->setValue( qRound(alpha * 100) ); // we have to round the value because of qreal conversion
 
         connectSlots();
 }
