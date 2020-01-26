@@ -2,7 +2,7 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
-   Copyright (C) 2019 Martin Reininger <nitramr>
+   Copyright (C) 2020 Martin Reininger <nitramr>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

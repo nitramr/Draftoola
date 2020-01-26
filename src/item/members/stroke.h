@@ -30,7 +30,7 @@
 #include <QPainter>
 #include <QDebug>
 
-#include <itemstruct.h>
+#include <utilities.h>
 #include <abstractitemproperty.h>
 
 class Stroke : public QPen, public AbstractItemProperty
@@ -49,10 +49,12 @@ public:
     Stroke(const QString name, const QColor & color, const StrokePosition strokePosition = StrokePosition::Center);
     Stroke(const QString name, const QBrush & brush, qreal width, const StrokePosition strokePosition = StrokePosition::Center, Qt::PenStyle style = Qt::SolidLine, Qt::PenCapStyle cap = Qt::SquareCap, Qt::PenJoinStyle join = Qt::MiterJoin);
     Stroke(const QString name, const QPen & pen, const StrokePosition strokePosition = StrokePosition::Center);
+//    Stroke(const Stroke &other);
+    Stroke(const Stroke &) = default;
 
-    Stroke(const Stroke &other);
-    ~Stroke(){}
+    ~Stroke() = default;
 
+    Stroke &operator=(const Stroke &) = default;
     bool operator==( const Stroke & other ) const;
     inline bool operator!=(const Stroke &stroke) const { return !(operator==(stroke)); }
     friend QDataStream &operator<<(QDataStream &out, const Stroke &obj);

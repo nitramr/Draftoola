@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion("0.1 alpha");
     QCoreApplication::setOrganizationName("Draftoola Development Team");
 
-    qRegisterMetaTypeStreamOperators<AbstractItemProperty>("AbstractItemProperty");
+    qRegisterMetaType<AbstractItemProperty>("AbstractItemProperty");
+    qRegisterMetaTypeStreamOperators<AbstractItemProperty>("AbstractItemProperty");    
 
     qRegisterMetaType<Shadow>("Shadow");
     qRegisterMetaTypeStreamOperators<Shadow>("Shadow");

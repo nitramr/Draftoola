@@ -38,6 +38,7 @@ Fills::Fills(const QString name, const Color &color) : AbstractItemProperty(name
     m_gradient = Gradient();
     setColor(color);
     m_fillMode = FillMode::Fill;
+    m_type = Type::Fill;
 }
 
 Fills::Fills(const QString name, const QPixmap &pixmap, const FillMode fillMode) :  Fills(name, Color()){
@@ -61,16 +62,16 @@ Fills::Fills(const QString name, const Gradient &gradient) : Fills(name, Color()
     setGradient(gradient);
 }
 
-Fills::Fills(const Fills &other) : AbstractItemProperty(other)
-{      
-    m_fillType = other.m_fillType;
-    m_fillMode = other.m_fillMode;
-    m_gradient = other.m_gradient;
-    m_color = other.m_color;
-    m_pixmap = other.m_pixmap;
-    m_opacity = other.m_opacity;
+//Fills::Fills(const Fills &other) : AbstractItemProperty(other)
+//{
+//    m_fillType = other.m_fillType;
+//    m_fillMode = other.m_fillMode;
+//    m_gradient = other.m_gradient;
+//    m_color = other.m_color;
+//    m_pixmap = other.m_pixmap;
+//    m_opacity = other.m_opacity;
 
-}
+//}
 
 
 /***************************************************
@@ -112,10 +113,10 @@ Gradient Fills::gradient() const
 
 void Fills::setColor(Color color)
 {
-    int opacity = qRound(color.alpha() / 2.56);
+    qreal opacity = qRound(color.alphaF() * 100) / 100.0;
     setOpacity(opacity);
 
-    if(color.alpha() < 255) color.setAlpha(255);
+    if(opacity < 1.0) color.setAlphaF(1);
 
     m_color = color;
 
@@ -138,13 +139,12 @@ QPixmap Fills::pixmap() const
     return m_pixmap;
 }
 
-void Fills::setOpacity(int opacity)
+void Fills::setOpacity(qreal opacity)
 {
-    opacity = qMax(0, qMin(100, opacity)); //clamp values
-    m_opacity = opacity;
+    m_opacity = qMax(0.0, qMin(1.0, opacity)); //clamp values
 }
 
-int Fills::opacity() const
+qreal Fills::opacity() const
 {
     return m_opacity;
 }
@@ -211,7 +211,7 @@ QDataStream &operator>>(QDataStream &in, Fills &obj)
     Color color;
     Gradient gradient;
     QPixmap pixmap;
-    int opacity;
+    qreal opacity;
     int fillMode;
     int fillType;
 

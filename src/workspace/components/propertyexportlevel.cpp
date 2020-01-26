@@ -26,7 +26,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QMap>
-#include <itemstruct.h>
+#include <utilities.h>
 
 PropertyExportLevel::PropertyExportLevel(QWidget *parent) : PropertyExportLevel(ExportLevel(), parent) {}
 

@@ -29,7 +29,7 @@
 #include <QMap>
 #include <QList>
 
-#include <itemstruct.h>
+#include <utilities.h>
 #include <exportlevel.h>
 
 class AbstractItemBase : public QGraphicsObject

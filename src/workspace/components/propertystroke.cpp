@@ -25,7 +25,7 @@
 
 #include <QPainter>
 #include <QDebug>
-#include <itemstruct.h>
+#include <utilities.h>
 
 PropertyStroke::PropertyStroke(QWidget *parent) : PropertyStroke(Stroke("tmpFill", QColor(0,0,0) ), parent){}
 

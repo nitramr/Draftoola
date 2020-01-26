@@ -36,7 +36,7 @@
 #include <QClipboard>
 #include <QtMath>
 
-#include <itemstruct.h>
+#include <utilities.h>
 #include <artboard.h>
 #include <itembase.h>
 #include <itemgroup.h>

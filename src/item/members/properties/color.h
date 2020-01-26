@@ -38,6 +38,7 @@ public:
     Color(const Color &other);
 
     // operator
+    Color &operator=(const Color &) = default;
     bool operator==( const Color & other ) const;
     inline bool operator!=(const Color &color) const { return !(operator==(color)); }
     friend QDataStream &operator<<(QDataStream &out, const Color &obj);

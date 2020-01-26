@@ -30,7 +30,7 @@
 #include <itemtext.h>
 #include <itempolygon.h>
 #include <itemgroup.h>
-#include <itemstruct.h>
+#include <utilities.h>
 #include <stroke.h>
 #include <shadow.h>
 #include <exportlevel.h>

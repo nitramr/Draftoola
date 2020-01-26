@@ -37,21 +37,28 @@ AbstractItemProperty::AbstractItemProperty(const QString name , QPainter::Compos
     m_name = name;
     m_blendMode = compositionMode;
     m_isOn = isOn;
+    m_type = Type::Fill;
 }
 
-AbstractItemProperty::AbstractItemProperty(const AbstractItemProperty &other)
-{
-    m_id = other.m_id;
-    m_name = other.m_name;
-    m_blendMode = other.m_blendMode;
-    m_isOn = other.m_isOn;
-}
+//AbstractItemProperty::AbstractItemProperty(const AbstractItemProperty &other)
+//{
+//    m_id = other.m_id;
+//    m_name = other.m_name;
+//    m_blendMode = other.m_blendMode;
+//    m_isOn = other.m_isOn;
+//}
 
 /***************************************************
  *
  * Properties
  *
  ***************************************************/
+
+void AbstractItemProperty::setID(const QString id)
+{
+    m_id = id;
+}
+
 
 QString AbstractItemProperty::ID() const
 {
@@ -88,6 +95,11 @@ bool AbstractItemProperty::isOn() const
     return m_isOn;
 }
 
+AbstractItemProperty::Type AbstractItemProperty::type() const
+{
+    return m_type;
+}
+
 
 
 /***************************************************
@@ -103,30 +115,29 @@ bool AbstractItemProperty::operator==(const AbstractItemProperty &other) const
     return m_id == other.m_id &&
             m_name == other.m_name &&
             m_blendMode == other.m_blendMode &&
-            m_isOn == other.m_isOn;
+            m_isOn == other.m_isOn &&
+            m_type == other.m_type;
 }
 
-void AbstractItemProperty::setID(const QString id)
-{
-    m_id = id;
-}
 
 QDebug operator<<(QDebug dbg, const AbstractItemProperty &obj)
 {
     dbg << obj.ID() <<
            obj.name() <<
            obj.blendMode() <<
-           obj.isOn();
+           obj.isOn() <<
+           obj.type();
     return dbg.maybeSpace();
 }
 
 
 QDataStream &operator<<(QDataStream &out, const AbstractItemProperty &obj)
 {
-    out << obj.ID()
-       << obj.name()
-       << (int)obj.blendMode()
-       << obj.isOn();
+    out << obj.ID() <<
+           obj.name() <<
+           (int)obj.blendMode() <<
+           obj.isOn() <<
+           (int)obj.type();
 
     return out;
 }
@@ -137,13 +148,15 @@ QDataStream &operator>>(QDataStream &in, AbstractItemProperty &obj)
     QString m_name;
     int m_blendMode;
     bool m_isOn;
+    AbstractItemProperty::Type m_type;
 
-    in >> m_id >> m_name >> m_blendMode >> m_isOn;
+    in >> m_id >> m_name >> m_blendMode >> m_isOn >> m_type;
 
     obj.m_isOn = m_isOn;
     obj.m_name = m_name;
     obj.m_blendMode = QPainter::CompositionMode(m_blendMode);
     obj.m_id = m_id;
+    obj.m_type = AbstractItemProperty::Type(m_type);
 
     return in;
 }

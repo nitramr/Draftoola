@@ -24,22 +24,26 @@
 #include <QEvent>
 #include <QBoxLayout>
 
-PopupMenu::PopupMenu(QWidget *widget)
+/*!
+ * \brief [CTR]
+ * \param widget
+ */
+PopupMenu::PopupMenu(QWidget *contentWidget)
 {
-    if(widget == nullptr) widget = new QWidget();
+    if(contentWidget == nullptr) contentWidget = new QWidget();
 
 	QVBoxLayout *layout = new QVBoxLayout();
-	layout->addWidget(widget);
+    layout->addWidget(contentWidget);
 	layout->setMargin(1);
 
 	QWidget *panel = new QWidget();
-	panel->setMinimumSize(widget->size());
+    panel->setMinimumSize(contentWidget->size());
 	panel->setLayout(layout);
 
 	QWidgetAction * action = new QWidgetAction(this);
 	action->setDefaultWidget(panel);
 
-	widget->installEventFilter(this);
+    contentWidget->installEventFilter(this);
 
 	this->addAction(action);
 

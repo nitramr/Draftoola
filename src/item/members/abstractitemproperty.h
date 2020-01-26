@@ -36,14 +36,26 @@ class AbstractItemProperty
     friend class ExportLevel;
 
     Q_PROPERTY(bool isOn READ isOn WRITE setIsOn)
+    Q_PROPERTY(QPainter::CompositionMode blendMode READ blendMode WRITE setBlendMode)
     Q_CLASSINFO("Version", "1.0.0")
 
 public:
+
+    enum Type {
+        Fill = 0,
+        Stroke = 1,
+        Shadow = 2
+    };
+
     AbstractItemProperty();
     AbstractItemProperty(const QString name, QPainter::CompositionMode compositionMode = QPainter::CompositionMode_SourceOver, bool isOn = true);
-    AbstractItemProperty(const AbstractItemProperty &other);
+//    AbstractItemProperty(const AbstractItemProperty &other);
+    AbstractItemProperty(const AbstractItemProperty &) = default;
+
+    ~AbstractItemProperty() = default;
 
     // operator
+    AbstractItemProperty &operator=(const AbstractItemProperty &) = default;
     bool operator==( const AbstractItemProperty & other ) const;
     inline bool operator!=(const AbstractItemProperty &other) const { return !(operator==(other)); }
     friend QDataStream &operator<<(QDataStream &out, const AbstractItemProperty &obj);
@@ -63,19 +75,23 @@ public:
     void setIsOn(bool isOn);
     bool isOn() const;
 
+    Type type() const;
+
 
 private:
     QString m_id;
     QString m_name;
     QPainter::CompositionMode m_blendMode;
     bool m_isOn;
+    Type m_type;
+
 
 
 };
 Q_DECLARE_METATYPE(AbstractItemProperty)
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const AbstractItemProperty &shadow);
+QDebug operator<<(QDebug dbg, const AbstractItemProperty &obj);
 #endif
 
 //QDataStream &operator<<(QDataStream &out, const AbstractItemProperty &obj);

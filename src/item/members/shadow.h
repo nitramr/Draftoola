@@ -41,9 +41,12 @@ public:
     // Constructor
     Shadow();
     Shadow(QString name, QColor color= QColor(0,0,0,128), qreal radius = 4, QPointF offset = QPointF(0,2), qreal spread = 0);
-    Shadow(const Shadow &other);
-    ~Shadow(){}
+//    Shadow(const Shadow &other);
+    Shadow(const Shadow &) = default;
 
+    ~Shadow() = default;
+
+    Shadow &operator=(const Shadow &) = default;
     bool operator==( const Shadow & other ) const;
     inline bool operator!=(const Shadow &shadow) const { return !(operator==(shadow)); }
     friend QDataStream &operator<<(QDataStream &out, const Shadow &obj);

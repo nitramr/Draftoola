@@ -34,20 +34,22 @@ Stroke::Stroke(const QString name, const QColor &color, const StrokePosition str
 Stroke::Stroke(const QString name, const QBrush &brush, qreal width, const StrokePosition strokePosition , Qt::PenStyle style, Qt::PenCapStyle cap, Qt::PenJoinStyle join) : QPen(brush, width, style, cap, join), AbstractItemProperty(name){
    setStrokePosition(strokePosition);
    setMiterLimit(0);
+   m_type = Type::Stroke;
 }
 Stroke::Stroke(const QString name, const QPen &pen, const StrokePosition strokePosition ) : QPen(pen), AbstractItemProperty(name){
     setStrokePosition(strokePosition);
     setMiterLimit(0);
+    m_type = Type::Stroke;
 }
 
-/*!
- * \brief Assigns the given stroke to this stroke and returns a reference to this stroke.
- * \param other
- */
-Stroke::Stroke(const Stroke &other) : QPen(other), AbstractItemProperty(other)
-{
-    m_strokePosition = other.m_strokePosition;
-}
+///*!
+// * \brief Assigns the given stroke to this stroke and returns a reference to this stroke.
+// * \param other
+// */
+//Stroke::Stroke(const Stroke &other) : QPen(other), AbstractItemProperty(other)
+//{
+//    m_strokePosition = other.m_strokePosition;
+//}
 
 
 /***************************************************

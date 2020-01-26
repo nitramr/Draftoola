@@ -27,7 +27,7 @@
 #include <QDebug>
 #include <QGradient>
 
-#include <itemstruct.h>
+#include <utilities.h>
 #include <abstractproperty.h>
 
 class Gradient : public AbstractProperty
@@ -39,8 +39,9 @@ public:
     Gradient();
     Gradient(const Gradient &other);
     Gradient(QString caption, const QGradient &gradient);
-    ~Gradient(){}
+    ~Gradient() = default;
 
+    Gradient &operator=(const Gradient &) = default;
     bool operator==( const Gradient & other ) const;
     inline bool operator!=(const Gradient &gradient) const { return !(operator==(gradient)); }
     friend QDataStream &operator<<(QDataStream &out, const Gradient &obj);

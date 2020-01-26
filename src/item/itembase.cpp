@@ -327,6 +327,7 @@ qreal ItemBase::lod()
         break;
 
         // 2.0 = mid render quality with good speed
+    default:
     case RenderQuality::Balanced:
         return qMin(2.0, m_lod);
         break;
@@ -529,7 +530,7 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
 
     QRectF shapeRect = shape().boundingRect();
 
-    painter->setOpacity(fills.opacity()/100.0);
+    painter->setOpacity(fills.opacity());
     painter->setCompositionMode(fills.blendMode());
 
     switch(fills.fillType()){

@@ -37,16 +37,17 @@ Shadow::Shadow(QString name, QColor color, qreal radius, QPointF offset, qreal s
     m_radius = radius;
     m_offset = offset;
     m_spread = spread;
+    m_type = Type::Shadow;
 }
 
-Shadow::Shadow(const Shadow &other) : AbstractItemProperty(other)
-{   
-    m_color = other.m_color;
-    m_radius = other.m_radius;
-    m_offset = other.m_offset;
-    m_spread = other.m_spread;
+//Shadow::Shadow(const Shadow &other) : AbstractItemProperty(other)
+//{
+//    m_color = other.m_color;
+//    m_radius = other.m_radius;
+//    m_offset = other.m_offset;
+//    m_spread = other.m_spread;
 
-}
+//}
 
 
 /***************************************************

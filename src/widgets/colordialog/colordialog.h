@@ -2,7 +2,7 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
-   Copyright (C) 2019 Martin Reininger <nitramr>
+   Copyright (C) 2020 Martin Reininger <nitramr>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,52 +20,58 @@
 
 **************************************************************************************/
 
-#ifndef PROPERTYFILL_H
-#define PROPERTYFILL_H
+#ifndef COLORDIALOG_H
+#define COLORDIALOG_H
 
 #include <QWidget>
-#include <QPixmap>
 
+#include <utilities.h>
 #include <fills.h>
-#include <colordialog.h>
+#include <stroke.h>
+#include <shadow.h>
 
 namespace Ui {
-class propertyFill;
+class ColorDialog;
 }
 
-class PropertyFill : public QWidget
+class ColorDialog : public QWidget
 {
     Q_OBJECT
 
-public:
-    explicit PropertyFill(QWidget *parent = nullptr);
-    explicit PropertyFill(Fills fill, QWidget *parent = nullptr);
-    ~PropertyFill();
+    enum Mode {
+        FillLayout = 0,
+        StrokeLayout = 1,
+        ShadowLayout = 2
+    };
 
-    void setFill(Fills fill);
-    Fills fill() const;
+
+public:
+    explicit ColorDialog(QWidget *parent = nullptr);
+    ~ColorDialog();
+
+    void setProperty(AbstractItemProperty *property);
+    Fills *fill();
+    Stroke *stroke();
+    Shadow *shadow();
+
+    FillType fillType();
+    Mode mode() const;
 
 private:
-    Ui::propertyFill *ui;
+    Ui::ColorDialog *ui;
 
-    Fills m_fill;
+    Mode                    m_mode;
+    FillType                m_fillType;
+    AbstractItemProperty    *m_property;
 
-    ColorDialog * m_colorDialog;
-
-    void drawFill(Fills fill);
-    void connectSlots();
-    void disconnectSlots();
-
-private slots:
-    void updateFill();
-    void updateColor();
-    void updateOpacity();
-    void removeClick();
 
 signals:
-    void hasChanged(bool);
-    void remove(PropertyFill*);
+
+    void propertyChanged();
+
+public slots:
+    void updateProperty();
 
 };
 
-#endif // PROPERTYFILL_H
+#endif // COLORDIALOG_H

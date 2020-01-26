@@ -2,7 +2,7 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
-   Copyright (C) 2019 Martin Reininger <nitramr>
+   Copyright (C) 2020 Martin Reininger <nitramr>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,52 +20,61 @@
 
 **************************************************************************************/
 
-#ifndef PROPERTYFILL_H
-#define PROPERTYFILL_H
+#include "tabcolor.h"
+#include "ui_tabcolor.h"
 
-#include <QWidget>
-#include <QPixmap>
+TabColor::TabColor(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::TabColor)
+{
+    ui->setupUi(this);
 
-#include <fills.h>
-#include <colordialog.h>
-
-namespace Ui {
-class propertyFill;
+    connectSlots();
 }
 
-class PropertyFill : public QWidget
+TabColor::~TabColor()
 {
-    Q_OBJECT
+    delete ui;
+}
 
-public:
-    explicit PropertyFill(QWidget *parent = nullptr);
-    explicit PropertyFill(Fills fill, QWidget *parent = nullptr);
-    ~PropertyFill();
+Color TabColor::color() const
+{
+    return m_color;
+}
 
-    void setFill(Fills fill);
-    Fills fill() const;
+qreal TabColor::alpha() const
+{
+    return m_alpha;
+}
 
-private:
-    Ui::propertyFill *ui;
+void TabColor::connectSlots()
+{
+    connect(ui->colorInput, &ColorInput::colorChanged, this, &TabColor::updateColor);
+}
 
-    Fills m_fill;
 
-    ColorDialog * m_colorDialog;
+void TabColor::disconnectSlots()
+{
+    disconnect(ui->colorInput, &ColorInput::colorChanged, this, &TabColor::updateColor);
+}
 
-    void drawFill(Fills fill);
-    void connectSlots();
-    void disconnectSlots();
+void TabColor::setColor(Color color, qreal alpha)
+{
+    m_color = color;
+    m_alpha = alpha;
 
-private slots:
-    void updateFill();
-    void updateColor();
-    void updateOpacity();
-    void removeClick();
+    disconnectSlots();
 
-signals:
-    void hasChanged(bool);
-    void remove(PropertyFill*);
+    ui->colorInput->setColor(m_color, m_alpha);
 
-};
+    connectSlots();
 
-#endif // PROPERTYFILL_H
+}
+
+void TabColor::updateColor(QColor color, qreal alpha)
+{
+    m_color = color;
+    m_alpha = alpha;
+
+    emit colorChanged();
+}

@@ -2,7 +2,7 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
-   Copyright (C) 2019 Martin Reininger <nitramr>
+   Copyright (C) 2020 Martin Reininger <nitramr>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,52 +20,47 @@
 
 **************************************************************************************/
 
-#ifndef PROPERTYFILL_H
-#define PROPERTYFILL_H
+#ifndef TABSOLID_H
+#define TABSOLID_H
 
 #include <QWidget>
-#include <QPixmap>
 
-#include <fills.h>
-#include <colordialog.h>
+#include <color.h>
 
 namespace Ui {
-class propertyFill;
+class TabColor;
 }
 
-class PropertyFill : public QWidget
+class TabColor : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PropertyFill(QWidget *parent = nullptr);
-    explicit PropertyFill(Fills fill, QWidget *parent = nullptr);
-    ~PropertyFill();
+    explicit TabColor(QWidget *parent = nullptr);
+    ~TabColor();
 
-    void setFill(Fills fill);
-    Fills fill() const;
+    Color color() const;
+    qreal alpha() const;
 
 private:
-    Ui::propertyFill *ui;
+    Ui::TabColor *ui;
 
-    Fills m_fill;
+    Color m_color;
+    qreal m_alpha;
 
-    ColorDialog * m_colorDialog;
-
-    void drawFill(Fills fill);
     void connectSlots();
     void disconnectSlots();
 
+public slots:
+
+    void setColor(Color color, qreal alpha);
+
 private slots:
-    void updateFill();
-    void updateColor();
-    void updateOpacity();
-    void removeClick();
+    void updateColor(QColor color, qreal alpha);
 
 signals:
-    void hasChanged(bool);
-    void remove(PropertyFill*);
+    void colorChanged();
 
 };
 
-#endif // PROPERTYFILL_H
+#endif // TABSOLID_H

@@ -30,7 +30,7 @@
 #include <QImage>
 #include <QPixmapCache>
 
-#include <itemstruct.h>
+#include <utilities.h>
 #include <stroke.h>
 #include <fills.h>
 #include <gradient.h>

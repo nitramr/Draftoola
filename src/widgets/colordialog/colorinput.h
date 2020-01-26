@@ -2,7 +2,7 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
-   Copyright (C) 2019 Martin Reininger <nitramr>
+   Copyright (C) 2020 Martin Reininger <nitramr>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,52 +20,38 @@
 
 **************************************************************************************/
 
-#ifndef PROPERTYFILL_H
-#define PROPERTYFILL_H
+#ifndef COLORINPUT_H
+#define COLORINPUT_H
 
 #include <QWidget>
-#include <QPixmap>
-
-#include <fills.h>
-#include <colordialog.h>
 
 namespace Ui {
-class propertyFill;
+class ColorInput;
 }
 
-class PropertyFill : public QWidget
+class ColorInput : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PropertyFill(QWidget *parent = nullptr);
-    explicit PropertyFill(Fills fill, QWidget *parent = nullptr);
-    ~PropertyFill();
-
-    void setFill(Fills fill);
-    Fills fill() const;
+    explicit ColorInput(QWidget *parent = nullptr);
+    ~ColorInput();
 
 private:
-    Ui::propertyFill *ui;
+    Ui::ColorInput *ui;
 
-    Fills m_fill;
-
-    ColorDialog * m_colorDialog;
-
-    void drawFill(Fills fill);
     void connectSlots();
     void disconnectSlots();
 
+public slots:
+    void setColor(const QColor color, qreal alpha);
+
 private slots:
-    void updateFill();
     void updateColor();
-    void updateOpacity();
-    void removeClick();
 
 signals:
-    void hasChanged(bool);
-    void remove(PropertyFill*);
+    void colorChanged(QColor color, qreal alpha);
 
 };
 
-#endif // PROPERTYFILL_H
+#endif // COLORINPUT_H

@@ -29,7 +29,7 @@
 #include <QColor>
 #include <QPainter>
 
-#include <itemstruct.h>
+#include <utilities.h>
 #include <abstractitemproperty.h>
 #include <gradient.h>
 #include <color.h>
@@ -56,8 +56,10 @@ public:
     Fills(const QString name, const QPixmap & pixmap, const FillMode fillMode = FillMode::Fill);
     Fills(const QString name, const QImage & image, const FillMode fillMode = FillMode::Fill);
     Fills(const QString name, const Gradient & gradient);
-    Fills(const Fills &other);
-    virtual ~Fills(){}
+//    Fills(const Fills &other);
+    Fills(const Fills &) = default;
+
+    ~Fills() = default;
 
 
     // Properties
@@ -76,10 +78,10 @@ public:
     void setPixmap(QPixmap pixmap);
     QPixmap pixmap() const;
 
-    void setOpacity(int opacity);
-    int opacity() const;
+    void setOpacity(qreal opacity);
+    qreal opacity() const;
 
-
+    Fills &operator=(const Fills &) = default;
     bool operator==( const Fills & other ) const;
     inline bool operator!=(const Fills &fill) const { return !(operator==(fill)); }
     friend QDataStream &operator<<(QDataStream &out, const Fills &obj);
@@ -96,7 +98,7 @@ private:
     Gradient m_gradient;
     Color m_color;
     QPixmap m_pixmap;
-    int m_opacity;
+    qreal m_opacity;
 
     void fromObject(AbstractItemProperty object);
 

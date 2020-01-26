@@ -41,6 +41,9 @@ SOURCES += src/main.cpp\
     src/manager/stylefactory.cpp \
     src/widgets/buttongroup.cpp \
     src/widgets/colorbutton.cpp \
+    src/widgets/colordialog/colordialog.cpp \
+    src/widgets/colordialog/colorinput.cpp \
+    src/widgets/colordialog/tabcolor.cpp \
     src/widgets/flowlayout.cpp \
     src/widgets/intelligentspinbox.cpp \
     src/widgets/layoutsection.cpp \
@@ -78,14 +81,17 @@ HEADERS  +=     src/mainwindow.h \
     src/item/itemrect.h \
     src/item/itemoval.h \
     src/item/itemgroup.h \
-    src/item/itemstruct.h \
     src/item/members/shadow.h \
     src/item/members/stroke.h \
     src/item/path/pathhandler.h \
     src/item/path/roundedpolygon.h \
+    src/utilities.h \
     src/manager/stylefactory.h \
     src/widgets/buttongroup.h \
     src/widgets/colorbutton.h \
+    src/widgets/colordialog/colordialog.h \
+    src/widgets/colordialog/colorinput.h \
+    src/widgets/colordialog/tabcolor.h \
     src/widgets/flowlayout.h \
     src/widgets/intelligentspinbox.h \
     src/widgets/layoutsection.h \
@@ -105,6 +111,9 @@ HEADERS  +=     src/mainwindow.h \
     src/workspace/tool_itemproperties/ip_innershadows.h
 
 FORMS    += src/mainwindow.ui \
+    src/widgets/colordialog/colordialog.ui \
+    src/widgets/colordialog/colorinput.ui \
+    src/widgets/colordialog/tabcolor.ui \
     src/workspace/tool_itemproperties.ui \
     src/workspace/tool_outliner.ui \
     src/workspace/components/propertyfill.ui \
@@ -121,10 +130,12 @@ RESOURCES += \
     src/resources/icons/icons.qrc
 
 INCLUDEPATH += \
+    $$PWD/src \
     $$PWD/src/item \
     $$PWD/src/item/members \
     $$PWD/src/item/members/properties \
     $$PWD/src/widgets \
+    $$PWD/src/widgets/colordialog \
     $$PWD/src/manager \
     $$PWD/src/designer \
     $$PWD/src/workspace \

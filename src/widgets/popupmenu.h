@@ -29,7 +29,7 @@
 class PopupMenu : public QMenu
 {
 public:
-    PopupMenu(QWidget*widget);
+    PopupMenu(QWidget*contentWidget);
 protected:
 	bool eventFilter(QObject *obj, QEvent *event);
 };

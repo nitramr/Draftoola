@@ -37,4 +37,5 @@ enum class FillType {
 Q_DECLARE_METATYPE(FillType)
 
 
+
 #endif // ITEMSTRUCT_H

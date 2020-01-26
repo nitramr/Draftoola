@@ -25,7 +25,8 @@
 
 #include <QPainter>
 #include <QDebug>
-#include <itemstruct.h>
+#include <utilities.h>
+#include <popupmenu.h>
 
 
 PropertyFill::PropertyFill(QWidget *parent) : PropertyFill(Fills(), parent){}
@@ -35,9 +36,14 @@ ui(new Ui::propertyFill)
 {
     ui->setupUi(this);
 
+    m_colorDialog = new ColorDialog;
+
+    PopupMenu * m_colorMenu = new PopupMenu(m_colorDialog);
+
     QPixmap pixmap(ui->btn_color->iconSize());
     pixmap.fill(fill.color());
     ui->btn_color->setIcon(pixmap);
+    ui->btn_color->setMenu(m_colorMenu);
 
     // https://doc.qt.io/qt-5/qpainter.html#CompositionMode-enum
     ui->combo_blending->addItem(tr("Normal"), QVariant(QPainter::CompositionMode_SourceOver)); //0
@@ -71,8 +77,10 @@ void PropertyFill::setFill(Fills fill)
     disconnectSlots();
 
     m_fill = fill;
+
     ui->cb_active->setChecked(fill.isOn());
-    ui->sb_opacity->setValue(fill.opacity());
+    ui->sb_opacity->setValue(fill.opacity()*100);
+    m_colorDialog->setProperty(&m_fill);
 
     int indexMode = 0;
     for(int i = 0; i < ui->combo_blending->count(); i++){
@@ -100,10 +108,11 @@ void PropertyFill::drawFill(Fills fill)
     pixmap.fill(Qt::transparent);
 
     QPainter painter(&pixmap);
-    painter.setOpacity(fill.opacity()/100.0);
+    painter.setOpacity(fill.opacity());
 
     switch (fill.fillType()) {
     case FillType::Color:{
+      //  painter.setOpacity(1.0); // opacity is definied by color alpha channel
         painter.fillRect(pixmap.rect(), QBrush(fill.color()));
         break;
     }
@@ -132,28 +141,56 @@ void PropertyFill::connectSlots()
 {
     connect(ui->btnDelete, &QToolButton::clicked, this, &PropertyFill::removeClick);
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
-    connect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateFill);
+    connect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateOpacity);
     connect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateFill);
+    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyFill::updateColor);
 }
 
 void PropertyFill::disconnectSlots()
 {
     disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyFill::removeClick);
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
-    disconnect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateFill);
+    disconnect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateOpacity);
     disconnect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateFill);
+    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyFill::updateColor);
 }
 
 void PropertyFill::updateFill()
 {
     m_fill.setIsOn(ui->cb_active->isChecked());
-    m_fill.setOpacity(ui->sb_opacity->value());
     m_fill.setBlendMode(static_cast<QPainter::CompositionMode>(ui->combo_blending->currentData().toInt()) );
+
+//    qDebug() << "PropertyFill::updateFill()" << ui->sb_opacity->value()/100.0;
+//    qDebug() << "PropertyFill opacity" << m_fill.opacity();
+
+//    disconnectSlots();
+//    m_colorDialog->setProperty(&m_fill);
+//    connectSlots();
 
     // update preview
     drawFill(m_fill);
 
     emit hasChanged(true);
+}
+
+void PropertyFill::updateColor()
+{
+    m_fill = *m_colorDialog->fill();
+
+    disconnectSlots();
+    ui->sb_opacity->setValue( qRound(m_fill.opacity() * 100) );
+    connectSlots();
+
+    updateFill();
+}
+
+void PropertyFill::updateOpacity()
+{
+
+    m_fill.setOpacity(ui->sb_opacity->value()/100.0);
+    m_colorDialog->setProperty(&m_fill);
+
+    updateFill();
 }
 
 void PropertyFill::removeClick()

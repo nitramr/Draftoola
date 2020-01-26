@@ -120,7 +120,6 @@ void AbstractItemBase::setShape(QPainterPath itemShape)
     m_shape = itemShape;
     m_rect = m_shape.boundingRect().normalized();
     setInvalidateCache(true);
-    qDebug() << "Invalidate::setShape()";
     setTransformOriginPoint(m_rect.center());
 
     //    emit this->widthChanged();
