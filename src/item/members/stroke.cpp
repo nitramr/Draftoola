@@ -1,3 +1,25 @@
+/*************************************************************************************
+
+   Draftoola - UI and UX prototyping tool for designing static and animated layouts.
+
+   Copyright (C) 2019 Martin Reininger <nitramr>
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+**************************************************************************************/
+
 #include "stroke.h"
 
 /***************************************************
@@ -6,7 +28,7 @@
  *
  ***************************************************/
 
-Stroke::Stroke() : Stroke(QString::null, QPen()){}
+Stroke::Stroke() : Stroke(QString(), QPen()){}
 Stroke::Stroke(const QString name, Qt::PenStyle style, const StrokePosition strokePosition ) : Stroke(name, QPen(style), strokePosition){}
 Stroke::Stroke(const QString name, const QColor &color, const StrokePosition strokePosition ) : Stroke(name, QBrush(color), 1, strokePosition, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin){}
 Stroke::Stroke(const QString name, const QBrush &brush, qreal width, const StrokePosition strokePosition , Qt::PenStyle style, Qt::PenCapStyle cap, Qt::PenJoinStyle join) : QPen(brush, width, style, cap, join), AbstractItemProperty(name){

@@ -1,3 +1,25 @@
+/*************************************************************************************
+
+   Draftoola - UI and UX prototyping tool for designing static and animated layouts.
+
+   Copyright (C) 2019 Martin Reininger <nitramr>
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+**************************************************************************************/
+
 #include "canvasscene.h"
 #include <QDebug>
 #include <QtGlobal>
@@ -47,8 +69,8 @@ void CanvasScene::setScaleFactor(qreal factor)
  *
  ***************************************************/
 
-/**
- * @brief [SLOT] Export all items on canvas into all provided output formats.
+/*!
+ * \brief [SLOT] Export all items on canvas into all provided output formats.
  */
 void CanvasScene::exportItems()
 {
@@ -65,9 +87,9 @@ void CanvasScene::exportItems()
 
 }
 
-/**
- * @brief [SLOT] Export single item into all provided output formats.
- * @param item
+/*!
+ * \brief [SLOT] Export single item into all provided output formats.
+ * \param item
  */
 void CanvasScene::exportItem(AbstractItemBase *item)
 {
@@ -102,11 +124,11 @@ void CanvasScene::exportItem(AbstractItemBase *item)
 }
 
 
-/**
- * @brief Render object as Image and save it under given output path.
- * @param bi
- * @param multiplier
- * @param outputPath
+/*!
+ * \brief Render object as Image and save it under given output path.
+ * \param bi
+ * \param multiplier
+ * \param outputPath
  */
 void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath, QColor bgColor)
 {
@@ -124,10 +146,10 @@ void CanvasScene::saveImage(AbstractItemBase *bi, qreal multiplier, const QStrin
 
 }
 
-/**
- * @brief Convert object as SVG and save it under given output path.
- * @param bi
- * @param outputPath
+/*!
+ * \brief Convert object as SVG and save it under given output path.
+ * \param bi
+ * \param outputPath
  */
 void CanvasScene::saveSVG(AbstractItemBase *bi, const QString outputPath)
 {
@@ -154,10 +176,10 @@ void CanvasScene::saveSVG(AbstractItemBase *bi, const QString outputPath)
 
 }
 
-/**
- * @brief Render object as PDF and save it under given output path.
- * @param bi
- * @param outputPath
+/*!
+ * \brief Render object as PDF and save it under given output path.
+ * \param bi
+ * \param outputPath
  */
 void CanvasScene::savePDF(AbstractItemBase *bi, const QString outputPath)
 {
