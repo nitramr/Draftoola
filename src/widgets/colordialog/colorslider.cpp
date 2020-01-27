@@ -167,15 +167,28 @@ void ColorSlider::setColor(int hue, int saturation, int value, qreal alpha)
         return;
 
     if(m_type == Alpha && (nhue != m_hue || nsat != m_saturation || nval != m_value || nalpha != m_alpha) ){
+
+        m_hue = nhue;
+        m_saturation = nsat;
+        m_value = nval;
+        m_alpha = nalpha;
+
         drawColorMap();
+        repaint();
+
+    }else{
+        QRect r(colorPos(), QSize(cSize,cSize));
+
+        m_hue = nhue;
+        m_saturation = nsat;
+        m_value = nval;
+        m_alpha = nalpha;
+
+        r = r.united(QRect(colorPos(), QSize(cSize,cSize)));
+        r.translate(contentsRect().x()-cSize/2, contentsRect().y()-cSize/2);
+
+        repaint(r);
     }
-
-    m_hue = nhue;
-    m_saturation = saturation;
-    m_value = value;
-    m_alpha = nalpha;
-
-    repaint();
 }
 
 

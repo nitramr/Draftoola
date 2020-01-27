@@ -122,22 +122,32 @@ void ColorMap::setColor(int hue, int saturation, int value, qreal alpha)
     int nhue = qMin(qMax(0,hue), 359);
     int nsat = qMin(qMax(0,saturation), 255);
     int nval = qMin(qMax(0,value), 255);
+
     if (nhue == m_hue && nsat == m_saturation && nval == m_value)
         return;
 
     if(nhue != m_hue){
-        drawColorMap(); // repaint for hue
+
+        m_hue = nhue;
+        m_saturation = nsat;
+        m_value = nval;
+
+        drawColorMap();
         repaint();
+
+    }else{
+        QRect r(colorPos(), QSize(cSize,cSize));
+
+        m_hue = nhue;
+        m_saturation = nsat;
+        m_value = nval;
+
+        r = r.united(QRect(colorPos(), QSize(cSize,cSize)));
+        r.translate(contentsRect().x()-cSize/2, contentsRect().y()-cSize/2);
+
+        repaint(r);
     }
 
-    QRect r(colorPos(), QSize(cSize,cSize));
-    m_hue = nhue;
-    m_saturation = nsat;
-    m_value = nval;    
-    r = r.united(QRect(colorPos(), QSize(cSize,cSize)));
-    r.translate(contentsRect().x()-9, contentsRect().y()-9);
-
-    repaint(r);
 }
 
 void ColorMap::mouseMoveEvent(QMouseEvent *m)
