@@ -32,8 +32,13 @@ TabColor::TabColor(QWidget *parent) :
     ui->setupUi(this);
 
     m_colorMap = new ColorMap();
+    m_colorSlider = new ColorSlider(ColorSlider::Hue);
+    m_alphaSlider = new ColorSlider(ColorSlider::Alpha);
+
     ui->sectionColorMap->setText(tr("Color Map"));
     ui->sectionColorMap->addWidget(m_colorMap);
+    ui->sectionColorMap->addWidget(m_colorSlider);
+    ui->sectionColorMap->addWidget(m_alphaSlider);
 
     connectSlots();
 }
@@ -57,6 +62,8 @@ void TabColor::connectSlots()
 {
     connect(ui->colorInput, &ColorInput::colorChanged, this, &TabColor::updateColor);
     connect(m_colorMap, &ColorMap::newColor, this, &TabColor::updateColor);
+    connect(m_colorSlider, &ColorSlider::newColor, this, &TabColor::updateColor);
+    connect(m_alphaSlider, &ColorSlider::newColor, this, &TabColor::updateColor);
 }
 
 
@@ -64,6 +71,8 @@ void TabColor::disconnectSlots()
 {
     disconnect(ui->colorInput, &ColorInput::colorChanged, this, &TabColor::updateColor);
     disconnect(m_colorMap, &ColorMap::newColor, this, &TabColor::updateColor);
+    disconnect(m_colorSlider, &ColorSlider::newColor, this, &TabColor::updateColor);
+    disconnect(m_alphaSlider, &ColorSlider::newColor, this, &TabColor::updateColor);
 }
 
 void TabColor::setColor(Color color, qreal alpha)
@@ -73,8 +82,10 @@ void TabColor::setColor(Color color, qreal alpha)
 
     disconnectSlots();
 
-    m_colorMap->setColor(m_color, m_alpha);
     ui->colorInput->setColor(m_color, m_alpha);
+    m_colorMap->setColor(m_color, m_alpha);
+    m_colorSlider->setColor(m_color, m_alpha);
+    m_alphaSlider->setColor(m_color, m_alpha);
 
     connectSlots();
 

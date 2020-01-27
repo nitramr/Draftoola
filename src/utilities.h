@@ -24,6 +24,8 @@
 #define ITEMSTRUCT_H
 
 #include <QMetaType>
+#include <QPainter>
+#include <QDebug>
 
 enum class FillType {
     Color = 0,
@@ -36,6 +38,34 @@ enum class FillType {
 };
 Q_DECLARE_METATYPE(FillType)
 
+
+inline void paintGrid(QPainter &painter, QRect rect, QSize grid){
+
+    int xP = rect.x(), yP = rect.y(), offset = 0, gridX = grid.width(), gridY = grid.height();
+    QSize count( rect.width() / gridX, rect.height() / gridY);
+
+    painter.save();
+    painter.setClipRect(rect);
+    painter.fillRect(rect, Qt::white);
+
+    for(int r = 0;  r <= count.height(); r++)
+    {
+        for(int c = 0; c <= count.width(); c++)
+        {
+            if(offset == 0)
+            {
+                painter.fillRect(QRect( xP, yP, gridX, gridY ), Qt::lightGray);
+                offset++;
+            }
+            else offset--;
+            xP += gridX;
+        }
+        xP = rect.x();
+        yP += gridY;
+        offset = (r % 2) ? 0 : 1;
+    }
+    painter.restore();
+}
 
 
 #endif // ITEMSTRUCT_H

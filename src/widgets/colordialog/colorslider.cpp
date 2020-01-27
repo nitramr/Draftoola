@@ -23,124 +23,162 @@
 
 **************************************************************************************/
 
-#include "colormap.h"
+#include "colorslider.h"
 
 #include <QPainter>
 #include <QDebug>
 #include <qevent.h>
+#include <utilities.h>
 
 static int pWidth = 220;
-static int pHeight = 180;
+static int pHeight = 16;
 static int cSize = 16;
+static int barWidth = 6;
 
-ColorMap::ColorMap(QWidget* parent)
-    : QFrame(parent)
+ColorSlider::ColorSlider(SliderType type, QWidget* parent)
+    : QWidget(parent)
 {
+    m_type = type;
     m_hue = 0;
     m_saturation = 0;
     m_value = 0;
     m_alpha = 0.0;
+
+    switch (m_type) {
+    case SliderType::Hue:
+        m_maxValue = 360;
+        break;
+    case SliderType::Alpha:
+        m_maxValue = 100;
+        break;
+    }
+
     setColor(m_hue, m_saturation, m_value, m_alpha);
 
     setAttribute(Qt::WA_NoSystemBackground);
-//    setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed) );
 }
+
 
 /*!
  * \brief Return position of current color
  * \return
  */
-QPoint ColorMap::colorPos()
+QPoint ColorSlider::colorPos()
 {
     QRect r = contentsRect();
-    return QPoint((0 + m_saturation) * (r.width() - 1) / 255, (255 - m_value) * (r.height() - 1) / 255);
+    switch (m_type) {
+    case SliderType::Hue:
+        return QPoint((m_hue) * (r.width() - 1) / m_maxValue, pHeight/2);
+        break;
+    case SliderType::Alpha:
+        return QPoint((m_alpha * 100.0) * (r.width() - 1) / m_maxValue, pHeight/2);
+        break;
+    }
+
+    return QPoint();
 }
 
-int ColorMap::valPt(const QPoint &pt)
-{
-    QRect r = contentsRect();
-    return 255 - pt.y() * 255 / (r.height() - 1);
-}
 
-int ColorMap::satPt(const QPoint &pt)
+int ColorSlider::colorVal(const QPoint &pt)
 {
     QRect r = contentsRect();
-    return 0 + pt.x() * 255 / (r.width() - 1);
+    return pt.x() * m_maxValue / (r.width() - 1);
 }
 
 /*!
  * \brief Set color of given point
  * \param pt
  */
-void ColorMap::setColor(const QPoint &pt)
+void ColorSlider::setColor(const QPoint &pt)
 {
-    setColor(m_hue, satPt(pt), valPt(pt), m_alpha);
+    switch (m_type) {
+    case SliderType::Hue:
+        setColor(colorVal(pt), m_saturation, m_value, m_alpha);
+        break;
+    case SliderType::Alpha:
+        setColor(m_hue, m_saturation, m_value, colorVal(pt) / 100.0);
+        break;
+    }
 }
 
 
 /*!
  * \brief Draw color map
  */
-void ColorMap::drawColorMap()
+void ColorSlider::drawColorMap()
 {
-    int w = width() - frameWidth() * 2;
-    int h = height() - frameWidth() * 2;
-    QImage img(w, h, QImage::Format_RGB32);
+    int w = width();
+    int h = barWidth;
+    QImage img(w, h, QImage::Format_ARGB32);
     int x, y;
     uint *pixel = (uint *) img.scanLine(0);
+
     for (y = 0; y < h; y++) {
         const uint *end = pixel + w;
         x = 0;
         while (pixel < end) {
             QPoint p(x, y);
             QColor c;
-            c.setHsv(m_hue, satPt(p), valPt(p));
-            *pixel = c.rgb();
+
+            switch (m_type) {
+            case SliderType::Hue:
+                c.setHsv(colorVal(p), 255, 255);
+                break;
+            case SliderType::Alpha:
+                c.setHsv(m_hue, m_saturation, m_value, colorVal(p) * 2.55);
+                break;
+            }
+
+            *pixel = c.rgba();
             ++pixel;
             ++x;
         }
     }
+
     pix = QPixmap::fromImage(img);
 
 }
 
 
-void ColorMap::setColor(QColor color, qreal alpha)
+void ColorSlider::setColor(QColor color, qreal alpha)
 {
     setColor(color.hue(), color.saturation(), color.value(), alpha);
 }
 
-QSize ColorMap::sizeHint() const
+QSize ColorSlider::sizeHint() const
 {
-    return QSize(pWidth + 2*frameWidth(), pHeight + 2*frameWidth());
+    return QSize(pWidth, pHeight);
 }
 
-void ColorMap::setColor(int hue, int saturation, int value, qreal alpha)
+void ColorSlider::setColor(int hue, int saturation, int value, qreal alpha)
 {
-    m_alpha = alpha;
-
     int nhue = qMin(qMax(0,hue), 359);
     int nsat = qMin(qMax(0,saturation), 255);
     int nval = qMin(qMax(0,value), 255);
-    if (nhue == m_hue && nsat == m_saturation && nval == m_value)
+    qreal nalpha = qMin(qMax(0.0, alpha), 1.0);
+    if(nhue == m_hue && nsat == m_saturation && nval == m_value && nalpha == m_alpha)
         return;
 
-    if(nhue != m_hue){
-        drawColorMap(); // repaint for hue
+    if(m_type == Alpha && (nhue != m_hue || nsat != m_saturation || nval != m_value || nalpha != m_alpha) ){
+        drawColorMap();
         repaint();
     }
 
     QRect r(colorPos(), QSize(cSize,cSize));
     m_hue = nhue;
-    m_saturation = nsat;
-    m_value = nval;    
+    m_saturation = saturation;
+    m_value = value;
+    m_alpha = nalpha;
     r = r.united(QRect(colorPos(), QSize(cSize,cSize)));
-    r.translate(contentsRect().x()-9, contentsRect().y()-9);
+    r.translate(contentsRect().x()-cSize/2, contentsRect().y()-cSize/2);
 
     repaint(r);
 }
 
-void ColorMap::mouseMoveEvent(QMouseEvent *m)
+
+
+void ColorSlider::mouseMoveEvent(QMouseEvent *m)
 {
     QPoint p = m->pos() - contentsRect().topLeft();
     setColor(p);
@@ -149,7 +187,7 @@ void ColorMap::mouseMoveEvent(QMouseEvent *m)
                   m_alpha);
 }
 
-void ColorMap::mousePressEvent(QMouseEvent *m)
+void ColorSlider::mousePressEvent(QMouseEvent *m)
 {
     QPoint p = m->pos() - contentsRect().topLeft();
     setColor(p);
@@ -158,15 +196,26 @@ void ColorMap::mousePressEvent(QMouseEvent *m)
                   m_alpha);
 }
 
-void ColorMap::paintEvent(QPaintEvent* )
+void ColorSlider::paintEvent(QPaintEvent* )
 {
     QPainter p(this);
-    drawFrame(&p);
-    QRect r = contentsRect();
+    p.setPen(Qt::NoPen);
 
-    p.drawPixmap(r.topLeft(), pix);
+    QPoint sliderPt( contentsRect().topLeft() + QPoint(0, (height() - barWidth) / 2));
+    QRect r = pix.rect();
+    r.translate(sliderPt);
+
+    // Draw grid
+    if(m_type == Alpha){
+        paintGrid(p, r, QSize(6,3));
+    }
+
+    p.drawPixmap(sliderPt, pix);
+
+
+    // Draw Cursor
     p.setRenderHint(QPainter::Antialiasing, true);
-    QPoint pt = colorPos() + r.topLeft();
+    QPoint pt = colorPos();
 
     QRect cursor(pt - QPoint(cSize/2, cSize/2), QSize(cSize, cSize));
     QPen pen(Qt::darkGray);
@@ -181,9 +230,8 @@ void ColorMap::paintEvent(QPaintEvent* )
 
 }
 
-void ColorMap::resizeEvent(QResizeEvent *ev)
+void ColorSlider::resizeEvent(QResizeEvent *ev)
 {
-    QFrame::resizeEvent(ev);
+    QWidget::resizeEvent(ev);
     drawColorMap();
 }
-

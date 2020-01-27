@@ -2,6 +2,7 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
+   Copyright (C) 2012 The Qt Company Ltd. - http://www.qt-project.org/
    Copyright (C) 2020 Martin Reininger <nitramr>
 
    This program is free software; you can redistribute it and/or modify
@@ -18,54 +19,58 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+   Widget based on code of QColorDialog widget.
+
 **************************************************************************************/
 
-#ifndef TABSOLID_H
-#define TABSOLID_H
+#ifndef COLORSLIDER_H
+#define COLORSLIDER_H
 
 #include <QWidget>
 
-#include <color.h>
-#include <colormap.h>
-#include <colorslider.h>
-
-namespace Ui {
-class TabColor;
-}
-
-class TabColor : public QWidget
+class ColorSlider : public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit TabColor(QWidget *parent = nullptr);
-    ~TabColor();
 
-    Color color() const;
-    qreal alpha() const;
+    enum SliderType {
+        Hue = 0,
+        Alpha = 1
+    };
 
-private:
-    Ui::TabColor *ui;
-
-    ColorMap *m_colorMap;
-    ColorSlider * m_colorSlider;
-    ColorSlider * m_alphaSlider;
-    Color m_color;
-    qreal m_alpha;
-
-    void connectSlots();
-    void disconnectSlots();
+    explicit ColorSlider(SliderType type, QWidget *parent = nullptr);
+    ~ColorSlider() = default;
 
 public slots:
-
-    void setColor(Color color, qreal alpha);
-
-private slots:
-    void updateColor(QColor color, qreal alpha);
+    void setColor(QColor color, qreal alpha);
+    void setColor(int hue, int saturation, int value, qreal alpha);
 
 signals:
-    void colorChanged();
+    void newColor(QColor,qreal);
+
+protected:
+    QSize sizeHint() const;
+    void paintEvent(QPaintEvent*);
+    void mouseMoveEvent(QMouseEvent *);
+    void mousePressEvent(QMouseEvent *);
+    void resizeEvent(QResizeEvent *);
+
+private:
+    int m_hue;
+    int m_saturation;
+    int m_value;
+    int m_maxValue;
+    qreal m_alpha;
+    SliderType m_type;
+
+    QPoint colorPos();
+    int colorVal(const QPoint &pt);
+    void setColor(const QPoint &pt);
+
+    void drawColorMap();
+
+    QPixmap pix;
 
 };
 
-#endif // TABSOLID_H
+#endif // COLORSLIDER_H
