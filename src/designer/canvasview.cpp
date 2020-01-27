@@ -265,7 +265,7 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
 
     if(m_artboard){ // Item is Artboard
 
-        qDebug() << "Canvas: Item is Artboard";
+      //  qDebug() << "Canvas: Item is Artboard";
 
         m_scene->addItem(m_artboard);
         m_artboard->setPos(x,y);
@@ -274,13 +274,13 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
 
     }else{ // Item is no Artboard
 
-        qDebug() << "Canvas: Item is no Artboard";
+       // qDebug() << "Canvas: Item is no Artboard";
 
         QList<Artboard*> abList = artboardList();
 
         if(parent == nullptr && abList.count() > 0){
 
-            qDebug() << "Canvas: Item has no Parent";
+          //  qDebug() << "Canvas: Item has no Parent";
             Artboard * artboard = abList.first();
 
             if(artboard){
@@ -291,7 +291,7 @@ void CanvasView::addItem(AbstractItemBase *item, qreal x, qreal y, AbstractItemB
 
         }else if(parent){
 
-            qDebug() << "Canvas: Item has Parent";
+         //   qDebug() << "Canvas: Item has Parent";
 
             parent->addItem(item);
             item->setPos(x,y);

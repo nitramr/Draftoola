@@ -53,7 +53,7 @@ ColorMap::ColorMap(QWidget* parent)
 QPoint ColorMap::colorPos()
 {
     QRect r = contentsRect();
-    return QPoint((0 + m_saturation) * (r.width() - 1) / 255, (255 - m_value) * (r.height() - 1) / 255);
+    return QPoint(m_saturation * (r.width() - 1) / 255, (255 - m_value) * (r.height() - 1) / 255);
 }
 
 int ColorMap::valPt(const QPoint &pt)
@@ -65,7 +65,7 @@ int ColorMap::valPt(const QPoint &pt)
 int ColorMap::satPt(const QPoint &pt)
 {
     QRect r = contentsRect();
-    return 0 + pt.x() * 255 / (r.width() - 1);
+    return pt.x() * 255 / (r.width() - 1);
 }
 
 /*!

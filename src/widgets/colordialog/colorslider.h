@@ -67,6 +67,8 @@ private:
     int colorVal(const QPoint &pt);
     void setColor(const QPoint &pt);
 
+    QRect paintRect() const;
+
     void drawColorMap();
 
     QPixmap pix;

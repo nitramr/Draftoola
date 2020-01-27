@@ -32,6 +32,8 @@ ColorInput::ColorInput(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->txtHex->setInputMask( "#Hhhhhh" );
+
     connectSlots();
 }
 
