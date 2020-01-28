@@ -38,9 +38,11 @@ class AbstractProperty
 public:
     AbstractProperty();
     AbstractProperty(const QString caption);
-    AbstractProperty(const AbstractProperty &other);
+ //   AbstractProperty(const AbstractProperty &other);
+    AbstractProperty(const AbstractProperty &) = default;
 
     // operator
+    AbstractProperty &operator=(const AbstractProperty &) = default;
     bool operator==( const AbstractProperty & other ) const;
     inline bool operator!=(const AbstractProperty &other) const { return !(operator==(other)); }
     friend QDataStream &operator<<(QDataStream &out, const AbstractProperty &obj);

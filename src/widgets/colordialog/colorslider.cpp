@@ -147,9 +147,10 @@ void ColorSlider::drawColorMap()
 }
 
 
-void ColorSlider::setColor(QColor color, qreal alpha)
+void ColorSlider::setColor(Color color, qreal alpha)
 {
-    setColor(color.hue(), color.saturation(), color.value(), alpha);
+    m_color = color;
+    setColor(m_color.hue(), m_color.saturation(), m_color.value(), alpha);
 }
 
 QSize ColorSlider::sizeHint() const
@@ -200,8 +201,8 @@ void ColorSlider::mouseMoveEvent(QMouseEvent *m)
     QPoint p = m->pos() - QPoint(padding,0);
     setColor(p);
 
-    emit newColor(QColor::fromHsv(m_hue, m_saturation, m_value),
-                  m_alpha);
+    m_color.setHsv(m_hue, m_saturation, m_value);
+    emit newColor(m_color, m_alpha);
 }
 
 void ColorSlider::mousePressEvent(QMouseEvent *m)
@@ -209,8 +210,8 @@ void ColorSlider::mousePressEvent(QMouseEvent *m)
     QPoint p = m->pos() - QPoint(padding,0);
     setColor(p);
 
-    emit newColor(QColor::fromHsv(m_hue, m_saturation, m_value),
-                  m_alpha);
+    m_color.setHsv(m_hue, m_saturation, m_value);
+    emit newColor(m_color, m_alpha);
 }
 
 void ColorSlider::paintEvent(QPaintEvent* )

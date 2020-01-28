@@ -104,30 +104,30 @@ Fills PropertyFill::fill() const
     return m_property;
 }
 
-void PropertyFill::drawFill(Fills fill)
+void PropertyFill::drawFill(Fills property)
 {
     QPixmap pixmap(ui->btn_color->iconSize());
     pixmap.fill(Qt::transparent);
 
     QPainter painter(&pixmap);
-    painter.setOpacity(fill.opacity());
+    painter.setOpacity(property.opacity());
 
-    switch (fill.fillType()) {
+    switch (property.fillType()) {
     case FillType::Color:{
-        painter.fillRect(pixmap.rect(), QBrush(fill.color()));
+        painter.fillRect(pixmap.rect(), QBrush(property.color()));
         break;
     }
     case FillType::RadialGradient:
-        painter.fillRect(pixmap.rect(), QBrush(fill.gradient().radial(pixmap.rect())));
+        painter.fillRect(pixmap.rect(), QBrush(property.gradient().radial(pixmap.rect())));
         break;
     case FillType::ConicalGradient:
-        painter.fillRect(pixmap.rect(), QBrush(fill.gradient().conical(pixmap.rect())));
+        painter.fillRect(pixmap.rect(), QBrush(property.gradient().conical(pixmap.rect())));
         break;
     case FillType::LinearGradient:
-        painter.fillRect(pixmap.rect(), QBrush(fill.gradient().linear()));
+        painter.fillRect(pixmap.rect(), QBrush(property.gradient().linear()));
         break;
     case FillType::Image:
-        painter.drawPixmap(pixmap.rect(), fill.pixmap(), fill.pixmap().rect());
+        painter.drawPixmap(pixmap.rect(), property.pixmap(), property.pixmap().rect());
         break;
     case FillType::Pattern:
         break;
@@ -140,21 +140,21 @@ void PropertyFill::drawFill(Fills fill)
 
 void PropertyFill::connectSlots()
 {
-    connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
+    connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateProperty);
     connect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateOpacity);
-    connect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateFill);    
+    connect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateProperty);
     connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyFill::updateColor);
 }
 
 void PropertyFill::disconnectSlots()
 {
-    disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
+    disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateProperty);
     disconnect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateOpacity);
-    disconnect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateFill);
+    disconnect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateProperty);
     disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyFill::updateColor);
 }
 
-void PropertyFill::updateFill()
+void PropertyFill::updateProperty()
 {
     m_property.setIsOn(ui->cb_active->isChecked());
     m_property.setBlendMode(static_cast<QPainter::CompositionMode>(ui->combo_blending->currentData().toInt()) );
@@ -177,15 +177,14 @@ void PropertyFill::updateColor()
     ui->sb_opacity->setValue( qRound(m_property.opacity() * 100) );
     connectSlots();
 
-    updateFill();
+    updateProperty();
 }
 
 void PropertyFill::updateOpacity()
 {
-
     m_property.setOpacity(ui->sb_opacity->value()/100.0);
     m_colorDialog->setProperty(&m_property);
 
-    updateFill();
+    updateProperty();
 }
 

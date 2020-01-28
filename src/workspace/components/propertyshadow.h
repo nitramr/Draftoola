@@ -52,12 +52,13 @@ private:
 
     ColorDialog * m_colorDialog;
 
-    void drawPreview(Shadow shadow);
+    void drawPreview(Shadow property);
     void connectSlots();
     void disconnectSlots();
 
 private slots:
-    void updateShadow();
+    void updateProperty();
+    void updateColor();
 
 signals:
     void hasChanged(bool);

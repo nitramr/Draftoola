@@ -48,14 +48,14 @@ ExportLevel::ExportLevel(int id, double level, ExportLevel::FileFormat fileForma
     setFileFormat(fileFormat);
 }
 
-ExportLevel::ExportLevel(const ExportLevel &other)
-{
-    m_id = other.m_id;
-    m_renderLevel = other.m_renderLevel;
-    m_fileFormat = other.m_fileFormat;
-    m_path = other.m_path;
-    m_pathType = other.m_pathType;
-}
+//ExportLevel::ExportLevel(const ExportLevel &other)
+//{
+//    m_id = other.m_id;
+//    m_renderLevel = other.m_renderLevel;
+//    m_fileFormat = other.m_fileFormat;
+//    m_path = other.m_path;
+//    m_pathType = other.m_pathType;
+//}
 
 
 

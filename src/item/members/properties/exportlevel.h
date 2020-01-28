@@ -47,9 +47,10 @@ public:
 
     ExportLevel();
     ExportLevel(int id, double level, FileFormat fileFormat = FileFormat::PNG, QString path = "", PathType pathType = PathType::suffix);
-    ExportLevel(const ExportLevel &other);
+    ExportLevel(const ExportLevel &) = default;
     //    virtual ~ExportLevel(){}
 
+    ExportLevel &operator=(const ExportLevel &) = default;
     bool operator==( const ExportLevel & other ) const;
     inline bool operator!=(const ExportLevel &exportLevel) const { return !(operator==(exportLevel)); }
     friend QDataStream &operator<<(QDataStream &out, const ExportLevel &obj);

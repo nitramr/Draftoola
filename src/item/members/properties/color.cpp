@@ -32,9 +32,9 @@
 
 Color::Color() : Color(QColor(Qt::black)){}
 Color::Color(const QString name, QColor color) : AbstractProperty(name), QColor(color){}
-Color::Color(double r, double g, double b, double a) : Color(QColor(r,g,b,a)){}
-Color::Color(const QString name, double r, double g, double b, double a): Color(name, QColor(r,g,b,a)){}
-Color::Color(const Color &other) : AbstractProperty(other), QColor(other){}
+Color::Color(int r, int g, int b, int a) : Color(QColor(r,g,b,a)){}
+Color::Color(const QString name, int r, int g, int b, int a): Color(name, QColor(r,g,b,a)){}
+//Color::Color(const Color &other) : AbstractProperty(other), QColor(other){}
 Color::Color(const QColor &color) : Color(QString(),color)
 {
     m_caption = color.name();

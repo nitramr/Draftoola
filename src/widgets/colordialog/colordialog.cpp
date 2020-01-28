@@ -38,6 +38,8 @@ ColorDialog::ColorDialog(QWidget *parent) :
     m_mode = Mode::FillLayout;
     m_fillType = FillType::Color;
 
+    m_opacity = -1.0;
+
     connect(ui->tabColor, &TabColor::colorChanged, this, &ColorDialog::updateProperty);
 
 }

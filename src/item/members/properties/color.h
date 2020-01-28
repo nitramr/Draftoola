@@ -33,9 +33,9 @@ public:
     Color();
     Color(const QColor &color);
     Color(const QString caption, QColor color);
-    Color(double r, double g, double b, double a=255);
-    Color(const QString caption, double r, double g, double b, double a=255);
-    Color(const Color &other);
+    Color(int r, int g, int b, int a=255);
+    Color(const QString caption, int r, int g, int b, int a=255);
+    Color(const Color &) = default;
 
     // operator
     Color &operator=(const Color &) = default;

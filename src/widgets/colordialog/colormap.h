@@ -27,6 +27,7 @@
 #define COLORMAP_H
 
 #include <QFrame>
+#include <color.h>
 
 class ColorMap : public QFrame
 {
@@ -36,11 +37,10 @@ public:
     ~ColorMap() = default;
 
 public slots:
-    void setColor(QColor color, qreal alpha);
-    void setColor(int hue, int saturation, int m_value, qreal alpha);
+    void setColor(Color color, qreal alpha);
 
 signals:
-    void newColor(QColor color, qreal alpha);
+    void newColor(Color color, qreal alpha);
 
 protected:
     QSize sizeHint() const;
@@ -54,11 +54,13 @@ private:
     int m_saturation;
     int m_value;
     qreal m_alpha;
+    Color m_color;
 
     QPoint colorPos();
     int satPt(const QPoint &pt);
     int valPt(const QPoint &pt);
     void setColor(const QPoint &pt);
+    void setColor(int hue, int saturation, int m_value, qreal alpha);
 
     void drawColorMap();
 

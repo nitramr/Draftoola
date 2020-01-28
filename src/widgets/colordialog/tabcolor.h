@@ -61,7 +61,7 @@ public slots:
     void setColor(Color color, qreal alpha);
 
 private slots:
-    void updateColor(QColor color, qreal alpha);
+    void updateColor(Color color, qreal alpha);
 
 signals:
     void colorChanged();

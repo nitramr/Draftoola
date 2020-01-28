@@ -52,12 +52,12 @@ private:
 
     ColorDialog * m_colorDialog;
 
-    void drawFill(Fills fill);
+    void drawFill(Fills property);
     void connectSlots();
     void disconnectSlots();
 
 private slots:
-    void updateFill();
+    void updateProperty();
     void updateColor();
     void updateOpacity();
 

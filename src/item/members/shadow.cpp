@@ -31,7 +31,7 @@
 
 Shadow::Shadow() : Shadow(QString()){}
 
-Shadow::Shadow(QString name, QColor color, qreal radius, QPointF offset, qreal spread) : AbstractItemProperty(name)
+Shadow::Shadow(QString name, Color color, qreal radius, QPointF offset, qreal spread) : AbstractItemProperty(name)
 {
     m_color = color;
     m_radius = radius;
@@ -48,12 +48,12 @@ Shadow::Shadow(QString name, QColor color, qreal radius, QPointF offset, qreal s
  ***************************************************/
 
 
-void Shadow::setColor(QColor color)
+void Shadow::setColor(Color color)
 {
     m_color = color;
 }
 
-QColor Shadow::color() const
+Color Shadow::color() const
 {
     return m_color;
 }
@@ -148,7 +148,7 @@ QDataStream &operator<<(QDataStream &out, const Shadow &obj)
 
 QDataStream &operator>>(QDataStream &in, Shadow &obj)
 {
-    QColor m_color;
+    Color m_color;
     qreal m_radius;
     QPointF m_offset;
     qreal m_spread;

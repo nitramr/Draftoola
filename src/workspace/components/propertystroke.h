@@ -57,12 +57,13 @@ private:
     ButtonGroupButton * btn_outer;
     ButtonGroupButton * btn_inner;
 
-    void drawPreview(Stroke stroke);
+    void drawPreview(Stroke property);
     void connectSlots();
     void disconnectSlots();
 
 private slots:
-    void updateStroke();
+    void updateProperty();
+    void updateColor();
 
 signals:
     void hasChanged(bool);

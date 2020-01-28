@@ -36,9 +36,9 @@ class Gradient : public AbstractProperty
     Q_CLASSINFO("Version", "1.0.0")
 
 public:
-    Gradient();
-    Gradient(const Gradient &other);
+    Gradient();    
     Gradient(QString caption, const QGradient &gradient);
+    Gradient(const Gradient &) = default;
     ~Gradient() = default;
 
     Gradient &operator=(const Gradient &) = default;

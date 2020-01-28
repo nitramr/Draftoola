@@ -60,10 +60,11 @@ void ColorInput::disconnectSlots()
     disconnect(ui->txtHex, &QLineEdit::returnPressed, this, &ColorInput::updateColor);
 }
 
-void ColorInput::setColor(const QColor color, qreal alpha)
+void ColorInput::setColor(const Color color, qreal alpha)
 {
         disconnectSlots();
 
+        m_color = color;
         ui->txtHex->setText( color.name(QColor::NameFormat::HexRgb) );
         ui->sbRed->setValue( color.red() );
         ui->sbGreen->setValue( color.green() );
@@ -80,16 +81,15 @@ void ColorInput::setColor(const QColor color, qreal alpha)
 void ColorInput::updateColor()
 {
     QLineEdit *hexEdit = dynamic_cast<QLineEdit*>(sender());
-    QColor color;
 
     if(hexEdit){
-        color.setNamedColor( ui->txtHex->text() );
+        m_color.setNamedColor( ui->txtHex->text() );
     }else{
-        color.setRgb(ui->sbRed->value(), ui->sbGreen->value(), ui->sbBlue->value() );
+        m_color.setRgb(ui->sbRed->value(), ui->sbGreen->value(), ui->sbBlue->value() );
     }
 
     qreal alpha = ui->sbAlpha->value()/100.0;
-    setColor( color, alpha );
+    setColor( m_color, alpha );
 
-    emit colorChanged( color, alpha);
+    emit colorChanged( m_color, alpha);
 }

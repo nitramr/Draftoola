@@ -27,6 +27,7 @@
 #define COLORSLIDER_H
 
 #include <QWidget>
+#include <color.h>
 
 class ColorSlider : public QWidget
 {
@@ -42,11 +43,11 @@ public:
     ~ColorSlider() = default;
 
 public slots:
-    void setColor(QColor color, qreal alpha);
-    void setColor(int hue, int saturation, int value, qreal alpha);
+    void setColor(Color color, qreal alpha);
+
 
 signals:
-    void newColor(QColor,qreal);
+    void newColor(Color,qreal);
 
 protected:
     QSize sizeHint() const;
@@ -62,6 +63,8 @@ private:
     int m_maxValue;
     qreal m_alpha;
     SliderType m_type;
+    QPixmap pix;
+    Color m_color;
 
     QPoint colorPos();
     int colorVal(const QPoint &pt);
@@ -70,8 +73,9 @@ private:
     QRect paintRect() const;
 
     void drawColorMap();
+    void setColor(int hue, int saturation, int value, qreal alpha);
 
-    QPixmap pix;
+
 
 };
 

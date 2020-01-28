@@ -79,45 +79,42 @@ Shadow PropertyShadow::shadow() const
     return m_property;
 }
 
-void PropertyShadow::drawPreview(Shadow shadow)
+void PropertyShadow::drawPreview(Shadow property)
 {
     QPixmap pixmap(ui->btn_color->iconSize());
-    pixmap.fill(Qt::white);
+    pixmap.fill(Qt::transparent);
 
     QPainter painter(&pixmap);
-    painter.fillRect(pixmap.rect(), QBrush(shadow.color()));
-    ui->btn_color->setIcon(QIcon(pixmap));
+    painter.fillRect(pixmap.rect(), QBrush(property.color()));
+
+    ui->btn_color->setIcon(pixmap);
 
 }
 
 void PropertyShadow::connectSlots()
 {
 
-    connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
-    connect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    connect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    connect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    connect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateShadow);
+    connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateProperty);
+    connect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
+    connect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
+    connect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
+    connect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
+    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateColor);
 }
 
 void PropertyShadow::disconnectSlots()
 {
 
-    disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
-    disconnect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    disconnect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    disconnect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    disconnect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
-    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateShadow);
+    disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateProperty);
+    disconnect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
+    disconnect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
+    disconnect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
+    disconnect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
+    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateColor);
 }
 
-void PropertyShadow::updateShadow()
+void PropertyShadow::updateProperty()
 {
-    Color col = m_colorDialog->color();
-    col.setAlphaF(m_colorDialog->opacity());
-
-    m_property.setColor(col);
     m_property.setIsOn(ui->cb_active->isChecked());
     m_property.setOffset(QPointF(ui->sb_xOffset->value(), ui->sb_yOffset->value()));
     m_property.setRadius(ui->sb_blur->value());
@@ -128,4 +125,13 @@ void PropertyShadow::updateShadow()
     drawPreview(m_property);
 
     emit hasChanged(true);
+}
+
+void PropertyShadow::updateColor()
+{
+    Color col = m_colorDialog->color();
+    col.setAlphaF( m_colorDialog->opacity() );
+    m_property.setColor(col);
+
+    updateProperty();
 }

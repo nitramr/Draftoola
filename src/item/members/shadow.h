@@ -27,11 +27,12 @@
 #include <QPainter>
 #include <QDebug>
 #include <abstractitemproperty.h>
+#include <color.h>
 
 class Shadow : public AbstractItemProperty
 {
     Q_PROPERTY(qreal radius READ radius WRITE setRadius)
-    Q_PROPERTY(QColor color READ color WRITE setColor)
+    Q_PROPERTY(Color color READ color WRITE setColor)
     Q_PROPERTY(QPointF offset READ offset WRITE setOffset)
     Q_PROPERTY(qreal spread READ spread WRITE setSpread)
 
@@ -40,7 +41,7 @@ class Shadow : public AbstractItemProperty
 public:
     // Constructor
     Shadow();
-    Shadow(QString name, QColor color= QColor(0,0,0,128), qreal radius = 4, QPointF offset = QPointF(0,2), qreal spread = 0);
+    Shadow(QString name, Color color= Color(0,0,0,128), qreal radius = 4, QPointF offset = QPointF(0,2), qreal spread = 0);
     Shadow(const Shadow &) = default;
 
     ~Shadow() = default;
@@ -56,8 +57,8 @@ public:
 #endif
 
     // Properties
-    void setColor(QColor color);
-    QColor color() const;
+    void setColor(Color color);
+    Color color() const;
 
     void setRadius(qreal radius);
     qreal radius() const;
@@ -71,7 +72,7 @@ public:
 
 
 private:
-    QColor m_color;
+    Color m_color;
     qreal m_radius;
     QPointF m_offset;
     qreal m_spread;

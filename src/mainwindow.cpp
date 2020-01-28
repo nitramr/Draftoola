@@ -306,13 +306,13 @@ void MainWindow::tmpSetup(int offsetX, int offsetY)
     ItemPolygon *star = new ItemPolygon(80,80, 5, true);
     star->setInnerRadius(0.5);
     star->addFills(Fills("color", Color("yellow",255,200,0)));
-    star->addShadow(Shadow("shadow", Qt::black, 10, QPointF(0,0)));
+    star->addShadow(Shadow("shadow", Color("black",0,0,0), 10, QPointF(0,0)));
     m_canvas->addItem(star, 80,300, artboard);
 
     ItemPolygon *pentagon = new ItemPolygon(80,80, 5);
     pentagon->setInnerRadius(1);
     pentagon->addFills(Fills("color", Color("yellow",255,200,0)));
-    pentagon->addShadow(Shadow("shadow", Qt::black, 10, QPointF(0,0)));
+    pentagon->addShadow(Shadow("shadow", Color("black",0,0,0), 10, QPointF(0,0)));
     m_canvas->addItem(pentagon, 200,300, artboard);
 
 

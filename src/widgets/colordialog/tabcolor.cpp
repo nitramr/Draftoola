@@ -82,8 +82,6 @@ void TabColor::setColor(Color color, qreal alpha)
 
     disconnectSlots();
 
-  //  qDebug() << m_color << m_alpha;
-
     ui->colorInput->setColor(m_color, m_alpha);
     m_colorMap->setColor(m_color, m_alpha);
     m_colorSlider->setColor(m_color, m_alpha);
@@ -93,7 +91,7 @@ void TabColor::setColor(Color color, qreal alpha)
 
 }
 
-void TabColor::updateColor(QColor color, qreal alpha)
+void TabColor::updateColor(Color color, qreal alpha)
 {
     setColor(color, alpha);
 

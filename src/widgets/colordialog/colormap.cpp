@@ -105,9 +105,10 @@ void ColorMap::drawColorMap()
 }
 
 
-void ColorMap::setColor(QColor color, qreal alpha)
+void ColorMap::setColor(Color color, qreal alpha)
 {
-    setColor(color.hue(), color.saturation(), color.value(), alpha);
+    m_color = color;
+    setColor(m_color.hue(), m_color.saturation(), m_color.value(), alpha);
 }
 
 QSize ColorMap::sizeHint() const
@@ -157,8 +158,8 @@ void ColorMap::mouseMoveEvent(QMouseEvent *m)
     QPoint p = m->pos() - contentsRect().topLeft();
     setColor(p);
 
-    emit newColor(QColor::fromHsv(m_hue, m_saturation, m_value),
-                  m_alpha);
+    m_color.setHsv(m_hue, m_saturation, m_value);
+    emit newColor(m_color, m_alpha);
 }
 
 void ColorMap::mousePressEvent(QMouseEvent *m)
@@ -166,8 +167,8 @@ void ColorMap::mousePressEvent(QMouseEvent *m)
     QPoint p = m->pos() - contentsRect().topLeft();
     setColor(p);
 
-    emit newColor(QColor::fromHsv(m_hue, m_saturation, m_value),
-                  m_alpha);
+    m_color.setHsv(m_hue, m_saturation, m_value);
+    emit newColor(m_color, m_alpha);
 }
 
 void ColorMap::paintEvent(QPaintEvent* )

@@ -24,6 +24,7 @@
 #define COLORINPUT_H
 
 #include <QWidget>
+#include <color.h>
 
 namespace Ui {
 class ColorInput;
@@ -39,18 +40,19 @@ public:
 
 private:
     Ui::ColorInput *ui;
+    Color m_color;
 
     void connectSlots();
     void disconnectSlots();
 
 public slots:
-    void setColor(const QColor color, qreal alpha);
+    void setColor(const Color color, qreal alpha);
 
 private slots:
     void updateColor();
 
 signals:
-    void colorChanged(QColor color, qreal alpha);
+    void colorChanged(Color color, qreal alpha);
 
 };
 

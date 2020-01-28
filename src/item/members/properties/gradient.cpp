@@ -23,19 +23,19 @@
 #include "gradient.h"
 
 Gradient::Gradient() : Gradient(QString(), QLinearGradient()){}
-Gradient::Gradient(const Gradient &other) : AbstractProperty(other){
-    m_stops = other.m_stops;
-    m_angle = other.m_angle;
-    m_spread = other.m_spread;
-    m_cmode = other.m_cmode;
-    m_imode = other.m_imode;
-    m_start = other.m_start;
-    m_stop = other.m_stop;
-    m_center = other.m_center;
-    m_radius = other.m_radius;
-    m_type = other.m_type;
-    m_focal = other.m_focal;
-}
+//Gradient::Gradient(const Gradient &other) : AbstractProperty(other){
+//    m_stops = other.m_stops;
+//    m_angle = other.m_angle;
+//    m_spread = other.m_spread;
+//    m_cmode = other.m_cmode;
+//    m_imode = other.m_imode;
+//    m_start = other.m_start;
+//    m_stop = other.m_stop;
+//    m_center = other.m_center;
+//    m_radius = other.m_radius;
+//    m_type = other.m_type;
+//    m_focal = other.m_focal;
+//}
 
 Gradient::Gradient(QString name, const QGradient &gradient) : AbstractProperty (name)
 {

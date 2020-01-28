@@ -35,11 +35,11 @@ AbstractProperty::AbstractProperty(const QString name)
     m_caption = name;
 }
 
-AbstractProperty::AbstractProperty(const AbstractProperty &other)
-{
-    m_id = other.m_id;
-    m_caption = other.m_caption;
-}
+//AbstractProperty::AbstractProperty(const AbstractProperty &other)
+//{
+//    m_id = other.m_id;
+//    m_caption = other.m_caption;
+//}
 
 /***************************************************
  *
