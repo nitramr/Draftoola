@@ -24,7 +24,6 @@
 #include "ui_tool_itemproperties.h"
 
 #include <layoutsection.h>
-
 #include <itemoval.h>
 #include <itemrect.h>
 
@@ -210,4 +209,5 @@ void ItemProperties::setActiveItems(QList<AbstractItemBase *> items)
     itemShadows->setActiveItem(item);
     itemInnerShadows->setActiveItem(item);
     itemExportLevels->setActiveItem(item);
+
 }

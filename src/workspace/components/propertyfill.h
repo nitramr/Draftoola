@@ -61,6 +61,7 @@ private slots:
     void updateColor();
     void updateOpacity();
     void removeClick();
+    void openColorDialog();
 
 signals:
     void hasChanged(bool);

@@ -115,8 +115,7 @@ void ipInnerShadows::loadShadows()
     resetItems();
 
     foreach(Shadow m_property, m_item->innerShadowList()){
-        PropertyShadow * pf = new PropertyShadow();
-        pf->setShadow(m_property);
+        PropertyShadow * pf = new PropertyShadow(m_property);
         addShadow(pf);
     }
     emit enabled(true);

@@ -55,13 +55,12 @@ void PropertyShadow::setShadow(Shadow shadow)
 {
     disconnectSlots();
 
-    m_shadow = shadow;
+    m_property = shadow;
     ui->cb_active->setChecked(shadow.isOn());
     ui->sb_xOffset->setValue(shadow.offset().x());
     ui->sb_yOffset->setValue(shadow.offset().y());
     ui->sb_blur->setValue(shadow.radius());
     ui->sb_spread->setValue(shadow.spread());
-    m_colorDialog->setProperty(&m_shadow);
 
     drawPreview(shadow);
 
@@ -70,7 +69,7 @@ void PropertyShadow::setShadow(Shadow shadow)
 
 Shadow PropertyShadow::shadow() const
 {
-    return m_shadow;
+    return m_property;
 }
 
 void PropertyShadow::drawPreview(Shadow shadow)
@@ -87,6 +86,7 @@ void PropertyShadow::drawPreview(Shadow shadow)
 void PropertyShadow::connectSlots()
 {
     connect(ui->btnDelete, &QToolButton::clicked, this, &PropertyShadow::removeClick);
+    connect(ui->btn_color, &ColorButton::openPopup, this, &PropertyShadow::openColorDialog);
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
     connect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     connect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
@@ -98,6 +98,7 @@ void PropertyShadow::connectSlots()
 void PropertyShadow::disconnectSlots()
 {
     disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyShadow::removeClick);
+    disconnect(ui->btn_color, &ColorButton::openPopup, this, &PropertyShadow::openColorDialog);
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
     disconnect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     disconnect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
@@ -108,15 +109,15 @@ void PropertyShadow::disconnectSlots()
 
 void PropertyShadow::updateShadow()
 {
-    m_shadow = *m_colorDialog->shadow();
-    m_shadow.setIsOn(ui->cb_active->isChecked());
-    m_shadow.setOffset(QPointF(ui->sb_xOffset->value(), ui->sb_yOffset->value()));
-    m_shadow.setRadius(ui->sb_blur->value());
-    m_shadow.setSpread(ui->sb_spread->value());
-    m_shadow.setBlendMode(m_shadow.blendMode()); // need real data
+    m_property = *m_colorDialog->shadow();
+    m_property.setIsOn(ui->cb_active->isChecked());
+    m_property.setOffset(QPointF(ui->sb_xOffset->value(), ui->sb_yOffset->value()));
+    m_property.setRadius(ui->sb_blur->value());
+    m_property.setSpread(ui->sb_spread->value());
+    m_property.setBlendMode(m_property.blendMode()); // need real data
 
     // update preview
-    drawPreview(m_shadow);
+    drawPreview(m_property);
 
     emit hasChanged(true);
 }
@@ -124,4 +125,9 @@ void PropertyShadow::updateShadow()
 void PropertyShadow::removeClick()
 {
     emit remove(this);
+}
+
+void PropertyShadow::openColorDialog()
+{
+    m_colorDialog->setProperty(&m_property);
 }

@@ -49,7 +49,7 @@ public:
 private:
     Ui::propertyStroke *ui;
 
-    Stroke m_stroke;
+    Stroke m_property;
     ColorDialog * m_colorDialog;
 
     ButtonGroup *m_position;
@@ -64,6 +64,7 @@ private:
 private slots:
     void updateStroke();
     void removeClick();
+    void openColorDialog();
 
 signals:
     void hasChanged(bool);

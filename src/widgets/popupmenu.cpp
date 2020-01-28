@@ -32,20 +32,20 @@ PopupMenu::PopupMenu(QWidget *contentWidget)
 {
     if(contentWidget == nullptr) contentWidget = new QWidget();
 
-	QVBoxLayout *layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(contentWidget);
-	layout->setMargin(1);
+    layout->setMargin(1);
 
-	QWidget *panel = new QWidget();
+    QWidget *panel = new QWidget();
     panel->setMinimumSize(contentWidget->size());
-	panel->setLayout(layout);
+    panel->setLayout(layout);
 
-	QWidgetAction * action = new QWidgetAction(this);
-	action->setDefaultWidget(panel);
+    QWidgetAction * action = new QWidgetAction(this);
+    action->setDefaultWidget(panel);
 
     contentWidget->installEventFilter(this);
 
-	this->addAction(action);
+    this->addAction(action);
 
 }
 

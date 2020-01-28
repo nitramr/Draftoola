@@ -23,17 +23,27 @@
 #ifndef COLORBUTTON_H
 #define COLORBUTTON_H
 
+#include "popupmenu.h"
+
 #include <QToolButton>
 
 class ColorButton : public QToolButton
 {
+
+    Q_OBJECT
+
 public:
-    ColorButton(QWidget *parent);
+    ColorButton(QWidget *parent = nullptr);
 
     void setIcon(const QPixmap &pixmap);
     void setIcon(const QIcon &icon);
+    void setMenu(QMenu *menu);
 
 private:
+    PopupMenu * m_colorMenu;
+
+signals:
+    void openPopup();
 };
 
 #endif // COLORBUTTON_H

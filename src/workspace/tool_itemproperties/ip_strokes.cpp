@@ -116,8 +116,7 @@ void ipStrokes::loadStrokes()
     resetItems();
 
     foreach(Stroke m_property, m_item->strokeList()){
-        PropertyStroke * pf = new PropertyStroke();
-        pf->setStroke(m_property);
+        PropertyStroke * pf = new PropertyStroke(m_property);
         addStroke(pf);
     }
 

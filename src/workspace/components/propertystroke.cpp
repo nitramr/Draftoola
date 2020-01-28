@@ -74,10 +74,10 @@ void PropertyStroke::setStroke(Stroke stroke)
 {
     disconnectSlots();
 
-    m_stroke = stroke;
+    m_property = stroke;
     ui->cb_active->setChecked(stroke.isOn());
     ui->sb_width->setValue(stroke.widthF());
-    m_colorDialog->setProperty(&m_stroke);
+ //   m_colorDialog->setProperty(&m_stroke);
 
     switch(stroke.strokePosition()){
     case Stroke::Center:
@@ -99,7 +99,7 @@ void PropertyStroke::setStroke(Stroke stroke)
 
 Stroke PropertyStroke::stroke() const
 {
-    return m_stroke;
+    return m_property;
 }
 
 
@@ -121,7 +121,7 @@ void PropertyStroke::connectSlots()
 //    connect(ui->btnDelete, &QToolButton::clicked, [this]{
 //        emit remove(this);
 //    });
-
+    connect(ui->btn_color, &ColorButton::openPopup, this, &PropertyStroke::openColorDialog);
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyStroke::updateStroke);
     connect(ui->sb_width, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
     connect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
@@ -133,6 +133,7 @@ void PropertyStroke::connectSlots()
 void PropertyStroke::disconnectSlots()
 {
     disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyStroke::removeClick);
+    disconnect(ui->btn_color, &ColorButton::openPopup, this, &PropertyStroke::openColorDialog);
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyStroke::updateStroke);
     disconnect(ui->sb_width, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
     disconnect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
@@ -143,20 +144,20 @@ void PropertyStroke::disconnectSlots()
 
 void PropertyStroke::updateStroke()
 {
-    m_stroke = *m_colorDialog->stroke();
-    m_stroke.setIsOn(ui->cb_active->isChecked());
-    m_stroke.setBlendMode(m_stroke.blendMode());  // need real data
-    m_stroke.setBrush(m_stroke.brush()); // need real data (use brush for solid color too)
-    m_stroke.setWidthF(ui->sb_width->value());
+    m_property = *m_colorDialog->stroke();
+    m_property.setIsOn(ui->cb_active->isChecked());
+    m_property.setBlendMode(m_property.blendMode());  // need real data
+    m_property.setBrush(m_property.brush()); // need real data (use brush for solid color too)
+    m_property.setWidthF(ui->sb_width->value());
 
     if(btn_outer->isChecked()){
-        m_stroke.setStrokePosition(Stroke::Outer);
+        m_property.setStrokePosition(Stroke::Outer);
     }else if(btn_inner->isChecked()){
-        m_stroke.setStrokePosition(Stroke::Inner);
-    }else m_stroke.setStrokePosition(Stroke::Center);
+        m_property.setStrokePosition(Stroke::Inner);
+    }else m_property.setStrokePosition(Stroke::Center);
 
     // update preview
-    drawPreview(m_stroke);
+    drawPreview(m_property);
 
     emit hasChanged(true);
 }
@@ -164,4 +165,9 @@ void PropertyStroke::updateStroke()
 void PropertyStroke::removeClick()
 {
     emit remove(this);
+}
+
+void PropertyStroke::openColorDialog()
+{
+    m_colorDialog->setProperty(&m_property);
 }

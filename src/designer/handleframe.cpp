@@ -795,6 +795,7 @@ void HandleFrame::frameToSelection()
         this->setVisible(true);
 
         sendSignals();
+
     }
 
 }

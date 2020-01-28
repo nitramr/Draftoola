@@ -116,8 +116,7 @@ void ipShadows::loadShadows()
     resetItems();
 
     foreach(Shadow m_property, m_item->shadowList()){
-        PropertyShadow * pf = new PropertyShadow();
-        pf->setShadow(m_property);
+        PropertyShadow * pf = new PropertyShadow(m_property);
         addShadow(pf);
     }
 

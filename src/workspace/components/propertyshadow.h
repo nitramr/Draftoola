@@ -48,7 +48,7 @@ public:
 private:
     Ui::propertyShadow *ui;
 
-    Shadow m_shadow;
+    Shadow m_property;
 
     ColorDialog * m_colorDialog;
 
@@ -59,6 +59,7 @@ private:
 private slots:
     void updateShadow();
     void removeClick();
+    void openColorDialog();
 
 signals:
     void hasChanged(bool);

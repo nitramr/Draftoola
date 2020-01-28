@@ -219,22 +219,39 @@ void CanvasView::filterSelection(QRect viewportRect, QPointF fromScenePoint, QPo
 
     QList<QGraphicsItem *> selectedItems = m_scene->items(rubberBand, Qt::IntersectsItemShape, Qt::AscendingOrder, transform());
 
+ //   qDebug() << "Selected Items" << selectedItems.count();
+
     foreach(QGraphicsItem *selectedItem, selectedItems) {
 
-        Artboard * abItem = dynamic_cast<Artboard*>(selectedItem);
+        if(selectedItem->type() == AbstractItemBase::Artboard){
+           // qDebug() << "Artboard plain" << selectedItem->boundingRect();
 
-        if(abItem){
-
-            QRect itemRect = abItem->rect().toRect();
-            itemRect.moveTo(abItem->scenePos().toPoint() );
+            QRect itemRect = selectedItem->boundingRect().toRect();
+            itemRect.moveTo(selectedItem->scenePos().toPoint() );
 
             if(rubberBand.contains(itemRect) ){
-                abItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
-            }else abItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
+                selectedItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
+            }else selectedItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
 
-            continue;
-
+            return;
         }
+
+//        Artboard * abItem = dynamic_cast<Artboard*>(selectedItem);
+
+//        if(abItem){
+
+//            qDebug() << "Artboard cast " << abItem;
+
+//            QRect itemRect = abItem->rect().toRect();
+//            itemRect.moveTo(abItem->scenePos().toPoint() );
+
+//            if(rubberBand.contains(itemRect) ){
+//                abItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
+//            }else abItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
+
+//            continue;
+
+//        }
 
 
     }

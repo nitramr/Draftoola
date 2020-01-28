@@ -25,7 +25,6 @@
 
 #include <QPainter>
 #include <QDebug>
-
 #include <popupmenu.h>
 
 
@@ -80,7 +79,6 @@ void PropertyFill::setFill(Fills fill)
 
     ui->cb_active->setChecked(fill.isOn());
     ui->sb_opacity->setValue(fill.opacity()*100);
-    m_colorDialog->setProperty(&m_fill);
 
     int indexMode = 0;
     for(int i = 0; i < ui->combo_blending->count(); i++){
@@ -91,9 +89,7 @@ void PropertyFill::setFill(Fills fill)
     }
 
     ui->combo_blending->setCurrentIndex(indexMode);
-
     drawFill(fill);
-
     connectSlots();
 }
 
@@ -139,15 +135,17 @@ void PropertyFill::drawFill(Fills fill)
 void PropertyFill::connectSlots()
 {
     connect(ui->btnDelete, &QToolButton::clicked, this, &PropertyFill::removeClick);
+    connect(ui->btn_color, &ColorButton::openPopup, this, &PropertyFill::openColorDialog);
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
     connect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateOpacity);
-    connect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateFill);
+    connect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateFill);    
     connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyFill::updateColor);
 }
 
 void PropertyFill::disconnectSlots()
 {
     disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyFill::removeClick);
+    disconnect(ui->btn_color, &ColorButton::openPopup, this, &PropertyFill::openColorDialog);
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateFill);
     disconnect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateOpacity);
     disconnect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateFill);
@@ -188,4 +186,9 @@ void PropertyFill::updateOpacity()
 void PropertyFill::removeClick()
 {
     emit remove(this);
+}
+
+void PropertyFill::openColorDialog()
+{
+    m_colorDialog->setProperty(&m_fill);
 }

@@ -112,14 +112,13 @@ void ipFills::loadFills()
     resetItems();
 
     foreach(Fills m_property, m_item->fillsList()){
-        PropertyFill * pf = new PropertyFill();
-        pf->setFill(m_property);
+        PropertyFill * pf = new PropertyFill(m_property);
         addFill(pf);
     }
 
+
     this->setEnabled(true);
     emit sendCollapse(false);
-
     emit enabled(true);
 }
 

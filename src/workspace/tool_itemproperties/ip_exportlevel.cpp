@@ -118,8 +118,7 @@ void ipExportLevels::loadExportLevels()
     resetItems();
 
     foreach(ExportLevel m_exportLevel, m_item->exportLevels()){
-        PropertyExportLevel * pf = new PropertyExportLevel();
-        pf->setExportLevel(m_exportLevel);
+        PropertyExportLevel * pf = new PropertyExportLevel(m_exportLevel);
         addExportLevel(pf);
     }
 
