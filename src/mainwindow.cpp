@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
     setWindowTitle(QCoreApplication::applicationName());
+    setUnifiedTitleAndToolBarOnMac(true);
     showMaximized();
 
     // inizialize widgets

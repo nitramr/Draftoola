@@ -43,7 +43,7 @@ ColorMap::ColorMap(QWidget* parent)
     setColor(m_hue, m_saturation, m_value, m_alpha);
 
     setAttribute(Qt::WA_NoSystemBackground);
-//    setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed) );
+    setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed) );
 }
 
 /*!
@@ -126,6 +126,7 @@ void ColorMap::setColor(int hue, int saturation, int value, qreal alpha)
     if (nhue == m_hue && nsat == m_saturation && nval == m_value)
         return;
 
+    // Full repaint
     if(nhue != m_hue){
 
         m_hue = nhue;
@@ -135,6 +136,7 @@ void ColorMap::setColor(int hue, int saturation, int value, qreal alpha)
         drawColorMap();
         repaint();
 
+    // Partial repaint of necessary area
     }else{
         QRect r(colorPos(), QSize(cSize,cSize));
 

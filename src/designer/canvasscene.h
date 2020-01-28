@@ -28,12 +28,15 @@
 
 #include <itembase.h>
 #include <artboard.h>
+#include <handleframe.h>
 
 class CanvasScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
     CanvasScene(QObject *parent = nullptr);
+
+    HandleFrame *handleFrame();
 
     qreal scaleFactor() const;
     void setScaleFactor(qreal factor);
@@ -42,13 +45,18 @@ public slots:
     void exportItems();
     void exportItem(AbstractItemBase *item);
 
+private slots:
+    void updateLabels();
+
 private:
+    HandleFrame *m_handleFrame;
     qreal m_scaleFactor;
     int m_grid;
     QPainterPath m_hoverPath;
     QPointF m_hoverPoint;
     QTransform m_hoverTransform;
     qreal m_hoverRotation;
+    QColor m_color;
 
     void saveImage(AbstractItemBase *bi, qreal multiplier, const QString outputPath, QColor bgColor = Qt::transparent);
     void saveSVG(AbstractItemBase *bi, const QString outputPath);

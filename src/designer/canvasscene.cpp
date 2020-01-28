@@ -33,6 +33,8 @@
 //#include <QGraphicsItemGroup>
 //#include <QGraphicsDropShadowEffect>
 
+
+
 /***************************************************
  *
  * Constructor
@@ -44,6 +46,20 @@ CanvasScene::CanvasScene(QObject *parent) : QGraphicsScene(parent)
     m_scaleFactor = 1;
     m_grid = 1;
 
+    m_color = QColor(0, 128, 255);
+
+    m_handleFrame = new HandleFrame(this, m_grid);
+    m_handleFrame->setColor(m_color);
+    addItem(m_handleFrame);
+    m_handleFrame->setup();
+
+    connect(this, &CanvasScene::selectionChanged, m_handleFrame, &HandleFrame::frameToSelection);
+    connect(m_handleFrame, &HandleFrame::geometryChanged, this, &CanvasScene::updateLabels);
+}
+
+HandleFrame *CanvasScene::handleFrame()
+{
+    return m_handleFrame;
 }
 
 /***************************************************
@@ -121,6 +137,11 @@ void CanvasScene::exportItem(AbstractItemBase *item)
         }
 
     }
+}
+
+void CanvasScene::updateLabels()
+{
+
 }
 
 
@@ -231,6 +252,8 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
 {
     QGraphicsScene::drawForeground(painter, rect);
 
+
+
     // draw grid
     if (scaleFactor() > 10 ) {
         // painter->setClipRect( rect);
@@ -254,10 +277,8 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
 
     // hover highlight
     if(!m_hoverPath.isEmpty()){
-
         painter->save();
-
-        QPen highlightPen(QColor(0, 128, 255));
+        QPen highlightPen(m_color);
         highlightPen.setWidthF(2/scaleFactor());
 
         painter->setRenderHint(QPainter::Antialiasing, true);
@@ -267,7 +288,6 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
         painter->translate(m_hoverPoint);
         painter->rotate(m_hoverRotation);
         painter->drawPath(m_hoverPath);
-
         painter->restore();
     }
 

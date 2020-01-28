@@ -65,24 +65,12 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     //    this->setRubberBandSelectionMode(Qt::ContainsItemShape);
     //    this->setMouseTracking(true);
 
-
-    m_scene = new CanvasScene();
-    m_scene->setSceneRect(QRectF(-16000, -16000, 32000,32000));
-    m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-
-
-    m_grid = 1;
     m_renderQuality = AbstractItemBase::Balanced;
     m_activeArtboard = nullptr;
-    QColor color(0, 128, 255);
-
-    m_handleFrame = new HandleFrame(m_scene, m_grid);
-    m_handleFrame->setColor(color);
-    m_scene->addItem(m_handleFrame);
-    m_handleFrame->setup();
 
     setViewportMargins(RULER_SIZE,RULER_SIZE,0,0);
 
+    QColor color(0, 128, 255);
     m_HRuler = new QDRuler(QDRuler::Horizontal, this);
     m_HRuler->setMarkerColor(color);
     m_VRuler = new QDRuler(QDRuler::Vertical, this);
@@ -101,6 +89,10 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     gridLayout->addWidget(this->viewport(),1,1);
 
     setLayout(gridLayout);
+
+    m_scene = new CanvasScene();
+    m_scene->setSceneRect(QRectF(-16000, -16000, 32000,32000));
+    m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
     setScene(m_scene);
 
 
@@ -112,16 +104,14 @@ CanvasView::CanvasView(QWidget * parent) : QGraphicsView(parent)
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateVRulerPosition);
     connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, &CanvasView::updateHRulerPosition);
 
-    connect(m_scene, &CanvasScene::selectionChanged, m_handleFrame, &HandleFrame::frameToSelection);
-
-    connect(m_handleFrame, &HandleFrame::geometryChanged, this, &CanvasView::setRulerToSelection);
+    connect(m_scene->handleFrame(), &HandleFrame::geometryChanged, this, &CanvasView::setRulerToSelection);
 
 }
 
 
-HandleFrame *CanvasView::handleFrame() const
+HandleFrame *CanvasView::handleFrame()
 {
-    return m_handleFrame;
+    return m_scene->handleFrame();
 }
 
 /***************************************************
@@ -182,8 +172,8 @@ void CanvasView::setRulerToSelection()
         m_activeArtboard = getTopLevelArtboard(m_scene->selectedItems().first());
 
         if(m_activeArtboard){
-            offset = m_handleFrame->mapToItem(m_activeArtboard, QPointF());
-            marker = m_handleFrame->rect();
+            offset = m_scene->handleFrame()->mapToItem(m_activeArtboard, QPointF());
+            marker = m_scene->handleFrame()->rect();
         }
 
     }else m_activeArtboard = nullptr;
@@ -507,7 +497,7 @@ void CanvasView::applyScaleFactor()
 {
     qreal scaleFactor = this->scaleFactor();
 
-    m_handleFrame->setScaleFactor(scaleFactor);
+    m_scene->handleFrame()->setScaleFactor(scaleFactor);
     m_scene->setScaleFactor(scaleFactor);
     m_VRuler->setScaleFactor(scaleFactor);
     m_HRuler->setScaleFactor(scaleFactor);
@@ -662,19 +652,19 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
         switch(event->key())
         {
         case Qt::Key_Left :
-            m_handleFrame->moveBy(-stepperL, 0);
+            m_scene->handleFrame()->moveBy(-stepperL, 0);
 
             break;
         case Qt::Key_Right :
-            m_handleFrame->moveBy(stepperL, 0);
+            m_scene->handleFrame()->moveBy(stepperL, 0);
 
             break;
         case Qt::Key_Up :
-            m_handleFrame->moveBy(0, -stepperL);
+            m_scene->handleFrame()->moveBy(0, -stepperL);
 
             break;
         case Qt::Key_Down :
-            m_handleFrame->moveBy(0, stepperL);
+            m_scene->handleFrame()->moveBy(0, stepperL);
 
             break;
         }
@@ -684,23 +674,23 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
     switch(event->key())
     {
     case Qt::Key_Left :
-        m_handleFrame->moveBy(-stepperS, 0);
+        m_scene->handleFrame()->moveBy(-stepperS, 0);
 
         break;
     case Qt::Key_Right :
-        m_handleFrame->moveBy(stepperS, 0);
+        m_scene->handleFrame()->moveBy(stepperS, 0);
 
         break;
     case Qt::Key_Up :
-        m_handleFrame->moveBy(0, -stepperS);
+        m_scene->handleFrame()->moveBy(0, -stepperS);
 
         break;
     case Qt::Key_Down :
-        m_handleFrame->moveBy(0, stepperS);
+        m_scene->handleFrame()->moveBy(0, stepperS);
 
         break;
     case Qt::Key_Shift :
-        m_handleFrame->setKeepAspectRatio(true);
+        m_scene->handleFrame()->setKeepAspectRatio(true);
 
         break;
     case Qt::Key_Space:
@@ -745,7 +735,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
         this->setInteractive(true);
         break;
     case Qt::Key_Shift :
-        m_handleFrame->setKeepAspectRatio(false);
+        m_scene->handleFrame()->setKeepAspectRatio(false);
         break;
     case Qt::Key_Delete:
         deleteItems();
