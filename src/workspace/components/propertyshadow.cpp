@@ -43,6 +43,13 @@ PropertyShadow::PropertyShadow(Shadow shadow, QWidget *parent) :
     ui->btn_color->setMenu(m_colorMenu);
 
     setShadow(shadow);
+
+    connect(ui->btnDelete, &QToolButton::clicked, [this]{
+        emit remove(this);
+    });
+    connect(ui->btn_color, &ColorButton::openPopup, [this]{
+        m_colorDialog->setProperty(&m_property);
+    });
 }
 
 
@@ -85,8 +92,7 @@ void PropertyShadow::drawPreview(Shadow shadow)
 
 void PropertyShadow::connectSlots()
 {
-    connect(ui->btnDelete, &QToolButton::clicked, this, &PropertyShadow::removeClick);
-    connect(ui->btn_color, &ColorButton::openPopup, this, &PropertyShadow::openColorDialog);
+
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
     connect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     connect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
@@ -97,8 +103,7 @@ void PropertyShadow::connectSlots()
 
 void PropertyShadow::disconnectSlots()
 {
-    disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyShadow::removeClick);
-    disconnect(ui->btn_color, &ColorButton::openPopup, this, &PropertyShadow::openColorDialog);
+
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyShadow::updateShadow);
     disconnect(ui->sb_blur, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
     disconnect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateShadow);
@@ -109,7 +114,7 @@ void PropertyShadow::disconnectSlots()
 
 void PropertyShadow::updateShadow()
 {
-    m_property = *m_colorDialog->shadow();
+    m_property.setColor(m_colorDialog->color());
     m_property.setIsOn(ui->cb_active->isChecked());
     m_property.setOffset(QPointF(ui->sb_xOffset->value(), ui->sb_yOffset->value()));
     m_property.setRadius(ui->sb_blur->value());
@@ -120,14 +125,4 @@ void PropertyShadow::updateShadow()
     drawPreview(m_property);
 
     emit hasChanged(true);
-}
-
-void PropertyShadow::removeClick()
-{
-    emit remove(this);
-}
-
-void PropertyShadow::openColorDialog()
-{
-    m_colorDialog->setProperty(&m_property);
 }

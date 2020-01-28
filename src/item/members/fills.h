@@ -93,8 +93,8 @@ public:
 
 private:
 
-    FillType m_fillType = FillType::Color;
-    FillMode m_fillMode = FillMode::Fill;
+    FillType m_fillType;
+    FillMode m_fillMode;
     Gradient m_gradient;
     Color m_color;
     QPixmap m_pixmap;

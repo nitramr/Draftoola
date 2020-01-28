@@ -58,8 +58,6 @@ private:
 
 private slots:
     void updateShadow();
-    void removeClick();
-    void openColorDialog();
 
 signals:
     void hasChanged(bool);

@@ -37,8 +37,8 @@ Fills::Fills(const QString name) : Fills(name, Color()){}
 Fills::Fills(const QString name, const Color &color) : AbstractItemProperty(name){
     m_gradient = Gradient();
     setColor(color);
-    m_fillMode = FillMode::Fill;
     m_type = Type::Fill;
+    m_fillMode = FillMode::Fill;
 }
 
 Fills::Fills(const QString name, const QPixmap &pixmap, const FillMode fillMode) :  Fills(name, Color()){
@@ -60,6 +60,7 @@ Fills::Fills(const QString name, const QImage &image, const FillMode fillMode) :
 
 Fills::Fills(const QString name, const Gradient &gradient) : Fills(name, Color()){
     setGradient(gradient);
+    m_fillMode = FillMode::Fill;
 }
 
 //Fills::Fills(const Fills &other) : AbstractItemProperty(other)

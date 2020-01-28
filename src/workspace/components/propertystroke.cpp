@@ -63,6 +63,13 @@ PropertyStroke::PropertyStroke(Stroke stroke, QWidget *parent) :
     ui->lyt_position->insertWidget(0, m_position);
 
     setStroke(stroke);
+
+    connect(ui->btnDelete, &QToolButton::clicked, [this]{
+        emit remove(this);
+    });
+    connect(ui->btn_color, &ColorButton::openPopup, [this]{
+        m_colorDialog->setProperty(&m_property);
+    });
 }
 
 PropertyStroke::~PropertyStroke()
@@ -116,12 +123,6 @@ void PropertyStroke::drawPreview(Stroke stroke)
 
 void PropertyStroke::connectSlots()
 {
-    connect(ui->btnDelete, &QToolButton::clicked, this, &PropertyStroke::removeClick);
-
-//    connect(ui->btnDelete, &QToolButton::clicked, [this]{
-//        emit remove(this);
-//    });
-    connect(ui->btn_color, &ColorButton::openPopup, this, &PropertyStroke::openColorDialog);
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyStroke::updateStroke);
     connect(ui->sb_width, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
     connect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
@@ -132,8 +133,6 @@ void PropertyStroke::connectSlots()
 
 void PropertyStroke::disconnectSlots()
 {
-    disconnect(ui->btnDelete, &QToolButton::clicked, this, &PropertyStroke::removeClick);
-    disconnect(ui->btn_color, &ColorButton::openPopup, this, &PropertyStroke::openColorDialog);
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyStroke::updateStroke);
     disconnect(ui->sb_width, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyStroke::updateStroke);
     disconnect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateStroke);
@@ -144,7 +143,7 @@ void PropertyStroke::disconnectSlots()
 
 void PropertyStroke::updateStroke()
 {
-    m_property = *m_colorDialog->stroke();
+    m_property.setColor(m_colorDialog->color());
     m_property.setIsOn(ui->cb_active->isChecked());
     m_property.setBlendMode(m_property.blendMode());  // need real data
     m_property.setBrush(m_property.brush()); // need real data (use brush for solid color too)
@@ -160,14 +159,4 @@ void PropertyStroke::updateStroke()
     drawPreview(m_property);
 
     emit hasChanged(true);
-}
-
-void PropertyStroke::removeClick()
-{
-    emit remove(this);
-}
-
-void PropertyStroke::openColorDialog()
-{
-    m_colorDialog->setProperty(&m_property);
 }

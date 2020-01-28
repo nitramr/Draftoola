@@ -63,8 +63,6 @@ private:
 
 private slots:
     void updateStroke();
-    void removeClick();
-    void openColorDialog();
 
 signals:
     void hasChanged(bool);

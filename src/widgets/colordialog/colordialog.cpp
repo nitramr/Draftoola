@@ -53,14 +53,6 @@ ColorDialog::~ColorDialog()
  *
  ***************************************************/
 
-
-FillType ColorDialog::fillType()
-{
-    return m_fillType;
-}
-
-
-
 /*!
  * \brief Return layout mode of color dialog
  */
@@ -69,48 +61,59 @@ ColorDialog::Mode ColorDialog::mode() const
     return m_mode;
 }
 
+Gradient ColorDialog::gradient() const
+{
+    return m_gradient;
+}
+
+Color ColorDialog::color() const
+{
+    return m_color;
+}
+
+QPixmap ColorDialog::pixmap() const
+{
+    return m_pixmap;
+}
+
+qreal ColorDialog::opacity() const
+{
+    return m_opacity;
+}
+
+FillType ColorDialog::fillType() const
+{
+    return m_fillType;
+}
 
 void ColorDialog::setProperty(AbstractItemProperty *property)
 {
-     if(!property) return;
+    if(!property) return;
 
-    m_property = property;
-
-    switch(m_property->type()){
+    switch(property->type()){
+    // Fill ****************************************************
     case AbstractItemProperty::Fill:{
-        // Fill ****************************************************
-        Fills *fill = static_cast<Fills*>(m_property);
+
+        Fills *fill = static_cast<Fills*>(property);
 
         if(fill){
 
+            m_fillType = fill->fillType();
+            m_pixmap = fill->pixmap();
+            m_gradient = fill->gradient();
+            m_color = fill->color();
             ui->tabColor->setColor(fill->color(), fill->opacity());
-
-//            m_fillType = fill->fillType();
-
-//            switch(fill->fillType()){
-//            case FillType::Color:
-//                ui->tabColor->setColor(fill->color(), fill->opacity());
-//                break;
-//            case FillType::Image:
-//                break;
-//            case FillType::LinearGradient:
-//                break;
-//            case FillType::RadialGradient:
-//                break;
-//            case FillType::ConicalGradient:
-//                break;
-//            case FillType::Pattern:
-//                break;
-//            }
 
             m_mode = Mode::FillLayout;
         }
 
         break;
     }
-    case AbstractItemProperty::Stroke:{
+
         // Stroke ****************************************************
-        Stroke *stroke = static_cast<Stroke*>(m_property);
+    case AbstractItemProperty::Stroke:{
+
+        Stroke *stroke = static_cast<Stroke*>(property);
 
         if(stroke){
 
@@ -120,9 +123,11 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
 
         break;
     }
-    case AbstractItemProperty::Shadow:{
+
         // Shadow ****************************************************
-        Shadow *shadow = static_cast<Shadow*>(m_property);
+    case AbstractItemProperty::Shadow:{
+
+        Shadow *shadow = static_cast<Shadow*>(property);
 
         if(shadow){
 
@@ -133,24 +138,16 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
     }
     }
 
+    configurateDialog();
+
 }
 
-Fills *ColorDialog::fill()
+/*!
+ * \brief Configure color dialog based on mode
+ */
+void ColorDialog::configurateDialog()
 {
-    Fills *prop = static_cast<Fills*>(m_property);
-    return (prop) ? prop : new Fills();
-}
-
-Stroke *ColorDialog::stroke()
-{
-    Stroke *prop = static_cast<Stroke*>(m_property);
-    return (prop) ? prop : new Stroke();
-}
-
-Shadow *ColorDialog::shadow()
-{
-    Shadow *prop = static_cast<Shadow*>(m_property);
-    return (prop) ? prop : new Shadow();
+    //TODO: use m_mode
 }
 
 /***************************************************
@@ -164,44 +161,8 @@ Shadow *ColorDialog::shadow()
  */
 void ColorDialog::updateProperty()
 {
-    if(!m_property) return;
-
-    switch(m_property->type()){
-    case AbstractItemProperty::Fill:{
-        Fills *property = static_cast<Fills*>(m_property);
-
-        switch(property->fillType()){
-        case FillType::Color:
-            property->setColor( ui->tabColor->color() );
-            property->setOpacity( ui->tabColor->alpha() );
-            break;
-        default:
-
-            break;
-        }
-
-        break;
-    }
-    case AbstractItemProperty::Stroke:{
-        Stroke *property = static_cast<Stroke*>(m_property);
-
-        QColor color = ui->tabColor->color();
-        color.setAlphaF( ui->tabColor->alpha() );
-        property->setColor( color );
-
-        break;
-    }
-    case AbstractItemProperty::Shadow:{
-
-        Shadow *property = static_cast<Shadow*>(m_property);
-
-        QColor color = ui->tabColor->color();
-        color.setAlphaF( ui->tabColor->alpha() );
-        property->setColor( color );
-
-        break;
-    }
-    }
+    m_color = ui->tabColor->color();
+    m_opacity = ui->tabColor->alpha();
 
     emit propertyChanged();
 }

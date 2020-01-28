@@ -50,19 +50,26 @@ public:
     ~ColorDialog();
 
     void setProperty(AbstractItemProperty *property);
-    Fills *fill();
-    Stroke *stroke();
-    Shadow *shadow();
 
-    FillType fillType();
+    Gradient gradient() const;
+    Color color() const;
+    QPixmap pixmap() const;
+    qreal opacity() const;
+    FillType fillType() const;
+
     Mode mode() const;
 
 private:
     Ui::ColorDialog *ui;
 
-    Mode                    m_mode;
-    FillType                m_fillType;
-    AbstractItemProperty    *m_property;
+    Mode        m_mode;
+    FillType    m_fillType;
+    Color       m_color;
+    Gradient    m_gradient;
+    QPixmap     m_pixmap;
+    qreal       m_opacity;
+
+    void configurateDialog();
 
 
 signals:

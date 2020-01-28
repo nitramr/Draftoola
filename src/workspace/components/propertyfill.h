@@ -48,7 +48,7 @@ public:
 private:
     Ui::propertyFill *ui;
 
-    Fills m_fill;
+    Fills m_property;
 
     ColorDialog * m_colorDialog;
 
@@ -60,8 +60,6 @@ private slots:
     void updateFill();
     void updateColor();
     void updateOpacity();
-    void removeClick();
-    void openColorDialog();
 
 signals:
     void hasChanged(bool);
