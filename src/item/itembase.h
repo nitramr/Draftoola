@@ -43,8 +43,8 @@ class ItemBase : public AbstractItemBase
 public:
 
     ItemBase(const QRectF rect, QGraphicsItem *parent = nullptr);
-    ItemBase(const ItemBase &other);
-
+//    ItemBase(const ItemBase &other);
+    ItemBase(const ItemBase &) = default;
 
     // operator
     bool operator==( const ItemBase & other ) const;

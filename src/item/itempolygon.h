@@ -27,6 +27,13 @@
 
 class ItemPolygon : public ItemBase
 {
+    Q_CLASSINFO("Version", "1.0.0")
+
+    Q_PROPERTY(QRect rect READ rect WRITE setRect)
+    Q_PROPERTY(bool useInnerRadius READ useInnerRadius WRITE setUseInnerRadius)
+    Q_PROPERTY(qreal innerRadius READ innerRadius WRITE setInnerRadius)
+    Q_PROPERTY(int sides READ sides WRITE setSides)
+
 public:
     ItemPolygon(qreal x, qreal y, qreal width, qreal height, int sides = 10, bool useInnerRadius = false, QGraphicsItem * parent = nullptr);
     ItemPolygon(qreal width, qreal height, int sides = 10, bool useInnerRadius = false, QGraphicsItem * parent = nullptr);
@@ -47,7 +54,7 @@ public:
     void setInnerRadius(qreal length);
     qreal innerRadius() const;
     void setUseInnerRadius(bool allow);
-    bool useInnerRadius();
+    bool useInnerRadius() const;
 
     void setRect(QRectF rect) override;
     virtual QPainterPath shapeScaled(QRectF frame) const;

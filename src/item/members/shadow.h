@@ -31,12 +31,12 @@
 
 class Shadow : public AbstractItemProperty
 {
+    Q_CLASSINFO("Version", "1.0.0")
+
     Q_PROPERTY(qreal radius READ radius WRITE setRadius)
     Q_PROPERTY(Color color READ color WRITE setColor)
     Q_PROPERTY(QPointF offset READ offset WRITE setOffset)
     Q_PROPERTY(qreal spread READ spread WRITE setSpread)
-
-    Q_CLASSINFO("Version", "1.0.0")
 
 public:
     // Constructor

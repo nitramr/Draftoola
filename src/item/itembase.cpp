@@ -55,20 +55,20 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
 
 }
 
-ItemBase::ItemBase(const ItemBase &other) : AbstractItemBase(other)
-{
-    m_id = other.m_id;
-    m_name = other.m_name;
-    m_strokePosition = other.m_strokePosition;
-    m_renderQuality = other.m_renderQuality;
-    m_shadowPath = other.m_shadowPath;
-    m_renderRect = other.m_renderRect;
-    m_fillsList = other.m_fillsList;
-    m_strokeList = other.m_strokeList;
-    m_shadowList = other.m_shadowList;
-    m_innerShadowList = other.m_innerShadowList;
+//ItemBase::ItemBase(const ItemBase &other) : AbstractItemBase(other)
+//{
+//    m_id = other.m_id;
+//    m_name = other.m_name;
+//    m_strokePosition = other.m_strokePosition;
+//    m_renderQuality = other.m_renderQuality;
+//    m_shadowPath = other.m_shadowPath;
+//    m_renderRect = other.m_renderRect;
+//    m_fillsList = other.m_fillsList;
+//    m_strokeList = other.m_strokeList;
+//    m_shadowList = other.m_shadowList;
+//    m_innerShadowList = other.m_innerShadowList;
 
-}
+//}
 
 bool ItemBase::operator==(const ItemBase &other) const
 {
@@ -87,9 +87,52 @@ bool ItemBase::operator==(const ItemBase &other) const
             AbstractItemBase::operator==(other);
 }
 
+
 /***************************************************
  *
  * Properties
+ *
+ ***************************************************/
+
+/**
+ * @brief Returns level of details value. If highRenderQuality() = true it returns best level but results in slow rendering.
+ * @return
+ */
+qreal ItemBase::lod()
+{
+    switch(renderQuality()){
+    // m_lod = best render result but slow
+    case RenderQuality::Quality:
+        return m_lod;
+        break;
+
+        // 2.0 = mid render quality with good speed
+    default:
+    case RenderQuality::Balanced:
+        return qMin(2.0, m_lod);
+        break;
+
+        // 1.0 = worst render result but fast
+    case RenderQuality::Performance:
+        return 1.0;
+        break;
+    }
+}
+
+
+QRectF ItemBase::renderRect() const
+{
+    return m_renderRect;
+}
+
+void ItemBase::clipsChildrenToShape(bool doClip)
+{
+    setFlag(QGraphicsItem::ItemClipsChildrenToShape, doClip);
+}
+
+/***************************************************
+ *
+ * Members
  *
  ***************************************************/
 
@@ -313,48 +356,6 @@ bool ItemBase::hasInnerShadows() const
     return false;
 }
 
-
-/**
- * @brief Returns level of details value. If highRenderQuality() = true it returns best level but results in slow rendering.
- * @return
- */
-qreal ItemBase::lod()
-{    
-    switch(renderQuality()){
-    // m_lod = best render result but slow
-    case RenderQuality::Quality:
-        return m_lod;
-        break;
-
-        // 2.0 = mid render quality with good speed
-    default:
-    case RenderQuality::Balanced:
-        return qMin(2.0, m_lod);
-        break;
-
-        // 1.0 = worst render result but fast
-    case RenderQuality::Performance:
-        return 1.0;
-        break;
-    }
-}
-
-
-QRectF ItemBase::renderRect() const
-{
-    return m_renderRect;
-}
-
-void ItemBase::clipsChildrenToShape(bool doClip)
-{
-    setFlag(QGraphicsItem::ItemClipsChildrenToShape, doClip);
-}
-
-/***************************************************
- *
- * Members
- *
- ***************************************************/
 
 ///
 /// \brief Returns outlined shape of a rendered stroke

@@ -88,7 +88,7 @@ void ItemPolygon::setUseInnerRadius(bool allow)
     m_useInnerRadius = allow;
 }
 
-bool ItemPolygon::useInnerRadius()
+bool ItemPolygon::useInnerRadius() const
 {
     return m_useInnerRadius;
 }

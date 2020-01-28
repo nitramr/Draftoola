@@ -31,6 +31,10 @@
 
 class ItemOval : public ItemBase
 {
+    Q_CLASSINFO("Version", "1.0.0")
+
+    Q_PROPERTY(QRect rect READ rect WRITE setRect)
+
 public:
     ItemOval(qreal x, qreal y, qreal width, qreal height, QGraphicsItem * parent = nullptr);
     ItemOval(qreal width, qreal height, QGraphicsItem * parent = nullptr);

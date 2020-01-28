@@ -32,6 +32,11 @@
 class ItemRect : public ItemBase
 {
 
+    Q_CLASSINFO("Version", "1.0.0")
+
+    Q_PROPERTY(QRect rect READ rect WRITE setRect)
+    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
+
 public:
     ItemRect(qreal x, qreal y, qreal width, qreal height, QGraphicsItem * parent = nullptr);
     ItemRect(qreal width, qreal height, QGraphicsItem * parent = nullptr);

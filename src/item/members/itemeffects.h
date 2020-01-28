@@ -31,7 +31,7 @@ class ItemEffects : public QGraphicsEffect
 {
 public:
     ItemEffects(QObject *parent = nullptr);
-	QRectF boundingRectFor(const QRectF &rect) const;
+    QRectF boundingRectFor(const QRectF &rect) const override;
 
 	void setShadowList(QList<Shadow> shadowList);
 	void setFillsList(QList<Fills> fillsList);

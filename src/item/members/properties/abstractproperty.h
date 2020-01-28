@@ -35,6 +35,8 @@ class AbstractProperty
 
     Q_CLASSINFO("Version", "1.0.0")
 
+    Q_PROPERTY(QString caption READ caption WRITE setCaption)
+
 public:
     AbstractProperty();
     AbstractProperty(const QString caption);

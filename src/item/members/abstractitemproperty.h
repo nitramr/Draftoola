@@ -35,9 +35,11 @@ class AbstractItemProperty
     friend class Shadow;
     friend class ExportLevel;
 
+    Q_CLASSINFO("Version", "1.0.0")
+
+    Q_PROPERTY(QString name READ name WRITE setName)
     Q_PROPERTY(bool isOn READ isOn WRITE setIsOn)
     Q_PROPERTY(QPainter::CompositionMode blendMode READ blendMode WRITE setBlendMode)
-    Q_CLASSINFO("Version", "1.0.0")
 
 public:
 

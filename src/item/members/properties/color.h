@@ -28,6 +28,9 @@
 
 class Color : public AbstractProperty, public QColor
 {
+    Q_CLASSINFO("Version", "1.0.0")
+
+
 public:
     // constructor
     Color();

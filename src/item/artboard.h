@@ -51,7 +51,6 @@ class ArtboardCanvas : public QGraphicsRectItem
 {
 
 public:
-   //enum { Type = UserType + 1 };
     enum Type {
         Canvas = UserType + 1
     };
@@ -69,6 +68,12 @@ public:
 
 class Artboard : public AbstractItemBase
 {
+    Q_CLASSINFO("Version", "1.0.0")
+
+    Q_PROPERTY(QRect rect READ rect WRITE setRect)
+    Q_PROPERTY(bool useBackgroundColor READ useBackgroundColor WRITE setUseBackgroundColor)
+    Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
+
 public:
     Artboard();
     Artboard(QString name, QGraphicsItem *parent = nullptr);

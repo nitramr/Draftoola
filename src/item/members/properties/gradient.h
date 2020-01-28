@@ -35,6 +35,13 @@ class Gradient : public AbstractProperty
 
     Q_CLASSINFO("Version", "1.0.0")
 
+    Q_PROPERTY(qreal angle READ angle WRITE setAngle)
+    Q_PROPERTY(QPointF center READ center WRITE setCenter)
+    Q_PROPERTY(QPointF start READ start WRITE setStart)
+    Q_PROPERTY(QPointF end READ finalStop WRITE setFinalStop)
+    Q_PROPERTY(QPointF focalPoint READ focalPoint WRITE setFocalPoint)
+    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
+
 public:
     Gradient();    
     Gradient(QString caption, const QGradient &gradient);

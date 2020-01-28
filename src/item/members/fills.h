@@ -37,7 +37,15 @@
 class Fills : public AbstractItemProperty
 {
 
-     Q_CLASSINFO("Version", "1.0.0")
+    Q_CLASSINFO("Version", "1.0.0")
+
+    Q_PROPERTY(FillType fillType READ fillType WRITE setFillType)
+    Q_PROPERTY(FillMode fillMode READ fillMode WRITE setFillMode)
+    Q_PROPERTY(Gradient gradient READ gradient WRITE setGradient)
+    Q_PROPERTY(Color color READ color WRITE setColor)
+    Q_PROPERTY(QPixmap image READ pixmap WRITE setPixmap)
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+
 
 public:
 

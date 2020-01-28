@@ -35,7 +35,10 @@
 
 class Stroke : public QPen, public AbstractItemProperty
 {
- //   Q_GADGET
+    Q_CLASSINFO("Version", "1.0.0")
+
+    Q_PROPERTY(StrokePosition strokePosition READ strokePosition WRITE setStrokePosition)
+
 public:
 
     enum StrokePosition {

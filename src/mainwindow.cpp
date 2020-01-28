@@ -101,8 +101,6 @@ void MainWindow::setupWorkspace()
     m_propertiesDock = new QDockWidget("Properties");
     m_propertiesDock->setWidget(scrollProp);
     m_propertiesDock->setAllowedAreas(Qt::DockWidgetArea::RightDockWidgetArea | Qt::DockWidgetArea::LeftDockWidgetArea);
- //   m_propertiesDock->setSizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::MinimumExpanding);
-//    m_propertiesDock->setFixedWidth(m_properties->width());
     this->addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
 }
 

@@ -24,6 +24,7 @@
 #define ITEMPROPERTIES_H
 
 #include <QWidget>
+#include <QScrollArea>
 
 #include <abstractitembase.h>
 #include <ip_geometry.h>
@@ -33,7 +34,6 @@
 #include <ip_innershadows.h>
 #include <ip_exportlevel.h>
 
-#include <QScrollArea>
 
 namespace Ui {
 class ItemProperties;
