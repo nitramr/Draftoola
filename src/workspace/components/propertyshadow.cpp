@@ -114,7 +114,10 @@ void PropertyShadow::disconnectSlots()
 
 void PropertyShadow::updateShadow()
 {
-    m_property.setColor(m_colorDialog->color());
+    Color col = m_colorDialog->color();
+    col.setAlphaF(m_colorDialog->opacity());
+
+    m_property.setColor(col);
     m_property.setIsOn(ui->cb_active->isChecked());
     m_property.setOffset(QPointF(ui->sb_xOffset->value(), ui->sb_yOffset->value()));
     m_property.setRadius(ui->sb_blur->value());

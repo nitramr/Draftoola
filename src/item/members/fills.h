@@ -56,7 +56,6 @@ public:
     Fills(const QString name, const QPixmap & pixmap, const FillMode fillMode = FillMode::Fill);
     Fills(const QString name, const QImage & image, const FillMode fillMode = FillMode::Fill);
     Fills(const QString name, const Gradient & gradient);
-//    Fills(const Fills &other);
     Fills(const Fills &) = default;
 
     ~Fills() = default;

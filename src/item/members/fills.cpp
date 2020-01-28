@@ -63,17 +63,6 @@ Fills::Fills(const QString name, const Gradient &gradient) : Fills(name, Color()
     m_fillMode = FillMode::Fill;
 }
 
-//Fills::Fills(const Fills &other) : AbstractItemProperty(other)
-//{
-//    m_fillType = other.m_fillType;
-//    m_fillMode = other.m_fillMode;
-//    m_gradient = other.m_gradient;
-//    m_color = other.m_color;
-//    m_pixmap = other.m_pixmap;
-//    m_opacity = other.m_opacity;
-
-//}
-
 
 /***************************************************
  *

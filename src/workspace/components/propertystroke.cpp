@@ -143,7 +143,10 @@ void PropertyStroke::disconnectSlots()
 
 void PropertyStroke::updateStroke()
 {
-    m_property.setColor(m_colorDialog->color());
+    Color col = m_colorDialog->color();
+    col.setAlphaF(m_colorDialog->opacity());
+
+    m_property.setColor(col);
     m_property.setIsOn(ui->cb_active->isChecked());
     m_property.setBlendMode(m_property.blendMode());  // need real data
     m_property.setBrush(m_property.brush()); // need real data (use brush for solid color too)

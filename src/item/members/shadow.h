@@ -41,7 +41,6 @@ public:
     // Constructor
     Shadow();
     Shadow(QString name, QColor color= QColor(0,0,0,128), qreal radius = 4, QPointF offset = QPointF(0,2), qreal spread = 0);
-//    Shadow(const Shadow &other);
     Shadow(const Shadow &) = default;
 
     ~Shadow() = default;

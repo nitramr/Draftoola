@@ -94,15 +94,17 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
     // Fill ****************************************************
     case AbstractItemProperty::Fill:{
 
-        Fills *fill = static_cast<Fills*>(property);
+        Fills *prop = static_cast<Fills*>(property);
 
-        if(fill){
+        if(prop){
 
-            m_fillType = fill->fillType();
-            m_pixmap = fill->pixmap();
-            m_gradient = fill->gradient();
-            m_color = fill->color();
-            ui->tabColor->setColor(fill->color(), fill->opacity());
+            m_fillType = prop->fillType();
+            m_pixmap = prop->pixmap();
+            m_gradient = prop->gradient();
+            m_color = prop->color();
+            m_opacity = prop->opacity();
+
+            ui->tabColor->setColor(m_color, m_opacity);
 
             m_mode = Mode::FillLayout;
         }
@@ -113,11 +115,15 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
         // Stroke ****************************************************
     case AbstractItemProperty::Stroke:{
 
-        Stroke *stroke = static_cast<Stroke*>(property);
+        Stroke *prop = static_cast<Stroke*>(property);
 
-        if(stroke){
+        if(prop){
 
-            ui->tabColor->setColor(stroke->color(), stroke->color().alphaF());
+            m_color = prop->color();
+            m_opacity = m_color.alphaF();
+
+            ui->tabColor->setColor(m_color, m_opacity);
+
             m_mode = Mode::StrokeLayout;
         }
 
@@ -127,11 +133,15 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
         // Shadow ****************************************************
     case AbstractItemProperty::Shadow:{
 
-        Shadow *shadow = static_cast<Shadow*>(property);
+        Shadow *prop = static_cast<Shadow*>(property);
 
-        if(shadow){
+        if(prop){
 
-            ui->tabColor->setColor(shadow->color(), shadow->color().alphaF());
+            m_color = prop->color();
+            m_opacity = m_color.alphaF();
+
+            ui->tabColor->setColor(m_color, m_opacity);
+
             m_mode = Mode::ShadowLayout;
         }
         break;
