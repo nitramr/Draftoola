@@ -56,7 +56,6 @@ signals:
 
 private:
     Ui::ItemProperties *ui;
-    QScrollArea * m_container;
 
     ipGeometry * itemGeometry;
     ipFills * itemFills;

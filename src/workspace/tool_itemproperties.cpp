@@ -32,7 +32,7 @@
 
 ItemProperties::ItemProperties(QScrollArea *container, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ItemProperties), m_container(container)
+    ui(new Ui::ItemProperties)
 {
     ui->setupUi(this);   
 
@@ -46,11 +46,11 @@ ItemProperties::ItemProperties(QScrollArea *container, QWidget *parent) :
 
     ui->layout->addStretch(1);
 
-    m_container->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
-    m_container->setWidget(this);
-    m_container->setWidgetResizable(true);
-    m_container->setFrameStyle(0);
-   // m_container->setSizePolicy(QSizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding));
+    container->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+    container->setWidget(this);
+    container->setWidgetResizable(true);
+    container->setFrameStyle(0);
+    container->setSizePolicy(QSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::MinimumExpanding));
 
 }
 
@@ -69,6 +69,7 @@ void ItemProperties::setupGeometry()
 {
     itemGeometry = new ipGeometry();
     LayoutSection *m_section = new LayoutSection(tr("Geometry"));
+    m_section->setFixedWidth(300);
     m_section->addWidget(itemGeometry);
 
     this->connect(itemGeometry, &ipGeometry::itemsChanged, [this](){
@@ -87,6 +88,7 @@ void ItemProperties::setupFills()
     btn_Addnew->setIcon( QIcon(":/icons/dark/plus.svg") );
 
     LayoutSection *m_section = new LayoutSection(tr("Fills"), nullptr, true);
+    m_section->setFixedWidth(300);
     m_section->addWidget(itemFills);
     m_section->setCollapsedState(true);
     m_section->addButton(btn_Addnew);
@@ -110,6 +112,7 @@ void ItemProperties::setupStrokes()
     btn_Addnew->setIcon( QIcon(":/icons/dark/plus.svg") );
 
     LayoutSection *m_section = new LayoutSection(tr("Strokes"), nullptr, true);
+    m_section->setFixedWidth(300);
     m_section->addWidget(itemStrokes);
     m_section->setCollapsedState(true);
     m_section->addButton(btn_Addnew);
@@ -133,6 +136,7 @@ void ItemProperties::setupShadows()
     btn_Addnew->setIcon( QIcon(":/icons/dark/plus.svg") );
 
     LayoutSection *m_section = new LayoutSection(tr("Shadows"), nullptr, true);
+    m_section->setFixedWidth(300);
     m_section->addWidget(itemShadows);
     m_section->setCollapsedState(true);
     m_section->addButton(btn_Addnew);
@@ -155,6 +159,7 @@ void ItemProperties::setupInnerShadows()
     btn_Addnew->setIcon( QIcon(":/icons/dark/plus.svg") );
 
     LayoutSection *m_section = new LayoutSection(tr("Inner Shadows"), nullptr, true);
+    m_section->setFixedWidth(300);
     m_section->addWidget(itemInnerShadows);
     m_section->setCollapsedState(true);
     m_section->addButton(btn_Addnew);
@@ -177,6 +182,7 @@ void ItemProperties::setupExportLevel()
     btn_Addnew->setIcon( QIcon(":/icons/dark/plus.svg") );
 
     LayoutSection *m_section = new LayoutSection(tr("Export"), nullptr, true);
+    m_section->setFixedWidth(300);
     m_section->addWidget(itemExportLevels);
     m_section->setCollapsedState(true);
     m_section->addButton(btn_Addnew);
