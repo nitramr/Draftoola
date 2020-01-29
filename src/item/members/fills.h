@@ -70,6 +70,11 @@ public:
 
 
     // Properties
+
+    Type type() const override{
+        return Type::Fill;
+    };
+
     void setFillType(FillType filltype);
     FillType fillType() const;
 

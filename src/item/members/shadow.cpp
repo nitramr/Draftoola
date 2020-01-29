@@ -37,7 +37,6 @@ Shadow::Shadow(QString name, Color color, qreal radius, QPointF offset, qreal sp
     m_radius = radius;
     m_offset = offset;
     m_spread = spread;
-    m_type = Type::Shadow;
 }
 
 

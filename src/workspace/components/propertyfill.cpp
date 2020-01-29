@@ -96,6 +96,7 @@ void PropertyFill::setFill(Fills fill)
 
     ui->combo_blending->setCurrentIndex(indexMode);
     drawFill(fill);
+
     connectSlots();
 }
 

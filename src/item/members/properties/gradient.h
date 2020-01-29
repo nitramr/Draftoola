@@ -62,7 +62,7 @@ public:
     QLinearGradient linear(QLineF target = QLineF()) const;
     QConicalGradient conical(QRectF target = QRectF()) const;
 
-    FillType type();
+    FillType type() const;
 
     QGradientStops stops() const;
     void setStops(QGradientStops stops);

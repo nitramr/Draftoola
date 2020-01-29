@@ -29,11 +29,13 @@
 #include <QPen>
 #include <QPainter>
 #include <QDebug>
+#include <color.h>
 
 #include <utilities.h>
 #include <abstractitemproperty.h>
+#include <gradient.h>
 
-class Stroke : public QPen, public AbstractItemProperty
+class Stroke : public AbstractItemProperty
 {
     Q_CLASSINFO("Version", "1.0.0")
 
@@ -48,10 +50,8 @@ public:
     };
 
     Stroke();
-    Stroke(const QString name, Qt::PenStyle style, const StrokePosition strokePosition = StrokePosition::Center);
-    Stroke(const QString name, const QColor & color, const StrokePosition strokePosition = StrokePosition::Center);
-    Stroke(const QString name, const QBrush & brush, qreal width, const StrokePosition strokePosition = StrokePosition::Center, Qt::PenStyle style = Qt::SolidLine, Qt::PenCapStyle cap = Qt::SquareCap, Qt::PenJoinStyle join = Qt::MiterJoin);
-    Stroke(const QString name, const QPen & pen, const StrokePosition strokePosition = StrokePosition::Center);
+    Stroke(const QString name, const Color & color, qreal width = 1.0, const StrokePosition strokePosition = StrokePosition::Center, Qt::PenStyle style = Qt::SolidLine, Qt::PenCapStyle cap = Qt::SquareCap, Qt::PenJoinStyle join = Qt::MiterJoin);
+    Stroke(const QString name, const Gradient & gradient, qreal width = 1.0, const StrokePosition strokePosition = StrokePosition::Center, Qt::PenStyle style = Qt::SolidLine, Qt::PenCapStyle cap = Qt::SquareCap, Qt::PenJoinStyle join = Qt::MiterJoin);
     Stroke(const Stroke &) = default;
 
     ~Stroke() = default;
@@ -67,15 +67,54 @@ public:
 #endif
 
 	// Properties
+    Type type() const override{
+        return Type::Stroke;
+    };
+
 	void setStrokePosition(StrokePosition position);
 	StrokePosition strokePosition() const;
+
+    void setColor(Color color);
+    Color color() const;
+
+    void setGradient(Gradient gradient);
+    Gradient gradient() const;
+
+    void setStyle(Qt::PenStyle style);
+    Qt::PenStyle style() const;
+
+    void setCapStyle(Qt::PenCapStyle cap);
+    Qt::PenCapStyle capStyle() const;
+
+    void setJoinStyle(Qt::PenJoinStyle joinStyle);
+    Qt::PenJoinStyle joinStyle() const;
+
+    void setWidthF(qreal width);
+    qreal widthF() const;
+
+    void setWidth(int width);
+    int width() const;
+
+    QPen pen() const;
+
+    void setFillType(FillType fillType);
+    FillType fillType() const;
+
+private:
+    Color m_color;
+    Gradient m_gradient;
+    Qt::PenStyle m_style;
+    Qt::PenCapStyle m_cap;
+    Qt::PenJoinStyle m_join;
+    qreal m_width;
+    FillType m_fillType;
 
 
 
 private:
 	StrokePosition m_strokePosition;
 
-    void fromObject(AbstractItemProperty object, QPen pen);
+    void fromObject(AbstractItemProperty object);
 
 };
 Q_DECLARE_METATYPE(Stroke)

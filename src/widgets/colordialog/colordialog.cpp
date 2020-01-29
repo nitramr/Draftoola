@@ -121,6 +121,8 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
 
         if(prop){
 
+            m_fillType = prop->fillType();
+            m_gradient = prop->gradient();
             m_color = prop->color();
             m_opacity = m_color.alphaF();
 

@@ -190,11 +190,11 @@ void MainWindow::tmpSetup(int offsetX, int offsetY)
     Gradient gradient("Gradient", lGradient);
 
     // Strokes
-    Stroke strokeR("TestEllipseStroke", QBrush(QColor(128,208,23, 128)),3, Stroke::Inner);
-    Stroke stroke("TestEllipseStroke", QBrush(lGradient),4, Stroke::Outer);
+    Stroke strokeR("StrokeR", Color(128,208,23, 128),3, Stroke::Inner);
+    Stroke stroke("Stroke", gradient,4, Stroke::Outer);
     stroke.setCapStyle(Qt::PenCapStyle::RoundCap);
     stroke.setStyle(Qt::PenStyle::DotLine);
-    Stroke stroke3("TestEllipseStroke", QBrush(QColor(128,208,23)),2, Stroke::Center);
+    Stroke stroke3("Stroke3", QColor(128,208,23),2, Stroke::Center);
 
     // Shadows
     Shadow shadow = Shadow("Shadow", QColor(0,0,0,100), 0, QPointF(0,0),0);

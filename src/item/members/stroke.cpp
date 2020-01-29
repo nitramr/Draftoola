@@ -28,20 +28,32 @@
  *
  ***************************************************/
 
-Stroke::Stroke() : Stroke(QString(), QPen()){}
-Stroke::Stroke(const QString name, Qt::PenStyle style, const StrokePosition strokePosition ) : Stroke(name, QPen(style), strokePosition){}
-Stroke::Stroke(const QString name, const QColor &color, const StrokePosition strokePosition ) : Stroke(name, QBrush(color), 1, strokePosition, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin){}
-Stroke::Stroke(const QString name, const QBrush &brush, qreal width, const StrokePosition strokePosition , Qt::PenStyle style, Qt::PenCapStyle cap, Qt::PenJoinStyle join) : QPen(brush, width, style, cap, join), AbstractItemProperty(name){
-   setStrokePosition(strokePosition);
-   setMiterLimit(0);
-   m_type = Type::Stroke;
-}
-Stroke::Stroke(const QString name, const QPen &pen, const StrokePosition strokePosition ) : QPen(pen), AbstractItemProperty(name){
-    setStrokePosition(strokePosition);
-    setMiterLimit(0);
-    m_type = Type::Stroke;
+Stroke::Stroke() : Stroke(QString(), QColor()){}
+Stroke::Stroke(const QString name, const Color &color, qreal width, const Stroke::StrokePosition strokePosition, Qt::PenStyle style, Qt::PenCapStyle cap, Qt::PenJoinStyle join)
+    : AbstractItemProperty(name)
+{
+    m_gradient = Gradient();
+    m_color = color;
+    m_width = width;
+    m_strokePosition = strokePosition;
+    m_style = style;
+    m_cap = cap;
+    m_join = join;
+    m_fillType = FillType::Color;
 }
 
+Stroke::Stroke(const QString name, const Gradient &gradient, qreal width, const Stroke::StrokePosition strokePosition, Qt::PenStyle style, Qt::PenCapStyle cap, Qt::PenJoinStyle join)
+    :AbstractItemProperty(name)
+{
+    m_gradient = gradient;
+    m_color = Color();
+    m_width = width;
+    m_strokePosition = strokePosition;
+    m_style = style;
+    m_cap = cap;
+    m_join = join;
+    m_fillType = gradient.type();
+}
 
 /***************************************************
  *
@@ -59,23 +71,120 @@ Stroke::StrokePosition Stroke::strokePosition() const
     return m_strokePosition;
 }
 
-void Stroke::fromObject(AbstractItemProperty object, QPen pen)
+void Stroke::setColor(Color color)
+{
+    m_color = color;
+    m_fillType = FillType::Color;
+}
+
+Color Stroke::color() const
+{
+    return m_color;
+}
+
+void Stroke::setGradient(Gradient gradient)
+{
+    m_gradient = gradient;
+    m_fillType = gradient.type();
+}
+
+Gradient Stroke::gradient() const
+{
+    return m_gradient;
+}
+
+void Stroke::setStyle(Qt::PenStyle style)
+{
+    m_style = style;
+}
+
+Qt::PenStyle Stroke::style() const
+{
+    return m_style;
+}
+
+void Stroke::setCapStyle(Qt::PenCapStyle cap)
+{
+    m_cap = cap;
+}
+
+Qt::PenCapStyle Stroke::capStyle() const
+{
+    return m_cap;
+}
+
+void Stroke::setJoinStyle(Qt::PenJoinStyle joinStyle)
+{
+    m_join = joinStyle;
+}
+
+Qt::PenJoinStyle Stroke::joinStyle() const
+{
+    return m_join;
+}
+
+void Stroke::setWidthF(qreal width)
+{
+    m_width = width;
+}
+
+qreal Stroke::widthF() const
+{
+    return m_width;
+}
+
+void Stroke::setWidth(int width)
+{
+    setWidthF(width);
+}
+
+int Stroke::width() const
+{
+    return qRound(m_width);
+}
+
+QPen Stroke::pen() const
+{
+    QBrush brush;
+
+    switch(m_fillType){
+    case FillType::LinearGradient:
+        brush = QBrush(m_gradient.linear());
+        break;
+    case FillType::RadialGradient:
+        brush = QBrush(m_gradient.radial());
+        break;
+    case FillType::ConicalGradient:
+        brush = QBrush(m_gradient.conical());
+        break;
+    case FillType::Color:
+        brush = QBrush(m_color);
+        break;
+    default:
+        brush = QBrush(Qt::black);
+        break;
+    }
+
+   return QPen(brush, m_width, m_style, m_cap, m_join);
+
+}
+
+void Stroke::setFillType(FillType fillType)
+{
+    m_fillType = fillType;
+}
+
+FillType Stroke::fillType() const
+{
+    return m_fillType;
+}
+
+void Stroke::fromObject(AbstractItemProperty object)
 {
     m_id = object.m_id;
     m_isOn = object.m_isOn;
     m_blendMode = object.m_blendMode;
     m_name = object.m_name;
-
-    setBrush(pen.brush());
-//    setColor(pen.color());
-//    setStyle(pen.style());
-    setWidthF(pen.widthF());
-    setCapStyle(pen.capStyle());
-    setCosmetic(pen.isCosmetic());
-    setJoinStyle(pen.joinStyle());
-    setDashOffset(pen.dashOffset());
-    setMiterLimit(pen.miterLimit());
-    setDashPattern(pen.dashPattern());
 }
 
 
@@ -91,8 +200,14 @@ bool Stroke::operator==(const Stroke &other) const
     if(this == &other) return true;
 
     return m_strokePosition == other.m_strokePosition &&
-            AbstractItemProperty::operator==(other) &&
-            QPen::operator==(other);
+            m_width == other.m_width &&
+            m_cap == other.m_cap &&
+            m_join == other.m_join &&
+            m_style == other.m_style &&
+            m_color == other.m_color &&
+            m_gradient == other.m_gradient &&
+            m_fillType == other.m_fillType &&
+            AbstractItemProperty::operator==(other);
 
 }
 
@@ -100,24 +215,42 @@ bool Stroke::operator==(const Stroke &other) const
 QDebug operator<<(QDebug dbg, const Stroke &obj)
 {
     const AbstractItemProperty &aip = obj;
-    const QPen &p = obj;
 
     dbg << "Stroke(" <<
            aip <<
            (int)obj.strokePosition() <<
-           p <<
-           ")";
+           obj.widthF();
+
+    switch(obj.fillType()){
+    default:
+    case FillType::Color:
+        dbg << obj.color();
+        break;
+    case FillType::LinearGradient:
+    case FillType::RadialGradient:
+    case FillType::ConicalGradient:
+        dbg << obj.gradient();
+        break;
+    }
+
+    dbg << ")";
+
     return dbg.maybeSpace();
 }
 
 QDataStream &operator<<(QDataStream &out, const Stroke &obj)
 {
     const AbstractItemProperty &aip = obj;
-    const QPen &p = obj;
 
-    out << aip
-        << (int)obj.strokePosition()
-        << p;
+    out << aip<<
+           (int)obj.strokePosition() <<
+           obj.widthF() <<
+           (int)obj.capStyle() <<
+           (int)obj.joinStyle() <<
+           (int)obj.style() <<
+           obj.color() <<
+           obj.gradient() <<
+           (int)obj.fillType();
 
     return out;
 }
@@ -125,15 +258,35 @@ QDataStream &operator<<(QDataStream &out, const Stroke &obj)
 QDataStream &operator>>(QDataStream &in, Stroke &obj)
 {
     AbstractItemProperty m_aip;
-    QPen pen;
-    int strokePos;
+    int m_strokePos;
+    Color m_color;
+    Gradient m_gradient;
+    int m_style;
+    int m_cap;
+    int m_join;
+    qreal m_width;
+    int m_fillType;
 
     in >> m_aip;
-    in >> strokePos;
-    in >> pen;
+    in >> m_strokePos;
+    in >> m_width;
+    in >> m_cap;
+    in >> m_join;
+    in >> m_style;
+    in >> m_color;
+    in >> m_gradient;
+    in >> m_fillType;
 
-    obj.fromObject(m_aip, pen);
-    obj.setStrokePosition(Stroke::StrokePosition(strokePos));
+    obj.fromObject(m_aip);
+    obj.setStrokePosition(Stroke::StrokePosition(m_strokePos));
+    obj.setWidthF(m_width);
+    obj.setCapStyle(Qt::PenCapStyle(m_cap));
+    obj.setJoinStyle(Qt::PenJoinStyle(m_join));
+    obj.setStyle(Qt::PenStyle(m_style));
+    obj.setGradient(m_gradient);
+    obj.setColor(m_color);
+    obj.setFillType(FillType(m_fillType));
+
 
     return in;
 }

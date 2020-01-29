@@ -57,6 +57,10 @@ public:
 #endif
 
     // Properties
+    Type type() const override{
+        return Type::Shadow;
+    };
+
     void setColor(Color color);
     Color color() const;
 

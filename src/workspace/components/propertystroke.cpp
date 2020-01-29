@@ -82,9 +82,9 @@ void PropertyStroke::setStroke(Stroke stroke)
     disconnectSlots();
 
     m_property = stroke;
+
     ui->cb_active->setChecked(stroke.isOn());
     ui->sb_width->setValue(stroke.widthF());
- //   m_colorDialog->setProperty(&m_stroke);
 
     switch(stroke.strokePosition()){
     case Stroke::Center:
@@ -116,7 +116,29 @@ void PropertyStroke::drawPreview(Stroke property)
     pixmap.fill(Qt::transparent);
 
     QPainter painter(&pixmap);
-    painter.fillRect(pixmap.rect(), property.brush());
+
+    switch (property.fillType()) {
+    case FillType::Color:
+        painter.fillRect(pixmap.rect(), QBrush(property.color()));
+        break;
+    case FillType::RadialGradient:
+        painter.fillRect(pixmap.rect(), QBrush(property.gradient().radial(pixmap.rect())));
+        break;
+    case FillType::ConicalGradient:
+        painter.fillRect(pixmap.rect(), QBrush(property.gradient().conical(pixmap.rect())));
+        break;
+    case FillType::LinearGradient:
+        painter.fillRect(pixmap.rect(), QBrush(property.gradient().linear()));
+        break;
+    case FillType::Image:
+
+        break;
+    case FillType::Pattern:
+        break;
+    default:
+        break;
+    }
+
 
     ui->btn_color->setIcon(pixmap);
 
@@ -146,7 +168,6 @@ void PropertyStroke::updateProperty()
 {
     m_property.setIsOn(ui->cb_active->isChecked());
     m_property.setBlendMode(m_property.blendMode());  // need real data
-    m_property.setBrush(m_property.brush()); // need real data (use brush for solid color too)
     m_property.setWidthF(ui->sb_width->value());
 
     if(btn_outer->isChecked()){
@@ -166,6 +187,8 @@ void PropertyStroke::updateColor()
     Color col = m_colorDialog->color();
     col.setAlphaF( m_colorDialog->opacity() );
     m_property.setColor(col);
+    m_property.setGradient(m_colorDialog->gradient());
+    m_property.setFillType(m_colorDialog->fillType());
 
     updateProperty();
 }

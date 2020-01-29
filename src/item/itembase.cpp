@@ -660,7 +660,7 @@ QRectF ItemBase::drawStrokes(Stroke stroke, QPainter *painter)
         break;
     }
 
-    painter->setPen(stroke);
+    painter->setPen(stroke.pen());
     painter->drawPath(pathStroke);
     painter->restore();
 
@@ -698,14 +698,14 @@ QPainterPath ItemBase::strokeShape() const
                 qreal width = stroke.widthF();
                 switch(stroke.strokePosition()){
                 case Stroke::Inner:
-                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke), shape(), PathHandler::Booleans::Intersect);
+                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathHandler::Booleans::Intersect);
                     break;
                 case Stroke::Outer:{
-                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke), shape(), PathHandler::Booleans::Subtract);
+                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathHandler::Booleans::Subtract);
                     break;
                 }
                 case Stroke::Center:
-                    pathMask = scaleStroke(shape(), width, stroke);
+                    pathMask = scaleStroke(shape(), width, stroke.pen());
                     break;
                 }
 

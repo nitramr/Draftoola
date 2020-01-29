@@ -117,7 +117,7 @@ QConicalGradient Gradient::conical(QRectF target) const
     return cg;
 }
 
-FillType Gradient::type()
+FillType Gradient::type() const
 {
     return m_type;
 }

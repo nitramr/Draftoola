@@ -37,7 +37,6 @@ Fills::Fills(const QString name) : Fills(name, Color()){}
 Fills::Fills(const QString name, const Color &color) : AbstractItemProperty(name){
     m_gradient = Gradient();
     setColor(color);
-    m_type = Type::Fill;
     m_fillMode = FillMode::Fill;
 }
 

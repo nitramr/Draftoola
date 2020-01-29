@@ -77,7 +77,7 @@ public:
     void setIsOn(bool isOn);
     bool isOn() const;
 
-    Type type() const;
+    virtual Type type() const;
 
 
 private:
