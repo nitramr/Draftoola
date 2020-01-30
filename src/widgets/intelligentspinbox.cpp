@@ -26,15 +26,30 @@
 
 IntelligentSpinBox::IntelligentSpinBox(QWidget *parent) : QDoubleSpinBox (parent)
 {
-    QRegExp rx("(\\d+\\s*|[+\\-*\\/^%,]\\s*)*");
-//    QRegExp rx("(\\d+[+\\-*\\/^%,])*(\\d+)");
-//    QRegExp rx("((\\d+,?)\\s*(px\\s*)?([+\\-*\\/^%,]\\s*)?(px\\s*)?)");
+    /*
+
+      Left part: match negative or positive number with optional comma
+      -?\d+(?:(?:\,|\.)\d+(?:\d+)*)?
+
+      Mid part: matches an arithmetic operator inclusive optional spaces
+      (?:\s*[-+/\*]\s*
+
+      Right part: match negative or positive number with optional comma
+      -?\d+(?:(?:\,|\.)\d+(?:\d+)*)?)*
+
+      Mid and right part are grouped so that they can be unlimited included in formula
+
+     */
+
+    QRegExp rx("-?\\d+(?:(?:\\,|\\.)\\d+(?:\\d+)*)?(?:\\s*[-+\\/\\*]\\s*-?\\d+(?:(?:\\,|\\.)\\d+(?:\\d+)*)?)*");
     validator = new QRegExpValidator(rx, this);
 
     setDecimals(1);
+    setKeyboardTracking(false); // deactivate value change on each key press
 
-//    don't support handling of suffix yet.
-//    setSuffix("px");
+
+    //    don't support handling of suffix yet.
+    //    setSuffix("px");
 
 
 }

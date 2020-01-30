@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>254</width>
-    <height>91</height>
+    <height>87</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,19 +21,35 @@
     <number>0</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>4</number>
    </property>
    <property name="rightMargin">
     <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>4</number>
    </property>
    <item>
     <widget class="LayoutSection" name="sectionColorMap" native="true"/>
    </item>
    <item>
     <widget class="ColorInput" name="colorInput" native="true"/>
+   </item>
+   <item>
+    <widget class="LayoutSection" name="sectionColorPalette" native="true"/>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

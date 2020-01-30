@@ -204,5 +204,7 @@ void LayoutSection::setCollapsedState(bool state){
         m_drawer->show();
         this->setMaximumHeight(QWIDGETSIZE_MAX);
     }
+
+    emit collapsedState(state);
 }
 

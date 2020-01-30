@@ -35,10 +35,12 @@ TabColor::TabColor(QWidget *parent) :
     m_colorSlider = new ColorSlider(ColorSlider::Hue);
     m_alphaSlider = new ColorSlider(ColorSlider::Alpha);
 
-    ui->sectionColorMap->setText(tr("Color Map"));
+    ui->sectionColorMap->setText(tr("Color Picker"));
     ui->sectionColorMap->addWidget(m_colorMap);
     ui->sectionColorMap->addWidget(m_colorSlider);
     ui->sectionColorMap->addWidget(m_alphaSlider);
+
+    ui->sectionColorPalette->setText(tr("Color Palette"));
 
     connectSlots();
 }
