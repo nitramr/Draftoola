@@ -552,14 +552,14 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
         break;
     }
     case FillType::RadialGradient:{
-        QRadialGradient rg(fills.gradient().radial());
+        QRadialGradient rg(fills.gradient().radial(rect()));
         rg.setCenter(rect().center());
         painter->setBrush(QBrush(rg));
         painter->drawPath(shape());
         break;
     }
     case FillType::ConicalGradient:{
-        QConicalGradient cg(fills.gradient().conical());
+        QConicalGradient cg(fills.gradient().conical(rect()));
         cg.setCenter(rect().center());
         painter->setBrush(QBrush(cg));
         painter->drawPath(shape());

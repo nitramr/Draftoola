@@ -23,5 +23,11 @@
         <file>dark/tools/triangle.svg</file>
         <file>dark/tools/format-textbox.svg</file>
         <file>dark/tools/format-text-variant.svg</file>
+        <file>dark/colordialog/color.svg</file>
+        <file>dark/colordialog/conical_gradient.png</file>
+        <file>dark/colordialog/image.svg</file>
+        <file>dark/colordialog/linear_gradient.png</file>
+        <file>dark/colordialog/radial_gradient.png</file>
+        <file>dark/colordialog/radial_gradient_alt.png</file>
     </qresource>
 </RCC>

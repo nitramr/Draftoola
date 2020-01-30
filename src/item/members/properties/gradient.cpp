@@ -92,6 +92,18 @@ QRadialGradient Gradient::radial(QRectF target) const
     return rg;
 }
 
+QConicalGradient Gradient::conical(QRectF target) const
+{
+    QPointF center = (target.isNull()) ? m_center : target.center();
+
+    QConicalGradient cg(center, m_angle);
+    cg.setStops(m_stops);
+    cg.setSpread(m_spread);
+    cg.setCoordinateMode(m_cmode);
+    cg.setInterpolationMode(m_imode);
+    return cg;
+}
+
 QLinearGradient Gradient::linear(QLineF target) const
 {
     QPointF start = (target.isNull()) ? m_start : target.p1();
@@ -105,16 +117,9 @@ QLinearGradient Gradient::linear(QLineF target) const
     return lg;
 }
 
-QConicalGradient Gradient::conical(QRectF target) const
+QLinearGradient Gradient::linear(QRectF target) const
 {
-    QPointF center = (target.isNull()) ? m_center : target.center();
-
-    QConicalGradient cg(center, m_angle);
-    cg.setStops(m_stops);
-    cg.setSpread(m_spread);
-    cg.setCoordinateMode(m_cmode);
-    cg.setInterpolationMode(m_imode);
-    return cg;
+    return linear(QLineF(target.topLeft(), target.bottomLeft()));
 }
 
 FillType Gradient::type() const
@@ -248,7 +253,8 @@ bool Gradient::operator==(const Gradient &other) const
             m_start == other.m_start &&
             m_stop == other.m_stop &&
             m_center == other.m_center &&
-            m_radius == other.m_radius;
+            m_radius == other.m_radius &&
+            m_type == other.m_type;
 }
 
 

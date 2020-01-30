@@ -125,7 +125,7 @@ void PropertyFill::drawFill(Fills property)
         painter.fillRect(pixmap.rect(), QBrush(property.gradient().conical(pixmap.rect())));
         break;
     case FillType::LinearGradient:
-        painter.fillRect(pixmap.rect(), QBrush(property.gradient().linear()));
+        painter.fillRect(pixmap.rect(), QBrush(property.gradient().linear(pixmap.rect())));
         break;
     case FillType::Image:
         painter.drawPixmap(pixmap.rect(), property.pixmap(), property.pixmap().rect());

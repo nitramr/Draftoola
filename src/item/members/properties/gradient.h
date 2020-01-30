@@ -58,9 +58,10 @@ public:
     friend QDebug operator<<(QDebug dbg, const Gradient &gradient);
 #endif
 
-    QRadialGradient radial(QRectF target = QRectF()) const;
-    QLinearGradient linear(QLineF target = QLineF()) const;
+    QRadialGradient radial(QRectF target = QRectF()) const;    
     QConicalGradient conical(QRectF target = QRectF()) const;
+    QLinearGradient linear(QRectF target = QRectF()) const;
+    QLinearGradient linear(QLineF target) const;
 
     FillType type() const;
 

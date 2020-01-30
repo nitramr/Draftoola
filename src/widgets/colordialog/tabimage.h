@@ -20,68 +20,25 @@
 
 **************************************************************************************/
 
-#ifndef COLORDIALOG_H
-#define COLORDIALOG_H
+#ifndef TABIMAGE_H
+#define TABIMAGE_H
 
 #include <QWidget>
 
-#include <utilities.h>
-#include <fills.h>
-#include <stroke.h>
-#include <shadow.h>
-
 namespace Ui {
-class ColorDialog;
+class TabImage;
 }
 
-class ColorDialog : public QWidget
+class TabImage : public QWidget
 {
     Q_OBJECT
 
-    enum Mode {
-        FillLayout = 0,
-        StrokeLayout = 1,
-        ShadowLayout = 2
-    };
-
-
 public:
-    explicit ColorDialog(QWidget *parent = nullptr);
-    ~ColorDialog();
-
-    void setProperty(AbstractItemProperty *property);
-
-    Gradient gradient() const;
-    Color color() const;
-    QPixmap pixmap() const;
-    qreal opacity() const;
-    FillType fillType() const;
-
-    Mode mode() const;
+    explicit TabImage(QWidget *parent = nullptr);
+    ~TabImage();
 
 private:
-    Ui::ColorDialog *ui;
-
-    Mode        m_mode;
-    FillType    m_fillType;
-    Color       m_color;
-    Gradient    m_gradient;
-    QPixmap     m_pixmap;
-    qreal       m_opacity;
-
-    void configurateDialog();
-
-
-signals:
-
-    void propertyChanged();
-
-public slots:
-    void updateProperty();
-
-private slots:
-    void changeTabs(int index);
-
+    Ui::TabImage *ui;
 };
 
-#endif // COLORDIALOG_H
+#endif // TABIMAGE_H
