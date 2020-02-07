@@ -39,14 +39,14 @@ enum class FillType {
 Q_DECLARE_METATYPE(FillType)
 
 
-inline void paintGrid(QPainter &painter, QRect rect, QSize grid){
+inline void paintGrid(QPainter &painter, QPainterPath path, QSize grid){
 
-    int xP = rect.x(), yP = rect.y(), offset = 0, gridX = grid.width(), gridY = grid.height();
-    QSize count( rect.width() / gridX, rect.height() / gridY);
+    int xP = path.boundingRect().x(), yP = path.boundingRect().y(), offset = 0, gridX = grid.width(), gridY = grid.height();
+    QSize count( path.boundingRect().width() / gridX, path.boundingRect().height() / gridY);
 
     painter.save();
-    painter.setClipRect(rect);
-    painter.fillRect(rect, Qt::white);
+    painter.setClipPath(path);
+    painter.fillPath(path, Qt::white);
 
     for(int r = 0;  r <= count.height(); r++)
     {
@@ -60,7 +60,7 @@ inline void paintGrid(QPainter &painter, QRect rect, QSize grid){
             else offset--;
             xP += gridX;
         }
-        xP = rect.x();
+        xP = path.boundingRect().x();
         yP += gridY;
         offset = (r % 2) ? 0 : 1;
     }

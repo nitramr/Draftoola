@@ -70,7 +70,7 @@ class ButtonGroup : public QWidget
 public:
     ButtonGroup(QWidget *parent = nullptr);
 
-    QToolButton *createButton(QString const& name,bool checked,QString const& sheet = QString());
+    QWidget *createButton(QString const& name,bool checked,QString const& sheet = QString());
 
     void addButton(ButtonGroupButton *button, bool checked);
 

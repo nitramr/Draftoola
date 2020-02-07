@@ -58,7 +58,7 @@ private:
 
 private slots:
     void updateProperty();
-    void updateColor();
+    void updateFill();
     void updateOpacity();
 
 signals:

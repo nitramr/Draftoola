@@ -38,8 +38,8 @@ friend class LayoutSection;
 
 public:
     LayoutSectionHeader(QString text, QWidget *menu = nullptr, bool toggle = false, QWidget *parent = nullptr);
-    void addButton(QToolButton *button);
-    void removeButton(QToolButton *button);
+    void addWidget(QWidget *widget);
+    void removeWidget(QWidget *widget);
 
 private:
 	void paintEvent(QPaintEvent *);
@@ -71,8 +71,8 @@ public:
     LayoutSection(QWidget *parent = nullptr);
     LayoutSection(QString text, QWidget *menu = nullptr, bool toggle = false, QWidget *parent = nullptr);
 	void addWidget(QWidget * item);
-    void addButton(QToolButton *button);
-    void removeButton(QToolButton *button);
+    void addHeaderWidget(QWidget *widget);
+    void removeHeaderButton(QWidget *widget);
 
     void setText(QString text);
     QString text() const;

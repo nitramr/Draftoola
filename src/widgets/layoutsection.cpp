@@ -39,7 +39,7 @@ LayoutSectionHeader::LayoutSectionHeader( QString text, QWidget *menu, bool togg
     QFont m_font(this->font());
     m_font.setBold( true );
 
-    int limit = 24;
+//    int limit = 24;
     m_collapsed = false; // Expanded by default
 
 
@@ -51,10 +51,8 @@ LayoutSectionHeader::LayoutSectionHeader( QString text, QWidget *menu, bool togg
 
     // Menu Button
     m_btnMenu = new QToolButton();
-    m_btnMenu->setFixedSize( limit,limit );
     m_btnMenu->setIcon( QIcon(":/icons/dark/settings.svg") );
-    m_btnMenu->setToolButtonStyle( Qt::ToolButtonStyle::ToolButtonIconOnly );
-    m_btnMenu->setAutoRaise( true );
+    m_btnMenu->setAutoRaise(true);
 
     if( menu == nullptr ){
         m_btnMenu->hide();
@@ -67,10 +65,8 @@ LayoutSectionHeader::LayoutSectionHeader( QString text, QWidget *menu, bool togg
 
     // Expand / Collapse Button
     m_btnCollapse = new QToolButton();
-    m_btnCollapse->setFixedSize( limit,limit );
     m_btnCollapse->setIcon( QIcon(":/icons/dark/chevron-down.svg") );
-    m_btnCollapse->setToolButtonStyle( Qt::ToolButtonStyle::ToolButtonIconOnly );
-    m_btnCollapse->setAutoRaise( true );
+    m_btnCollapse->setAutoRaise(true);
 
     if( !toggle ){
         m_btnCollapse->hide();
@@ -83,11 +79,9 @@ LayoutSectionHeader::LayoutSectionHeader( QString text, QWidget *menu, bool togg
     m_headerLayout->addWidget( m_btnMenu );
     m_headerLayout->addWidget( m_btnCollapse );
     m_headerLayout->setContentsMargins( 4,4,4,4 );
-//    m_headerLayout->setSpacing( 0 );
 
 
     this->setLayout( m_headerLayout );
-    this->setMinimumHeight( limit );
     this->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Maximum );
 
     this->connect( m_btnCollapse, &QToolButton::clicked,this, &LayoutSectionHeader::setCollapsedState );
@@ -124,15 +118,22 @@ void LayoutSectionHeader::setCollapsed( bool isCollapsed ){
 
 }
 
-void LayoutSectionHeader::addButton( QToolButton *button ){
-    button->setAutoRaise( true );
-    button->setFixedSize( 24,24 );
-    m_headerLayout->insertWidget( m_headerLayout->count() - 2, button );
+void LayoutSectionHeader::addWidget(QWidget *widget ){
+
+    QToolButton *toolButton = static_cast<QToolButton*>(widget);
+
+    if(toolButton){
+        toolButton->setAutoRaise(true);
+        m_headerLayout->insertWidget( m_headerLayout->count() - 2, toolButton );
+    }else{
+        m_headerLayout->insertWidget( m_headerLayout->count() - 2, widget );
+    }
+
 }
 
-void LayoutSectionHeader::removeButton( QToolButton *button ){
-    m_headerLayout->removeWidget( button );
-    button->deleteLater();
+void LayoutSectionHeader::removeWidget(QWidget *widget ){
+    m_headerLayout->removeWidget( widget );
+    widget->deleteLater();
 }
 
 
@@ -175,12 +176,12 @@ void LayoutSection::addWidget(QWidget * item){
 
 }
 
-void LayoutSection::addButton(QToolButton *button){
-    m_header->addButton(button);
+void LayoutSection::addHeaderWidget(QWidget *widget){
+    m_header->addWidget(widget);
 }
 
-void LayoutSection::removeButton(QToolButton *button){
-    m_header->removeButton(button);
+void LayoutSection::removeHeaderButton(QWidget *widget){
+    m_header->removeWidget(widget);
 }
 
 void LayoutSection::setText(QString text)

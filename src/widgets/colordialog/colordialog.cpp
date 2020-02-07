@@ -122,7 +122,7 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
             m_color = prop->color();
             m_opacity = prop->opacity();
 
-            ui->tabColor->setColor(m_color, m_opacity);
+            ui->tabColor->setColor(m_color);
 
             m_mode = Mode::FillLayout;
 
@@ -143,7 +143,7 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
             m_color = prop->color();
             m_opacity = m_color.alphaF();
 
-            ui->tabColor->setColor(m_color, m_opacity);
+            ui->tabColor->setColor(m_color);
 
             m_mode = Mode::StrokeLayout;
         }
@@ -161,7 +161,7 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
             m_color = prop->color();
             m_opacity = m_color.alphaF();
 
-            ui->tabColor->setColor(m_color, m_opacity);
+            ui->tabColor->setColor(m_color);
 
             m_mode = Mode::ShadowLayout;
         }
@@ -243,7 +243,6 @@ void ColorDialog::configurateDialog()
 void ColorDialog::updateProperty()
 {
     m_color = ui->tabColor->color();
-    m_opacity = ui->tabColor->alpha();
 
     emit propertyChanged();
 }

@@ -131,10 +131,7 @@ void PropertyStroke::drawPreview(Stroke property)
         painter.fillRect(pixmap.rect(), QBrush(property.gradient().linear()));
         break;
     case FillType::Image:
-
-        break;
     case FillType::Pattern:
-        break;
     default:
         break;
     }
@@ -151,7 +148,7 @@ void PropertyStroke::connectSlots()
     connect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateProperty);
     connect(btn_inner, &QToolButton::clicked, this, &PropertyStroke::updateProperty);
     connect(btn_outer, &QToolButton::clicked, this, &PropertyStroke::updateProperty);
-    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyStroke::updateColor);
+    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyStroke::updateFill);
 }
 
 void PropertyStroke::disconnectSlots()
@@ -161,7 +158,7 @@ void PropertyStroke::disconnectSlots()
     disconnect(btn_center, &QToolButton::clicked, this, &PropertyStroke::updateProperty);
     disconnect(btn_inner, &QToolButton::clicked, this, &PropertyStroke::updateProperty);
     disconnect(btn_outer, &QToolButton::clicked, this, &PropertyStroke::updateProperty);
-    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyStroke::updateColor);
+    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyStroke::updateFill);
 }
 
 void PropertyStroke::updateProperty()
@@ -182,11 +179,9 @@ void PropertyStroke::updateProperty()
     emit hasChanged(true);
 }
 
-void PropertyStroke::updateColor()
+void PropertyStroke::updateFill()
 {
-    Color col = m_colorDialog->color();
-    col.setAlphaF( m_colorDialog->opacity() );
-    m_property.setColor(col);
+    m_property.setColor(m_colorDialog->color());
     m_property.setGradient(m_colorDialog->gradient());
     m_property.setFillType(m_colorDialog->fillType());
 

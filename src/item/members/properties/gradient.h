@@ -95,6 +95,8 @@ public:
     qreal radius() const;
     void setRadius(qreal radius);
 
+    void setColorAt(double position, QColor color);
+
 
 private:
     FillType m_type;

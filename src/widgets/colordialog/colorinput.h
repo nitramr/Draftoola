@@ -41,18 +41,21 @@ public:
 private:
     Ui::ColorInput *ui;
     Color m_color;
+    int m_alpha;
 
     void connectSlots();
     void disconnectSlots();
 
 public slots:
-    void setColor(const Color color, qreal alpha);
+    void setColor(const Color color, int alpha);
 
 private slots:
     void updateColor();
+    void updateAlpha();
 
 signals:
-    void colorChanged(Color color, qreal alpha);
+    void colorChanged(Color color);
+    void alphaChanged(int alpha);
 
 };
 

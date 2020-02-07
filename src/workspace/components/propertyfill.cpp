@@ -84,7 +84,9 @@ void PropertyFill::setFill(Fills fill)
     m_property = fill;
 
     ui->cb_active->setChecked(fill.isOn());
-    ui->sb_opacity->setValue(fill.opacity()*100);
+    ui->sb_opacity->setValue( (m_property.fillType() == FillType::Color) ?
+                                  qRound(m_property.color().alphaF()* 100) :
+                                  qRound(m_property.opacity() * 100) );
 
     int indexMode = 0;
     for(int i = 0; i < ui->combo_blending->count(); i++){
@@ -111,7 +113,7 @@ void PropertyFill::drawFill(Fills property)
     pixmap.fill(Qt::transparent);
 
     QPainter painter(&pixmap);
-    painter.setOpacity(property.opacity());
+
 
     switch (property.fillType()) {
     case FillType::Color:{
@@ -119,15 +121,19 @@ void PropertyFill::drawFill(Fills property)
         break;
     }
     case FillType::RadialGradient:
+        painter.setOpacity(property.opacity());
         painter.fillRect(pixmap.rect(), QBrush(property.gradient().radial(pixmap.rect())));
         break;
     case FillType::ConicalGradient:
+        painter.setOpacity(property.opacity());
         painter.fillRect(pixmap.rect(), QBrush(property.gradient().conical(pixmap.rect())));
         break;
     case FillType::LinearGradient:
+        painter.setOpacity(property.opacity());
         painter.fillRect(pixmap.rect(), QBrush(property.gradient().linear(pixmap.rect())));
         break;
     case FillType::Image:
+        painter.setOpacity(property.opacity());
         painter.drawPixmap(pixmap.rect(), property.pixmap(), property.pixmap().rect());
         break;
     case FillType::Pattern:
@@ -144,7 +150,7 @@ void PropertyFill::connectSlots()
     connect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateProperty);
     connect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateOpacity);
     connect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateProperty);
-    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyFill::updateColor);
+    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyFill::updateFill);
 }
 
 void PropertyFill::disconnectSlots()
@@ -152,7 +158,7 @@ void PropertyFill::disconnectSlots()
     disconnect(ui->cb_active, &QCheckBox::clicked, this, &PropertyFill::updateProperty);
     disconnect(ui->sb_opacity, QOverload<int>::of(&QSpinBox::valueChanged), this, &PropertyFill::updateOpacity);
     disconnect(ui->combo_blending, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PropertyFill::updateProperty);
-    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyFill::updateColor);
+    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyFill::updateFill);
 }
 
 void PropertyFill::updateProperty()
@@ -166,7 +172,7 @@ void PropertyFill::updateProperty()
     emit hasChanged(true);
 }
 
-void PropertyFill::updateColor()
+void PropertyFill::updateFill()
 {
     m_property.setColor(m_colorDialog->color());
     m_property.setOpacity(m_colorDialog->opacity());
@@ -175,7 +181,9 @@ void PropertyFill::updateColor()
     m_property.setFillType(m_colorDialog->fillType()); // set which type should used
 
     disconnectSlots();
-    ui->sb_opacity->setValue( qRound(m_property.opacity() * 100) );
+    ui->sb_opacity->setValue( (m_property.fillType() == FillType::Color) ?
+                                  qRound(m_property.color().alphaF()* 100) :
+                                  qRound(m_property.opacity() * 100) );
     connectSlots();
 
     updateProperty();
@@ -183,8 +191,13 @@ void PropertyFill::updateColor()
 
 void PropertyFill::updateOpacity()
 {
-    m_property.setOpacity(ui->sb_opacity->value()/100.0);
-    m_colorDialog->setProperty(&m_property);
+
+    // if fill type is "color" opacity widget controls directly alpha channel of color
+    if(m_property.fillType() == FillType::Color){
+        Color col = m_property.color();
+        col.setAlphaF(ui->sb_opacity->value()/100.0);
+        m_property.setColor(col);
+    }else m_property.setOpacity( ui->sb_opacity->value()/100.0 );
 
     updateProperty();
 }

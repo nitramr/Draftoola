@@ -58,7 +58,7 @@ private:
 
 private slots:
     void updateProperty();
-    void updateColor();
+    void updateFill();
 
 signals:
     void hasChanged(bool);

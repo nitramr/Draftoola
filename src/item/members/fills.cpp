@@ -34,17 +34,21 @@ Fills::Fills() : Fills(QString()){}
 
 Fills::Fills(const QString name) : Fills(name, Color()){}
 
+// Color
 Fills::Fills(const QString name, const Color &color) : AbstractItemProperty(name){
     m_gradient = Gradient();
     setColor(color);
     m_fillMode = FillMode::Fill;
+    m_opacity = 1.0;
 }
 
+// Image (Pixmap)
 Fills::Fills(const QString name, const QPixmap &pixmap, const FillMode fillMode) :  Fills(name, Color()){
     setPixmap(pixmap);
     m_fillMode = fillMode;
 }
 
+// Image
 Fills::Fills(const QString name, const QImage &image, const FillMode fillMode) : Fills(name, Color()){
 
     QPixmap pixmap(image.size());
@@ -57,9 +61,9 @@ Fills::Fills(const QString name, const QImage &image, const FillMode fillMode) :
     m_fillMode = fillMode;
 }
 
+// Gradient
 Fills::Fills(const QString name, const Gradient &gradient) : Fills(name, Color()){
     setGradient(gradient);
-    m_fillMode = FillMode::Fill;
 }
 
 
@@ -102,13 +106,7 @@ Gradient Fills::gradient() const
 
 void Fills::setColor(Color color)
 {
-    qreal opacity = qRound(color.alphaF() * 100) / 100.0;
-    setOpacity(opacity);
-
-    if(opacity < 1.0) color.setAlphaF(1);
-
     m_color = color;
-
     setFillType(FillType::Color);
 }
 

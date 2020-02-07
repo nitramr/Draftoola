@@ -20,14 +20,31 @@
 
 **************************************************************************************/
 
+#include <gradienteditor.h>
 #include "tabgradient.h"
 #include "ui_tabgradient.h"
+
+#include <gradient.h>
 
 TabGradient::TabGradient(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::TabGradient)
 {
     ui->setupUi(this);
+
+
+    QLinearGradient linear(0,1,100,1);
+    linear.setColorAt(0.0, Qt::black);
+    linear.setColorAt(0.5, Qt::white);
+    linear.setColorAt(1.0, QColor(255,0,0,128));
+
+    Gradient gradient("Gradient", linear);
+
+    GradientEditor *slider = new GradientEditor();
+    slider->setGradient(gradient);
+
+
+    ui->verticalLayout->addWidget(slider);
 }
 
 TabGradient::~TabGradient()

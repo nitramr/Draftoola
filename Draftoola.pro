@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui widgets svg
+QT += core gui widgets svg designer
 #QT += gui-private # add private classes
 QT += script
 #qtHaveModule(printsupport): QT += printsupport
@@ -41,10 +41,15 @@ SOURCES += src/main.cpp\
     src/manager/stylefactory.cpp \
     src/widgets/buttongroup.cpp \
     src/widgets/colorbutton.cpp \
+    src/widgets/colordialog/QtColorWidgets/color_2d_slider.cpp \
+    src/widgets/colordialog/QtColorWidgets/gradient_editor.cpp \
+    src/widgets/colordialog/QtColorWidgets/gradient_slider.cpp \
+    src/widgets/colordialog/QtColorWidgets/hue_slider.cpp \
     src/widgets/colordialog/colordialog.cpp \
     src/widgets/colordialog/colorinput.cpp \
     src/widgets/colordialog/colormap.cpp \
     src/widgets/colordialog/colorslider.cpp \
+    src/widgets/colordialog/gradienteditor.cpp \
     src/widgets/colordialog/tabcolor.cpp \
     src/widgets/colordialog/tabgradient.cpp \
     src/widgets/colordialog/tabimage.cpp \
@@ -93,10 +98,17 @@ HEADERS  +=     src/mainwindow.h \
     src/manager/stylefactory.h \
     src/widgets/buttongroup.h \
     src/widgets/colorbutton.h \
+    src/widgets/colordialog/QtColorWidgets/color_2d_slider.hpp \
+    src/widgets/colordialog/QtColorWidgets/colorwidgets_global.hpp \
+    src/widgets/colordialog/QtColorWidgets/gradient_editor.hpp \
+    src/widgets/colordialog/QtColorWidgets/gradient_helper.hpp \
+    src/widgets/colordialog/QtColorWidgets/gradient_slider.hpp \
+    src/widgets/colordialog/QtColorWidgets/hue_slider.hpp \
     src/widgets/colordialog/colordialog.h \
     src/widgets/colordialog/colorinput.h \
     src/widgets/colordialog/colormap.h \
     src/widgets/colordialog/colorslider.h \
+    src/widgets/colordialog/gradienteditor.h \
     src/widgets/colordialog/tabcolor.h \
     src/widgets/colordialog/tabgradient.h \
     src/widgets/colordialog/tabimage.h \
@@ -146,6 +158,7 @@ INCLUDEPATH += \
     $$PWD/src/item/members/properties \
     $$PWD/src/widgets \
     $$PWD/src/widgets/colordialog \
+    $$PWD/src/widgets/colordialog/QtColorWidgets \
     $$PWD/src/manager \
     $$PWD/src/designer \
     $$PWD/src/workspace \

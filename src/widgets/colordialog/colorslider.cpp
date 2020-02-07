@@ -47,7 +47,7 @@ ColorSlider::ColorSlider(SliderType type, QWidget* parent)
 
     switch (m_type) {
     case SliderType::Hue:
-        m_maxValue = 360;
+        m_maxValue = 359;
         break;
     case SliderType::Alpha:
         m_maxValue = 100;
@@ -223,7 +223,9 @@ void ColorSlider::paintEvent(QPaintEvent* )
 
     // Draw grid
     if(m_type == Alpha){
-        paintGrid(p, r, QSize(6,3));
+        QPainterPath path;
+        path.addRect(r);
+        paintGrid(p, path, QSize(6,3));
     }
 
     p.drawPixmap(r.topLeft(), pix);

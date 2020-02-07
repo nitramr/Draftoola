@@ -31,14 +31,15 @@ TabColor::TabColor(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_colorMap = new ColorMap();
-    m_colorSlider = new ColorSlider(ColorSlider::Hue);
-    m_alphaSlider = new ColorSlider(ColorSlider::Alpha);
+    m_colorMap2D = new color_widgets::Color2DSlider();
+    m_hueSlider = new color_widgets::HueSlider();
+    m_alphaSlider2 = new color_widgets::GradientSlider();
+    m_alphaSlider2->setRange(0,100);
 
     ui->sectionColorMap->setText(tr("Color Picker"));
-    ui->sectionColorMap->addWidget(m_colorMap);
-    ui->sectionColorMap->addWidget(m_colorSlider);
-    ui->sectionColorMap->addWidget(m_alphaSlider);
+    ui->sectionColorMap->addWidget(m_colorMap2D);
+    ui->sectionColorMap->addWidget(m_hueSlider);
+    ui->sectionColorMap->addWidget(m_alphaSlider2);
 
     ui->sectionColorPalette->setText(tr("Color Palette"));
 
@@ -55,47 +56,64 @@ Color TabColor::color() const
     return m_color;
 }
 
-qreal TabColor::alpha() const
-{
-    return m_alpha;
-}
 
 void TabColor::connectSlots()
 {
     connect(ui->colorInput, &ColorInput::colorChanged, this, &TabColor::updateColor);
-    connect(m_colorMap, &ColorMap::newColor, this, &TabColor::updateColor);
-    connect(m_colorSlider, &ColorSlider::newColor, this, &TabColor::updateColor);
-    connect(m_alphaSlider, &ColorSlider::newColor, this, &TabColor::updateColor);
+    connect(ui->colorInput, &ColorInput::alphaChanged, this, &TabColor::updateAlpha);
+    connect(m_colorMap2D, &color_widgets::Color2DSlider::colorChanged, this, &TabColor::updateColor);
+    connect(m_hueSlider, &color_widgets::HueSlider::colorHueChanged, this, &TabColor::updateHue);
+    connect(m_alphaSlider2, &color_widgets::GradientSlider::valueChanged, this, &TabColor::updateAlpha);
 }
 
 
 void TabColor::disconnectSlots()
 {
     disconnect(ui->colorInput, &ColorInput::colorChanged, this, &TabColor::updateColor);
-    disconnect(m_colorMap, &ColorMap::newColor, this, &TabColor::updateColor);
-    disconnect(m_colorSlider, &ColorSlider::newColor, this, &TabColor::updateColor);
-    disconnect(m_alphaSlider, &ColorSlider::newColor, this, &TabColor::updateColor);
+    disconnect(ui->colorInput, &ColorInput::alphaChanged, this, &TabColor::updateAlpha);
+    disconnect(m_colorMap2D, &color_widgets::Color2DSlider::colorChanged, this, &TabColor::updateColor);
+    disconnect(m_hueSlider, &color_widgets::HueSlider::colorHueChanged, this, &TabColor::updateHue);
+    disconnect(m_alphaSlider2, &color_widgets::GradientSlider::valueChanged, this, &TabColor::updateAlpha);
 }
 
-void TabColor::setColor(Color color, qreal alpha)
-{
+void TabColor::setColor(Color color)
+{    
     m_color = color;
-    m_alpha = alpha;
+
+    qDebug() << m_color.alphaF();
 
     disconnectSlots();
 
-    ui->colorInput->setColor(m_color, m_alpha);
-    m_colorMap->setColor(m_color, m_alpha);
-    m_colorSlider->setColor(m_color, m_alpha);
-    m_alphaSlider->setColor(m_color, m_alpha);
+    int alpha = qRound(m_color.alphaF() * 100);
+
+    ui->colorInput->setColor(m_color, alpha);
+    m_colorMap2D->setColor(m_color);
+    m_hueSlider->setColorHue(m_color.hueF());
+    m_alphaSlider2->setFirstColor(QColor::fromRgb(m_color.red(), m_color.green(), m_color.blue(), 0));
+    m_alphaSlider2->setLastColor(QColor::fromRgb(m_color.red(), m_color.green(), m_color.blue(), 255));
+    m_alphaSlider2->setValue(alpha);
 
     connectSlots();
 
 }
 
-void TabColor::updateColor(Color color, qreal alpha)
+void TabColor::updateHue(qreal hue)
 {
-    setColor(color, alpha);
+    updateColor(QColor::fromHsvF(hue, m_color.saturationF(), m_color.valueF()));
+}
+
+void TabColor::updateColor(Color color)
+{
+    setColor(color);
+
+    emit colorChanged();
+}
+
+void TabColor::updateAlpha(int alpha)
+{
+    m_color.setAlphaF(alpha / 100.0);
+
+    setColor(m_color);
 
     emit colorChanged();
 }

@@ -528,11 +528,9 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, (renderQuality() == RenderQuality::Quality) ? true : false);
-
-    QRectF shapeRect = shape().boundingRect();
-
-    painter->setOpacity(fills.opacity());
     painter->setCompositionMode(fills.blendMode());
+
+    QRectF shapeRect = shape().boundingRect();    
 
     switch(fills.fillType()){
     case FillType::Color:{
@@ -554,6 +552,7 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
     case FillType::RadialGradient:{
         QRadialGradient rg(fills.gradient().radial(rect()));
         rg.setCenter(rect().center());
+        painter->setOpacity(fills.opacity());
         painter->setBrush(QBrush(rg));
         painter->drawPath(shape());
         break;
@@ -561,12 +560,13 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
     case FillType::ConicalGradient:{
         QConicalGradient cg(fills.gradient().conical(rect()));
         cg.setCenter(rect().center());
+        painter->setOpacity(fills.opacity());
         painter->setBrush(QBrush(cg));
         painter->drawPath(shape());
         break;
     }
     case FillType::LinearGradient:{
-
+        painter->setOpacity(fills.opacity());
         painter->setBrush(QBrush( fills.gradient().linear( QLineF(QPointF(), QPointF(0,rect().bottom())) ) ));
         painter->drawPath(shape());
         break;
@@ -609,6 +609,7 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
                             static_cast<int>(shapeRect.width() * xratio),
                             static_cast<int>(shapeRect.height() * yratio ));
 
+            painter->setOpacity(fills.opacity());
             painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
             painter->setClipPath(shape(), Qt::ClipOperation::IntersectClip);
             painter->drawPixmap(shapeRect, texture, imgRect);

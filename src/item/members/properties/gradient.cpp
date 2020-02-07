@@ -227,6 +227,11 @@ void Gradient::setRadius(qreal radius)
     m_radius = radius;
 }
 
+void Gradient::setColorAt(double position, QColor color)
+{
+    m_stops.append(QPair<double,QColor>(position, color));
+}
+
 void Gradient::fromObject(AbstractProperty object)
 {
     m_id = object.m_id;

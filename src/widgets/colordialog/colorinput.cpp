@@ -32,7 +32,7 @@ ColorInput::ColorInput(QWidget *parent) :
 {
     ui->setupUi(this);
 
- //   ui->txtHex->setInputMask( "#Hhhhhh" );
+    //   ui->txtHex->setInputMask( "#Hhhhhh" );
 
     connectSlots();
 }
@@ -47,7 +47,7 @@ void ColorInput::connectSlots()
     connect(ui->sbRed, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
     connect(ui->sbGreen, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
     connect(ui->sbBlue, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
-    connect(ui->sbAlpha, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
+    connect(ui->sbAlpha, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateAlpha);
     connect(ui->txtHex, &QLineEdit::returnPressed, this, &ColorInput::updateColor);
 }
 
@@ -56,22 +56,23 @@ void ColorInput::disconnectSlots()
     disconnect(ui->sbRed, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
     disconnect(ui->sbGreen, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
     disconnect(ui->sbBlue, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
-    disconnect(ui->sbAlpha, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
+    disconnect(ui->sbAlpha, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateAlpha);
     disconnect(ui->txtHex, &QLineEdit::returnPressed, this, &ColorInput::updateColor);
 }
 
-void ColorInput::setColor(const Color color, qreal alpha)
+void ColorInput::setColor(const Color color, int alpha)
 {
-        disconnectSlots();
+    disconnectSlots();
 
-        m_color = color;
-        ui->txtHex->setText( color.name(QColor::NameFormat::HexRgb) );
-        ui->sbRed->setValue( color.red() );
-        ui->sbGreen->setValue( color.green() );
-        ui->sbBlue->setValue( color.blue() );
-        ui->sbAlpha->setValue( qRound(alpha * 100) ); // we have to round the value because of qreal conversion
+    m_color = color;
+    m_alpha = alpha;
+    ui->txtHex->setText( color.name(QColor::NameFormat::HexRgb) );
+    ui->sbRed->setValue( color.red() );
+    ui->sbGreen->setValue( color.green() );
+    ui->sbBlue->setValue( color.blue() );
+    ui->sbAlpha->setValue( m_alpha ); // we have to round the value because of qreal conversion
 
-        connectSlots();
+    connectSlots();
 }
 
 
@@ -88,8 +89,14 @@ void ColorInput::updateColor()
         m_color.setRgb(ui->sbRed->value(), ui->sbGreen->value(), ui->sbBlue->value() );
     }
 
-    qreal alpha = ui->sbAlpha->value()/100.0;
-    setColor( m_color, alpha );
+    setColor( m_color, m_alpha);
 
-    emit colorChanged( m_color, alpha);
+    emit colorChanged( m_color);
+}
+
+void ColorInput::updateAlpha()
+{
+    setColor( m_color, ui->sbAlpha->value());
+
+    emit alphaChanged( m_alpha);
 }

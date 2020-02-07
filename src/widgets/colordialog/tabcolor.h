@@ -28,6 +28,8 @@
 #include <color.h>
 #include <colormap.h>
 #include <colorslider.h>
+#include <color_2d_slider.hpp>
+#include <hue_slider.hpp>
 
 namespace Ui {
 class TabColor;
@@ -42,26 +44,26 @@ public:
     ~TabColor();
 
     Color color() const;
-    qreal alpha() const;
 
 private:
     Ui::TabColor *ui;
 
-    ColorMap *m_colorMap;
-    ColorSlider * m_colorSlider;
-    ColorSlider * m_alphaSlider;
+    color_widgets::Color2DSlider * m_colorMap2D;
+    color_widgets::HueSlider * m_hueSlider;
+    color_widgets::GradientSlider * m_alphaSlider2;
     Color m_color;
-    qreal m_alpha;
 
     void connectSlots();
     void disconnectSlots();
 
 public slots:
 
-    void setColor(Color color, qreal alpha);
+    void setColor(Color color);
 
 private slots:
-    void updateColor(Color color, qreal alpha);
+    void updateHue(qreal hue);
+    void updateColor(Color color);
+    void updateAlpha(int alpha);
 
 signals:
     void colorChanged();

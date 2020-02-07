@@ -99,7 +99,7 @@ void PropertyShadow::connectSlots()
     connect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
     connect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
     connect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
-    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateColor);
+    connect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateFill);
 }
 
 void PropertyShadow::disconnectSlots()
@@ -110,7 +110,7 @@ void PropertyShadow::disconnectSlots()
     disconnect(ui->sb_spread, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
     disconnect(ui->sb_xOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
     disconnect(ui->sb_yOffset, QOverload<double>::of(&IntelligentSpinBox::valueChanged), this, &PropertyShadow::updateProperty);
-    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateColor);
+    disconnect(m_colorDialog, &ColorDialog::propertyChanged, this, &PropertyShadow::updateFill);
 }
 
 void PropertyShadow::updateProperty()
@@ -127,11 +127,9 @@ void PropertyShadow::updateProperty()
     emit hasChanged(true);
 }
 
-void PropertyShadow::updateColor()
+void PropertyShadow::updateFill()
 {
-    Color col = m_colorDialog->color();
-    col.setAlphaF( m_colorDialog->opacity() );
-    m_property.setColor(col);
+    m_property.setColor(m_colorDialog->color());
 
     updateProperty();
 }

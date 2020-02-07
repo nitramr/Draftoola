@@ -91,11 +91,11 @@ void ItemProperties::setupFills()
     m_section->setFixedWidth(300);
     m_section->addWidget(itemFills);
     m_section->setCollapsedState(true);
-    m_section->addButton(btn_Addnew);
+    m_section->addHeaderWidget(btn_Addnew);
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemFills, &ipFills::newFill);
     this->connect(itemFills, &ipFills::sendCollapse, m_section, &LayoutSection::setCollapsedState);
-    this->connect(itemFills, &ipFills::enabled, btn_Addnew, &QToolButton::setEnabled);
+    this->connect(itemFills, &ipFills::enabled, btn_Addnew, &QWidget::setEnabled);
     this->connect(itemFills, &ipFills::itemsChanged, [this](){
         emit itemsChanged();
     });
@@ -115,11 +115,11 @@ void ItemProperties::setupStrokes()
     m_section->setFixedWidth(300);
     m_section->addWidget(itemStrokes);
     m_section->setCollapsedState(true);
-    m_section->addButton(btn_Addnew);
+    m_section->addHeaderWidget(btn_Addnew);
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemStrokes, &ipStrokes::newStroke);
     this->connect(itemStrokes, &ipStrokes::sendCollapse, m_section, &LayoutSection::setCollapsedState);
-    this->connect(itemStrokes, &ipStrokes::enabled, btn_Addnew, &QToolButton::setEnabled);
+    this->connect(itemStrokes, &ipStrokes::enabled, btn_Addnew, &QWidget::setEnabled);
     this->connect(itemStrokes, &ipStrokes::itemsChanged, [this](){
         emit itemsChanged();
     });
@@ -139,11 +139,11 @@ void ItemProperties::setupShadows()
     m_section->setFixedWidth(300);
     m_section->addWidget(itemShadows);
     m_section->setCollapsedState(true);
-    m_section->addButton(btn_Addnew);
+    m_section->addHeaderWidget(btn_Addnew);
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemShadows, &ipShadows::newShadow);
     this->connect(itemShadows, &ipShadows::sendCollapse, m_section, &LayoutSection::setCollapsedState);
-    this->connect(itemShadows, &ipShadows::enabled, btn_Addnew, &QToolButton::setEnabled);
+    this->connect(itemShadows, &ipShadows::enabled, btn_Addnew, &QWidget::setEnabled);
     this->connect(itemShadows, &ipShadows::itemsChanged, [this](){
         emit itemsChanged();
     });
@@ -162,11 +162,11 @@ void ItemProperties::setupInnerShadows()
     m_section->setFixedWidth(300);
     m_section->addWidget(itemInnerShadows);
     m_section->setCollapsedState(true);
-    m_section->addButton(btn_Addnew);
+    m_section->addHeaderWidget(btn_Addnew);
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemInnerShadows, &ipInnerShadows::newShadow);
     this->connect(itemInnerShadows, &ipInnerShadows::sendCollapse, m_section, &LayoutSection::setCollapsedState);
-    this->connect(itemInnerShadows, &ipInnerShadows::enabled, btn_Addnew, &QToolButton::setEnabled);
+    this->connect(itemInnerShadows, &ipInnerShadows::enabled, btn_Addnew, &QWidget::setEnabled);
     this->connect(itemInnerShadows, &ipInnerShadows::itemsChanged, [this](){
         emit itemsChanged();
     });
@@ -185,7 +185,7 @@ void ItemProperties::setupExportLevel()
     m_section->setFixedWidth(300);
     m_section->addWidget(itemExportLevels);
     m_section->setCollapsedState(true);
-    m_section->addButton(btn_Addnew);
+    m_section->addHeaderWidget(btn_Addnew);
 
     this->connect(btn_Addnew, &QToolButton::clicked, itemExportLevels, &ipExportLevels::newExportLevel);
     this->connect(itemExportLevels, &ipExportLevels::sendCollapse, m_section, &LayoutSection::setCollapsedState);
