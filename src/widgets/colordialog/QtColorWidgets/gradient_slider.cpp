@@ -28,25 +28,11 @@
 #include <QLinearGradient>
 #include <QMouseEvent>
 #include <QDebug>
+//#include <utilities.h>
 //#include "QtColorWidgets/color_utils.hpp"
 
 
 namespace color_widgets {
-
-inline QPixmap paintGrid(){
-
-    int w = 12;
-    int h = 6;
-
-    QPixmap pixmap(w,h);
-    QPainter painter(&pixmap);
-    painter.fillRect(pixmap.rect(), Qt::white);
-
-    painter.fillRect(QRect(w/2,0,w/2,h/2), Qt::lightGray);
-    painter.fillRect(QRect(0,h/2,w/2,h/2), Qt::lightGray);
-
-    return pixmap;
-}
 
 
 class GradientSlider::Private
@@ -57,8 +43,8 @@ public:
 
     Private() :
         back(Qt::darkGray, Qt::DiagCrossPattern)
-    {
-        back.setTexture( paintGrid());
+    {        
+        back.setTexture(QPixmap(QStringLiteral(":/color_widgets/alphaback.png")));
         gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
         gradient.setSpread(QGradient::RepeatSpread);
     }

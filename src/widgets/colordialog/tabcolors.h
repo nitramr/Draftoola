@@ -26,32 +26,32 @@
 #include <QWidget>
 
 #include <color.h>
-#include <colormap.h>
-#include <colorslider.h>
 #include <color_2d_slider.hpp>
-#include <hue_slider.hpp>
+#include <gradient.h>
 
 namespace Ui {
-class TabColor;
+class TabColors;
 }
 
-class TabColor : public QWidget
+class TabColors : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TabColor(QWidget *parent = nullptr);
-    ~TabColor();
+    explicit TabColors(QWidget *parent = nullptr);
+    ~TabColors();
 
     Color color() const;
+    Gradient gradient() const;
+
+    void enableGradientControls(bool enabled);
 
 private:
-    Ui::TabColor *ui;
+    Ui::TabColors *ui;
 
     color_widgets::Color2DSlider * m_colorMap2D;
-    color_widgets::HueSlider * m_hueSlider;
-    color_widgets::GradientSlider * m_alphaSlider2;
     Color m_color;
+    Gradient m_gradient;
 
     void connectSlots();
     void disconnectSlots();
@@ -59,14 +59,18 @@ private:
 public slots:
 
     void setColor(Color color);
+    void setGradient(Gradient gradient);
 
 private slots:
     void updateHue(qreal hue);
     void updateColor(Color color);
     void updateAlpha(int alpha);
+    void updateGradient(QGradientStops stops);
+    void updateGradientStop(int stop);
 
 signals:
     void colorChanged();
+    void gradientChanged();
 
 };
 

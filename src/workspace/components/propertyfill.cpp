@@ -173,7 +173,7 @@ void PropertyFill::updateProperty()
 }
 
 void PropertyFill::updateFill()
-{
+{    
     m_property.setColor(m_colorDialog->color());
     m_property.setOpacity(m_colorDialog->opacity());
     m_property.setPixmap(m_colorDialog->pixmap());

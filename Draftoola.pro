@@ -42,16 +42,16 @@ SOURCES += src/main.cpp\
     src/widgets/buttongroup.cpp \
     src/widgets/colorbutton.cpp \
     src/widgets/colordialog/QtColorWidgets/color_2d_slider.cpp \
+    src/widgets/colordialog/QtColorWidgets/color_line_edit.cpp \
+    src/widgets/colordialog/QtColorWidgets/color_names.cpp \
+    src/widgets/colordialog/QtColorWidgets/color_preview.cpp \
     src/widgets/colordialog/QtColorWidgets/gradient_editor.cpp \
     src/widgets/colordialog/QtColorWidgets/gradient_slider.cpp \
     src/widgets/colordialog/QtColorWidgets/hue_slider.cpp \
     src/widgets/colordialog/colordialog.cpp \
     src/widgets/colordialog/colorinput.cpp \
-    src/widgets/colordialog/colormap.cpp \
-    src/widgets/colordialog/colorslider.cpp \
     src/widgets/colordialog/gradienteditor.cpp \
-    src/widgets/colordialog/tabcolor.cpp \
-    src/widgets/colordialog/tabgradient.cpp \
+    src/widgets/colordialog/tabcolors.cpp \
     src/widgets/colordialog/tabimage.cpp \
     src/widgets/flowlayout.cpp \
     src/widgets/intelligentspinbox.cpp \
@@ -99,6 +99,10 @@ HEADERS  +=     src/mainwindow.h \
     src/widgets/buttongroup.h \
     src/widgets/colorbutton.h \
     src/widgets/colordialog/QtColorWidgets/color_2d_slider.hpp \
+    src/widgets/colordialog/QtColorWidgets/color_line_edit.hpp \
+    src/widgets/colordialog/QtColorWidgets/color_names.hpp \
+    src/widgets/colordialog/QtColorWidgets/color_preview.hpp \
+    src/widgets/colordialog/QtColorWidgets/color_utils.hpp \
     src/widgets/colordialog/QtColorWidgets/colorwidgets_global.hpp \
     src/widgets/colordialog/QtColorWidgets/gradient_editor.hpp \
     src/widgets/colordialog/QtColorWidgets/gradient_helper.hpp \
@@ -106,11 +110,8 @@ HEADERS  +=     src/mainwindow.h \
     src/widgets/colordialog/QtColorWidgets/hue_slider.hpp \
     src/widgets/colordialog/colordialog.h \
     src/widgets/colordialog/colorinput.h \
-    src/widgets/colordialog/colormap.h \
-    src/widgets/colordialog/colorslider.h \
     src/widgets/colordialog/gradienteditor.h \
-    src/widgets/colordialog/tabcolor.h \
-    src/widgets/colordialog/tabgradient.h \
+    src/widgets/colordialog/tabcolors.h \
     src/widgets/colordialog/tabimage.h \
     src/widgets/flowlayout.h \
     src/widgets/intelligentspinbox.h \
@@ -133,8 +134,7 @@ HEADERS  +=     src/mainwindow.h \
 FORMS    += src/mainwindow.ui \
     src/widgets/colordialog/colordialog.ui \
     src/widgets/colordialog/colorinput.ui \
-    src/widgets/colordialog/tabcolor.ui \
-    src/widgets/colordialog/tabgradient.ui \
+    src/widgets/colordialog/tabcolors.ui \
     src/widgets/colordialog/tabimage.ui \
     src/workspace/tool_itemproperties.ui \
     src/workspace/tool_outliner.ui \

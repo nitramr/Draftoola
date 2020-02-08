@@ -29,6 +29,7 @@
 #include <fills.h>
 #include <stroke.h>
 #include <shadow.h>
+#include <QTabBar>
 
 namespace Ui {
 class ColorDialog;
@@ -68,8 +69,10 @@ private:
     Gradient    m_gradient;
     QPixmap     m_pixmap;
     qreal       m_opacity;
+    QTabBar    *m_tabBar;
 
     void configurateDialog();
+    void selectTab();
 
 
 signals:

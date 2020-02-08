@@ -337,7 +337,7 @@ void GradientEditor::paintEvent(QPaintEvent *)
     // Draw Background
     QPainterPath path;
     path.addRoundedRect(rangeRect(), rangeRect().height()/2, rangeRect().height()/2);
-    paintGrid(painter, path, QSize(6,3));
+//    paintGrid(painter, path, QSize(6,3));
 
     // Draw Gradient
 //    painter.setRenderHint(QPainter::Antialiasing, true);

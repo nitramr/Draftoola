@@ -42,7 +42,7 @@ void ColorButton::setIcon(const QPixmap &pixmap)
     QPainterPath path;
     path.addRect(iconPixmap.rect());
 
-    paintGrid(painter, path, QSize(6,6));
+    painter.fillRect(pixmap.rect(), QBrush(paintGrid()) );
     painter.drawPixmap(pixmap.rect(), pixmap);
 
     QIcon icon(iconPixmap);

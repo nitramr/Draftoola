@@ -33,161 +33,70 @@
     <number>4</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="tabs">
-     <property name="tabShape">
-      <enum>QTabWidget::Rounded</enum>
-     </property>
+    <widget class="QStackedWidget" name="tabs">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <property name="iconSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="documentMode">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="tColor">
-      <attribute name="icon">
-       <iconset resource="../../resources/icons/icons.qrc">
-        <normaloff>:/icons/dark/colordialog/color.svg</normaloff>:/icons/dark/colordialog/color.svg</iconset>
-      </attribute>
-      <attribute name="title">
-       <string/>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+     <widget class="QWidget" name="page">
+      <layout class="QVBoxLayout" name="verticalLayout_7">
        <property name="spacing">
         <number>4</number>
        </property>
        <property name="leftMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <item>
-        <widget class="TabColor" name="tabColor" native="true"/>
+        <widget class="TabColors" name="tabColor" native="true"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tLGradient">
-      <attribute name="icon">
-       <iconset resource="../../resources/icons/icons.qrc">
-        <normaloff>:/icons/dark/colordialog/linear_gradient.png</normaloff>:/icons/dark/colordialog/linear_gradient.png</iconset>
-      </attribute>
-      <attribute name="title">
-       <string/>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+     <widget class="QWidget" name="page_3">
+      <layout class="QVBoxLayout" name="verticalLayout_9">
        <property name="spacing">
         <number>4</number>
        </property>
        <property name="leftMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <item>
-        <widget class="TabGradient" name="tabLGradient" native="true"/>
+        <widget class="TabColors" name="tabGradient" native="true"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tRGradient">
-      <attribute name="icon">
-       <iconset resource="../../resources/icons/icons.qrc">
-        <normaloff>:/icons/dark/colordialog/radial_gradient.png</normaloff>:/icons/dark/colordialog/radial_gradient.png</iconset>
-      </attribute>
-      <attribute name="title">
-       <string/>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
+     <widget class="QWidget" name="page_2">
+      <layout class="QVBoxLayout" name="verticalLayout_8">
        <property name="spacing">
         <number>4</number>
        </property>
        <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="TabGradient" name="tabRGradient" native="true"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tCGradient">
-      <attribute name="icon">
-       <iconset resource="../../resources/icons/icons.qrc">
-        <normaloff>:/icons/dark/colordialog/conical_gradient.png</normaloff>:/icons/dark/colordialog/conical_gradient.png</iconset>
-      </attribute>
-      <attribute name="title">
-       <string/>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <property name="spacing">
         <number>4</number>
        </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
        <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="TabGradient" name="tabCGradient" native="true"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tImage">
-      <attribute name="icon">
-       <iconset resource="../../resources/icons/icons.qrc">
-        <normaloff>:/icons/dark/colordialog/image.svg</normaloff>:/icons/dark/colordialog/image.svg</iconset>
-      </attribute>
-      <attribute name="title">
-       <string/>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="spacing">
         <number>4</number>
        </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <item>
         <widget class="TabImage" name="tabImage" native="true"/>
@@ -200,26 +109,18 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TabColor</class>
-   <extends>QWidget</extends>
-   <header>src/widgets/colordialog/tabcolor.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>TabGradient</class>
-   <extends>QWidget</extends>
-   <header>src/widgets/colordialog/tabgradient.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>TabImage</class>
    <extends>QWidget</extends>
    <header>src/widgets/colordialog/tabimage.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>TabColors</class>
+   <extends>QWidget</extends>
+   <header>src/widgets/colordialog/tabcolors.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
- <resources>
-  <include location="../../resources/icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

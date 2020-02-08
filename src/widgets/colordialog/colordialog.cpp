@@ -45,18 +45,34 @@ ColorDialog::ColorDialog(QWidget *parent) :
 
 
     // set tab data
-    QTabBar *tabBar = ui->tabs->tabBar();
-    tabBar->setTabData(0, QVariant::fromValue(FillType::Color));
-    tabBar->setTabData(1, QVariant::fromValue(FillType::LinearGradient));
-    tabBar->setTabData(2, QVariant::fromValue(FillType::RadialGradient));
-    tabBar->setTabData(3, QVariant::fromValue(FillType::ConicalGradient));
-    tabBar->setTabData(4, QVariant::fromValue(FillType::Image));
+    QString tabStyle = "QTabBar::tab { align: center; text-align: center; }";
 
-    QString tabStyle = "QTabWidget::tab-bar { alignment: center; }";
-    ui->tabs->setStyleSheet(tabStyle);
+    m_tabBar = new QTabBar();
+    m_tabBar->setIconSize(QSize(24,24));
+    m_tabBar->setStyleSheet(tabStyle);
+    m_tabBar->setExpanding(false);
 
-    connect(ui->tabs, &QTabWidget::currentChanged, this, &ColorDialog::changeTabs);
-    connect(ui->tabColor, &TabColor::colorChanged, this, &ColorDialog::updateProperty);
+    m_tabBar->addTab(QIcon(":icons/dark/colordialog/color.svg"), QString());
+    m_tabBar->setTabData(0, QVariant::fromValue(FillType::Color));
+
+    m_tabBar->addTab(QIcon(":icons/dark/colordialog/linear_gradient.png"), QString());
+    m_tabBar->setTabData(1, QVariant::fromValue(FillType::LinearGradient));
+
+    m_tabBar->addTab(QIcon(":icons/dark/colordialog/radial_gradient.png"), QString());
+    m_tabBar->setTabData(2, QVariant::fromValue(FillType::RadialGradient));
+
+    m_tabBar->addTab(QIcon(":icons/dark/colordialog/conical_gradient.png"), QString());
+    m_tabBar->setTabData(3, QVariant::fromValue(FillType::ConicalGradient));
+
+    m_tabBar->addTab(QIcon(":icons/dark/colordialog/image.svg"), QString());
+    m_tabBar->setTabData(4, QVariant::fromValue(FillType::Image));
+
+    ui->verticalLayout->insertWidget(0,m_tabBar);
+    ui->tabColor->enableGradientControls(false);
+
+    connect(m_tabBar, &QTabBar::currentChanged, this, &ColorDialog::changeTabs);
+    connect(ui->tabColor, &TabColors::colorChanged, this, &ColorDialog::updateProperty);
+    connect(ui->tabGradient, &TabColors::gradientChanged, this, &ColorDialog::updateProperty);
 
 }
 
@@ -123,6 +139,7 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
             m_opacity = prop->opacity();
 
             ui->tabColor->setColor(m_color);
+            ui->tabGradient->setGradient(m_gradient);
 
             m_mode = Mode::FillLayout;
 
@@ -144,6 +161,7 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
             m_opacity = m_color.alphaF();
 
             ui->tabColor->setColor(m_color);
+            ui->tabGradient->setGradient(m_gradient);
 
             m_mode = Mode::StrokeLayout;
         }
@@ -162,6 +180,7 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
             m_opacity = m_color.alphaF();
 
             ui->tabColor->setColor(m_color);
+            ui->tabGradient->setGradient(m_gradient);
 
             m_mode = Mode::ShadowLayout;
         }
@@ -170,28 +189,7 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
     }
 
     configurateDialog();
-
-    // set current tab based on fill type
-    switch (m_fillType) {
-    default:
-    case FillType::Color:
-       ui->tabs->setCurrentIndex(0);
-        break;
-    case FillType::LinearGradient:
-       ui->tabs->setCurrentIndex(1);
-        break;
-    case FillType::RadialGradient:
-        ui->tabs->setCurrentIndex(2);
-        break;
-    case FillType::ConicalGradient:
-        ui->tabs->setCurrentIndex(3);
-        break;
-    case FillType::Image:
-       ui->tabs->setCurrentIndex(4);
-        break;
-    case FillType::Pattern:
-        break;
-    }
+    selectTab();
 
 }
 
@@ -203,32 +201,61 @@ void ColorDialog::configurateDialog()
     switch(m_mode){
     case Mode::FillLayout:
 
-        ui->tabs->setTabEnabled(0, true);
-        ui->tabs->setTabEnabled(1, true);
-        ui->tabs->setTabEnabled(2, true);
-        ui->tabs->setTabEnabled(3, true);
-        ui->tabs->setTabEnabled(4, true);
+        m_tabBar->setTabEnabled(0, true);
+        m_tabBar->setTabEnabled(1, true);
+        m_tabBar->setTabEnabled(2, true);
+        m_tabBar->setTabEnabled(3, true);
+        m_tabBar->setTabEnabled(4, true);
 
         break;
     case Mode::StrokeLayout:
-        ui->tabs->setTabEnabled(0, true);
-        ui->tabs->setTabEnabled(1, true);
-        ui->tabs->setTabEnabled(2, true);
-        ui->tabs->setTabEnabled(3, true);
-        ui->tabs->setTabEnabled(4, false);
+        m_tabBar->setTabEnabled(0, true);
+        m_tabBar->setTabEnabled(1, true);
+        m_tabBar->setTabEnabled(2, true);
+        m_tabBar->setTabEnabled(3, true);
+        m_tabBar->setTabEnabled(4, false);
 
         break;
     case Mode::ShadowLayout:
-        ui->tabs->setTabEnabled(0, true);
-        ui->tabs->setTabEnabled(1, false);
-        ui->tabs->setTabEnabled(2, false);
-        ui->tabs->setTabEnabled(3, false);
-        ui->tabs->setTabEnabled(4, false);
+        m_tabBar->setTabEnabled(0, true);
+        m_tabBar->setTabEnabled(1, false);
+        m_tabBar->setTabEnabled(2, false);
+        m_tabBar->setTabEnabled(3, false);
+        m_tabBar->setTabEnabled(4, false);
 
         break;
     }
 
-    ui->tabs->setCurrentIndex(0);
+}
+
+void ColorDialog::selectTab()
+{
+    switch (m_fillType) {
+    default:
+    case FillType::Color:
+       m_tabBar->setCurrentIndex(0);
+       ui->tabs->setCurrentIndex(0);
+        break;
+    case FillType::LinearGradient:
+       m_tabBar->setCurrentIndex(1);
+       ui->tabs->setCurrentIndex(1);
+        break;
+    case FillType::RadialGradient:
+        m_tabBar->setCurrentIndex(2);
+        ui->tabs->setCurrentIndex(1);
+        break;
+    case FillType::ConicalGradient:
+        m_tabBar->setCurrentIndex(3);
+        ui->tabs->setCurrentIndex(1);
+        break;
+    case FillType::Image:
+       m_tabBar->setCurrentIndex(4);
+       ui->tabs->setCurrentIndex(2);
+        break;
+    case FillType::Pattern:
+        break;
+    }
+
 }
 
 /***************************************************
@@ -243,13 +270,16 @@ void ColorDialog::configurateDialog()
 void ColorDialog::updateProperty()
 {
     m_color = ui->tabColor->color();
+    m_gradient = ui->tabGradient->gradient();
 
     emit propertyChanged();
 }
 
 void ColorDialog::changeTabs(int index)
 {
-    m_fillType = ui->tabs->tabBar()->tabData(index).value<FillType>();
+    m_fillType = m_tabBar->tabData(index).value<FillType>();
+
+    selectTab();
 
     emit propertyChanged();
 }

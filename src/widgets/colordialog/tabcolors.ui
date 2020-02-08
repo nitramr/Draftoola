@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TabColors</class>
+ <widget class="QWidget" name="TabColors">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>254</width>
+    <height>160</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>4</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>4</number>
+   </property>
+   <item>
+    <widget class="color_widgets::GradientEditor" name="gradientEditor" native="true"/>
+   </item>
+   <item>
+    <widget class="LayoutSection" name="sectionColorMap" native="true"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="color_widgets::ColorPreview" name="preview" native="true"/>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="color_widgets::HueSlider" name="hueSlider" native="true"/>
+       </item>
+       <item>
+        <widget class="color_widgets::GradientSlider" name="alphaSlider" native="true"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="ColorInput" name="colorInput" native="true"/>
+   </item>
+   <item>
+    <widget class="LayoutSection" name="sectionColorPalette" native="true"/>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColorInput</class>
+   <extends>QWidget</extends>
+   <header>src/widgets/colordialog/colorinput.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LayoutSection</class>
+   <extends>QWidget</extends>
+   <header>src/widgets/layoutsection.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::ColorPreview</class>
+   <extends>QWidget</extends>
+   <header>src/widgets/colordialog/QtColorWidgets/color_preview.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::HueSlider</class>
+   <extends>QWidget</extends>
+   <header>src/widgets/colordialog/QtColorWidgets/hue_slider.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::GradientSlider</class>
+   <extends>QWidget</extends>
+   <header>src/widgets/colordialog/QtColorWidgets/gradient_slider.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::GradientEditor</class>
+   <extends>QWidget</extends>
+   <header>src/widgets/colordialog/QtColorWidgets/gradient_editor.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
