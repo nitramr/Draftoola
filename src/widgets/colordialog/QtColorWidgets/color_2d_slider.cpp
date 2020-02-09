@@ -25,6 +25,8 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QResizeEvent>
+#include <QStylePainter>
+#include <QStyleOptionFrame>
 
 namespace color_widgets {
 
@@ -33,7 +35,7 @@ static const double selector_radius = 6;
 class Color2DSlider::Private
 {
 public:
-    qreal hue = 1, sat = 1, val = 1;
+    qreal hue = 1, sat = 1, val = 1, alpha = 1;
     Component comp_x = Saturation;
     Component comp_y = Value;
     QImage square;
@@ -136,7 +138,7 @@ Color2DSlider::~Color2DSlider()
 
 QColor Color2DSlider::color() const
 {
-    return QColor::fromHsvF(p->hue, p->sat, p->val);
+    return QColor::fromHsvF(p->hue, p->sat, p->val, p->alpha);
 }
 
 QSize Color2DSlider::sizeHint() const
@@ -159,6 +161,11 @@ qreal Color2DSlider::value() const
     return p->val;
 }
 
+qreal Color2DSlider::alpha() const
+{
+    return p->alpha;
+}
+
 Color2DSlider::Component Color2DSlider::componentX() const
 {
     return p->comp_x;
@@ -174,6 +181,7 @@ void Color2DSlider::setColor(const QColor& c)
     p->hue = c.hsvHueF();
     p->sat = c.saturationF();
     p->val = c.valueF();
+    p->alpha = c.alphaF();
     p->renderSquare(size());
     update();
     Q_EMIT colorChanged(color());
@@ -203,6 +211,12 @@ void Color2DSlider::setValue(qreal v)
     Q_EMIT colorChanged(color());
 }
 
+void Color2DSlider::setAlpha(qreal a)
+{
+    p->alpha = a;
+    Q_EMIT colorChanged(color());
+}
+
 void Color2DSlider::setComponentX(Color2DSlider::Component componentX)
 {
     if ( componentX != p->comp_x )
@@ -227,7 +241,17 @@ void Color2DSlider::setComponentY(Color2DSlider::Component componentY)
 
 void Color2DSlider::paintEvent(QPaintEvent*)
 {
-    QPainter painter(this);
+    QStylePainter painter(this);
+
+    QStyleOptionFrame panel;
+    panel.initFrom(this);
+    panel.lineWidth = 2;
+    panel.midLineWidth = 0;
+    panel.state |= QStyle::State_Sunken;
+    style()->drawPrimitive(QStyle::PE_Frame, &panel, &painter, this);
+    QRect r = style()->subElementRect(QStyle::SE_FrameContents, &panel, this);
+    painter.setClipRect(r);
+
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawImage(0,0,p->square);
 

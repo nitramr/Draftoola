@@ -151,7 +151,7 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="QLineEdit" name="txtHex"/>
+      <widget class="color_widgets::ColorLineEdit" name="txtHex"/>
      </item>
      <item>
       <widget class="QLabel" name="label_5">
@@ -161,7 +161,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Hex</string>
+        <string>Color</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignHCenter|Qt::AlignTop</set>
@@ -172,6 +172,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>color_widgets::ColorLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>src/widgets/colordialog/QtColorWidgets/color_line_edit.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

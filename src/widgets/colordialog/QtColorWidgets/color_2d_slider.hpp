@@ -71,6 +71,8 @@ public:
     /// Get current value in the range [0-1]
     qreal value() const;
 
+    qreal alpha() const;
+
     Component componentX() const;
     Component componentY() const;
 
@@ -94,6 +96,8 @@ public Q_SLOTS:
      */
     void setValue(qreal v);
 
+    void setAlpha(qreal a);
+
     void setComponentX(Component componentX);
     void setComponentY(Component componentY);
 
@@ -110,6 +114,7 @@ Q_SIGNALS:
 
     void componentXChanged(Component componentX);
     void componentYChanged(Component componentY);
+
 
 protected:
     void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;

@@ -77,7 +77,7 @@ void TabColors::enableGradientControls(bool enabled)
 void TabColors::connectSlots()
 {
     connect(ui->colorInput, &ColorInput::colorChanged, this, &TabColors::updateColor);
-    connect(ui->colorInput, &ColorInput::alphaChanged, this, &TabColors::updateAlpha);
+//    connect(ui->colorInput, &ColorInput::alphaChanged, this, &TabColors::updateAlpha);
     connect(m_colorMap2D, &color_widgets::Color2DSlider::colorChanged, this, &TabColors::updateColor);
     connect(ui->hueSlider, &color_widgets::HueSlider::colorHueChanged, this, &TabColors::updateHue);
     connect(ui->alphaSlider, &color_widgets::GradientSlider::valueChanged, this, &TabColors::updateAlpha);
@@ -90,7 +90,7 @@ void TabColors::connectSlots()
 void TabColors::disconnectSlots()
 {
     disconnect(ui->colorInput, &ColorInput::colorChanged, this, &TabColors::updateColor);
-    disconnect(ui->colorInput, &ColorInput::alphaChanged, this, &TabColors::updateAlpha);
+//    disconnect(ui->colorInput, &ColorInput::alphaChanged, this, &TabColors::updateAlpha);
     disconnect(m_colorMap2D, &color_widgets::Color2DSlider::colorChanged, this, &TabColors::updateColor);
     disconnect(ui->hueSlider, &color_widgets::HueSlider::colorHueChanged, this, &TabColors::updateHue);
     disconnect(ui->alphaSlider, &color_widgets::GradientSlider::valueChanged, this, &TabColors::updateAlpha);
@@ -102,16 +102,16 @@ void TabColors::disconnectSlots()
 void TabColors::setColor(Color color)
 {    
     m_color = color;
-    int alpha = qRound(m_color.alphaF() * 100);
 
     disconnectSlots();
 
-    ui->colorInput->setColor(m_color, alpha);
+    ui->colorInput->setColor(m_color);
     m_colorMap2D->setColor(m_color);
     ui->hueSlider->setColorHue(m_color.hueF());
+    ui->hueSlider->setColorAlpha(m_color.alphaF());
     ui->alphaSlider->setFirstColor(QColor::fromRgb(m_color.red(), m_color.green(), m_color.blue(), 0));
     ui->alphaSlider->setLastColor(QColor::fromRgb(m_color.red(), m_color.green(), m_color.blue(), 255));
-    ui->alphaSlider->setValue(alpha);
+    ui->alphaSlider->setValue(qRound( m_color.alphaF() * 100) );
     ui->preview->setColor(m_color);
 
     ui->gradientEditor->setSelectedColor(m_color);
@@ -134,7 +134,7 @@ void TabColors::setGradient(Gradient gradient)
 
 void TabColors::updateHue(qreal hue)
 {
-    updateColor(QColor::fromHsvF(hue, m_color.saturationF(), m_color.valueF()));
+    updateColor( QColor::fromHsvF(hue, m_color.saturationF(),m_color.valueF(), ui->hueSlider->colorAlpha()) );
 }
 
 

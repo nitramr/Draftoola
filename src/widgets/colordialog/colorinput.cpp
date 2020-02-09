@@ -31,9 +31,6 @@ ColorInput::ColorInput(QWidget *parent) :
     ui(new Ui::ColorInput)
 {
     ui->setupUi(this);
-
-    //   ui->txtHex->setInputMask( "#Hhhhhh" );
-
     connectSlots();
 }
 
@@ -47,8 +44,8 @@ void ColorInput::connectSlots()
     connect(ui->sbRed, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
     connect(ui->sbGreen, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
     connect(ui->sbBlue, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
-    connect(ui->sbAlpha, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateAlpha);
-    connect(ui->txtHex, &QLineEdit::returnPressed, this, &ColorInput::updateColor);
+    connect(ui->sbAlpha, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
+    connect(ui->txtHex, &color_widgets::ColorLineEdit::returnPressed, this, &ColorInput::updateColor);
 }
 
 void ColorInput::disconnectSlots()
@@ -56,21 +53,20 @@ void ColorInput::disconnectSlots()
     disconnect(ui->sbRed, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
     disconnect(ui->sbGreen, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
     disconnect(ui->sbBlue, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
-    disconnect(ui->sbAlpha, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateAlpha);
-    disconnect(ui->txtHex, &QLineEdit::returnPressed, this, &ColorInput::updateColor);
+    disconnect(ui->sbAlpha, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorInput::updateColor);
+    disconnect(ui->txtHex, &color_widgets::ColorLineEdit::returnPressed, this, &ColorInput::updateColor);
 }
 
-void ColorInput::setColor(const Color color, int alpha)
+void ColorInput::setColor(const Color color)
 {
     disconnectSlots();
 
     m_color = color;
-    m_alpha = alpha;
-    ui->txtHex->setText( color.name(QColor::NameFormat::HexRgb) );
+    ui->txtHex->setColor(m_color);
     ui->sbRed->setValue( color.red() );
     ui->sbGreen->setValue( color.green() );
     ui->sbBlue->setValue( color.blue() );
-    ui->sbAlpha->setValue( m_alpha ); // we have to round the value because of qreal conversion
+    ui->sbAlpha->setValue( qRound(m_color.alphaF() * 100) );
 
     connectSlots();
 }
@@ -81,22 +77,24 @@ void ColorInput::setColor(const Color color, int alpha)
  */
 void ColorInput::updateColor()
 {
-    QLineEdit *hexEdit = dynamic_cast<QLineEdit*>(sender());
+    color_widgets::ColorLineEdit *hexEdit = dynamic_cast<color_widgets::ColorLineEdit*>(sender());
 
     if(hexEdit){
-        m_color.setNamedColor( ui->txtHex->text() );
+        m_color = ui->txtHex->color();
+        m_color.setAlphaF( ui->sbAlpha->value() / 100.0 );
     }else{
         m_color.setRgb(ui->sbRed->value(), ui->sbGreen->value(), ui->sbBlue->value() );
+        m_color.setAlphaF( ui->sbAlpha->value() / 100.0 );
     }
 
-    setColor( m_color, m_alpha);
+    setColor( m_color);
 
     emit colorChanged( m_color);
 }
 
-void ColorInput::updateAlpha()
-{
-    setColor( m_color, ui->sbAlpha->value());
+//void ColorInput::updateAlpha()
+//{
+//   // setColor( m_color, ui->sbAlpha->value());
 
-    emit alphaChanged( m_alpha);
-}
+//    emit alphaChanged( m_alpha);
+//}

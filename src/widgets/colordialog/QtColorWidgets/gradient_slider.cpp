@@ -34,6 +34,7 @@
 
 namespace color_widgets {
 
+static const int hWidth = 4;
 
 class GradientSlider::Private
 {
@@ -259,13 +260,27 @@ void GradientSlider::paintEvent(QPaintEvent *)
 
     pos = pos * (geometry().width() - 5);
     if (color.valueF() > 0.5 || color.alphaF() < 0.5) {
-        painter.setPen(QPen(Qt::black, 3));
+        painter.setPen(QPen(Qt::black, hWidth));
     } else {
-        painter.setPen(QPen(Qt::white, 3));
+        painter.setPen(QPen(Qt::white, hWidth));
     }
+
+
     QPointF p1 = QPointF(2.5, 2.5) + QPointF(pos, 0);
     QPointF p2 = p1 + QPointF(0, geometry().height() - 5);
     painter.drawLine(p1, p2);
+
+//    painter.setRenderHint(QPainter::Antialiasing, true);
+
+//    QPen penBorder(Qt::darkGray, hWidth);
+//    penBorder.setCapStyle(Qt::RoundCap);
+//    painter.setPen(penBorder);
+//    painter.drawLine(p1, p2);
+
+//    QPen penFill(Qt::white, hWidth-2);
+//    penFill.setCapStyle(Qt::RoundCap);
+//    painter.setPen(penFill);
+//    painter.drawLine(p1, p2);
 
 }
 
