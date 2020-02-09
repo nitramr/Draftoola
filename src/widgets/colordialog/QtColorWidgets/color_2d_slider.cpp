@@ -30,7 +30,7 @@
 
 namespace color_widgets {
 
-static const double selector_radius = 6;
+static const double selectorSize = 6;
 
 class Color2DSlider::Private
 {
@@ -255,9 +255,19 @@ void Color2DSlider::paintEvent(QPaintEvent*)
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawImage(0,0,p->square);
 
-    painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
-    painter.setBrush(Qt::NoBrush);
-    painter.drawEllipse(p->selectorPos(size()), selector_radius, selector_radius);
+//    painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
+//    painter.setBrush(Qt::NoBrush);
+//    painter.drawEllipse(p->selectorPos(size()), selectorSize, selectorSize);
+
+
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(QPen(Qt::darkGray, 1));
+    painter.setBrush(QBrush(Qt::white));
+    painter.drawEllipse(p->selectorPos(size()), selectorSize,selectorSize);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QBrush(color()));
+    painter.drawEllipse(p->selectorPos(size()), selectorSize-3,selectorSize-3);
+
 
 }
 

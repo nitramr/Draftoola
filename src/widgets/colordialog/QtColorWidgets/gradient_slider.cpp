@@ -28,13 +28,14 @@
 #include <QLinearGradient>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QStylePainter>
 //#include <utilities.h>
 //#include "QtColorWidgets/color_utils.hpp"
 
 
 namespace color_widgets {
 
-static const int hWidth = 4;
+static const double selectorSize = 6;
 
 class GradientSlider::Private
 {
@@ -52,8 +53,8 @@ public:
 
     void mouse_event(QMouseEvent *ev, GradientSlider* owner)
     {
-        qreal pos = (owner->geometry().width() > 5) ?
-            static_cast<qreal>(ev->pos().x() - 2.5) / (owner->geometry().width() - 5) : 0;
+        qreal pos = (owner->geometry().width() > selectorSize) ?
+            static_cast<qreal>(ev->pos().x() - selectorSize/2) / (owner->geometry().width() - selectorSize) : 0;
         pos = qMax(qMin(pos, 1.0), 0.0);
         owner->setSliderPosition(qRound(owner->minimum() +
             pos * (owner->maximum() - owner->minimum())));
@@ -207,31 +208,31 @@ QColor GradientSlider::lastColor() const
 
 void GradientSlider::paintEvent(QPaintEvent *)
 {
-    QPainter painter(this);
+    QStylePainter painter(this);
+
+    QRect drawRect(selectorSize/2 + 1, selectorSize/2 + 1, geometry().width()-selectorSize -2, geometry().height()-selectorSize -2);
+
+    qreal gradient_direction = invertedAppearance() ? -1 : 1;
+
+    if(orientation() == Qt::Horizontal){
+        p->gradient.setFinalStop(gradient_direction, 0);
+    }
+    else{
+        p->gradient.setFinalStop(0, -gradient_direction);
+    }
 
     QStyleOptionFrame panel;
     panel.initFrom(this);
     panel.lineWidth = 1;
     panel.midLineWidth = 0;
+    panel.rect = drawRect;
     panel.state |= QStyle::State_Sunken;
     style()->drawPrimitive(QStyle::PE_Frame, &panel, &painter, this);
     QRect r = style()->subElementRect(QStyle::SE_FrameContents, &panel, this);
-    painter.setClipRect(r);
-
-    qreal gradient_direction = invertedAppearance() ? -1 : 1;
-
-    if(orientation() == Qt::Horizontal)
-        p->gradient.setFinalStop(gradient_direction, 0);
-    else
-        p->gradient.setFinalStop(0, -gradient_direction);
-
-    QRect sliderArea(1,1,geometry().width()-2,geometry().height()-2);
 
     painter.setPen(Qt::NoPen);
-    painter.setBrush(p->back);
-    painter.drawRect(sliderArea);
-    painter.setBrush(p->gradient);
-    painter.drawRect(sliderArea);
+    painter.fillRect(r, p->back);
+    painter.fillRect(r, p->gradient);
 
     qreal pos = (maximum() != 0) ?
         static_cast<qreal>(value() - minimum()) / maximum() : 0;
@@ -258,17 +259,18 @@ void GradientSlider::paintEvent(QPaintEvent *)
             b.second.alphaF() * q + a.second.alphaF() * (1.0 - q));
     }
 
-    pos = pos * (geometry().width() - 5);
-    if (color.valueF() > 0.5 || color.alphaF() < 0.5) {
-        painter.setPen(QPen(Qt::black, hWidth));
-    } else {
-        painter.setPen(QPen(Qt::white, hWidth));
-    }
+    pos = pos * (geometry().width() - selectorSize*2) + selectorSize;
+//    if (color.valueF() > 0.5 || color.alphaF() < 0.5) {
+//        painter.setPen(QPen(Qt::black, hWidth));
+//    } else {
+//        painter.setPen(QPen(Qt::white, hWidth));
+//    }
 
+//    painter.setPen(QPen(Qt::black, hWidth));
 
-    QPointF p1 = QPointF(2.5, 2.5) + QPointF(pos, 0);
-    QPointF p2 = p1 + QPointF(0, geometry().height() - 5);
-    painter.drawLine(p1, p2);
+//    QPointF p1 = QPointF(2.5, 2.5) + QPointF(pos, 0);
+//    QPointF p2 = p1 + QPointF(0, geometry().height() - 5);
+//    painter.drawLine(p1, p2);
 
 //    painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -281,6 +283,27 @@ void GradientSlider::paintEvent(QPaintEvent *)
 //    penFill.setCapStyle(Qt::RoundCap);
 //    painter.setPen(penFill);
 //    painter.drawLine(p1, p2);
+
+
+//    QStyleOptionSlider handle;
+//     handle.init(this);
+//     handle.orientation = this->orientation();
+//     handle.minimum = this->minimum();
+//     handle.maximum = this->maximum();
+//     handle.sliderPosition = this->value();
+//     handle.sliderValue = this->value();
+//     handle.subControls = QStyle::SC_SliderHandle;
+//     painter.drawComplexControl(QStyle::CC_Slider, handle);
+
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(QPen(Qt::darkGray, 1));
+    painter.setBrush(QBrush(Qt::white));
+    painter.drawEllipse(QPointF(pos, height()/2), selectorSize,selectorSize);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QBrush(color));
+    painter.drawEllipse(QPointF(pos, height()/2), selectorSize-3,selectorSize-3);
+
+
 
 }
 

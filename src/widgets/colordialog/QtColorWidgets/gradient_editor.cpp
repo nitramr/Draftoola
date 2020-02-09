@@ -30,10 +30,13 @@
 #include <QMimeData>
 #include <QDropEvent>
 #include <QDragEnterEvent>
+#include <QStylePainter>
 
 #include "QtColorWidgets/gradient_helper.hpp"
 
 namespace color_widgets {
+
+static const double selectorSize = 6;
 
 class GradientEditor::Private
 {
@@ -65,7 +68,7 @@ public:
     {
         if ( stops.empty() )
             return -1;
-        if ( stops.size() == 1 || owner->geometry().width() <= 5 )
+        if ( stops.size() == 1 || owner->geometry().width() <= selectorSize )
             return 0;
         qreal pos = move_pos(p, owner);
 
@@ -93,7 +96,7 @@ public:
             width = owner->geometry().height();
             x = p.y();
         }
-        return (width > 5) ? qMax(qMin((x - 2.5) / (width - 5), 1.0), 0.0) : 0;
+        return (width > selectorSize) ? qMax(qMin((x - selectorSize/2) / (width - selectorSize), 1.0), 0.0) : 0;
     }
 
     void drop_event(QDropEvent* event, GradientEditor* owner)
@@ -333,70 +336,97 @@ void GradientEditor::setOrientation(Qt::Orientation orientation)
 
 void GradientEditor::paintEvent(QPaintEvent *)
 {
-    QPainter painter(this);
+    QStylePainter painter(this);
 
-    QStyleOptionFrame panel;
-    panel.initFrom(this);
-    panel.lineWidth = 1;
-    panel.midLineWidth = 0;
-    panel.state |= QStyle::State_Sunken;
-    style()->drawPrimitive(QStyle::PE_Frame, &panel, &painter, this);
-    QRect r = style()->subElementRect(QStyle::SE_FrameContents, &panel, this);
-    painter.setClipRect(r);
-
+    QRect drawRect(4,4,geometry().width()-8,geometry().height()-8);
 
     if(orientation() == Qt::Horizontal)
         p->gradient.setFinalStop(1, 0);
     else
         p->gradient.setFinalStop(0, -1);
 
+    QStyleOptionFrame panel;
+    panel.initFrom(this);
+    panel.lineWidth = 1;
+    panel.midLineWidth = 0;
+    panel.rect = drawRect;
+    panel.state |= QStyle::State_Sunken;
+    style()->drawPrimitive(QStyle::PE_Frame, &panel, &painter, this);
+    QRect r = style()->subElementRect(QStyle::SE_FrameContents, &panel, this);
+    painter.setClipRect(r);
+
     painter.setPen(Qt::NoPen);
     painter.setBrush(p->back);
-    painter.drawRect(1,1,geometry().width()-2,geometry().height()-2);
+    painter.drawRect(r);
     painter.setBrush(p->gradient);
-    painter.drawRect(1,1,geometry().width()-2,geometry().height()-2);
+    painter.drawRect(r);
+
+    painter.setClipping(false);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
     /// \todo Take orientation into account
     int i = 0;
     for ( const QGradientStop& stop : p->stops )
     {
-        qreal pos = stop.first * (geometry().width() - 5);
+        qreal pos = stop.first * (geometry().width() - selectorSize*2) + selectorSize;
+
         QColor color = stop.second;
         Qt::GlobalColor border_color = Qt::black;
         Qt::GlobalColor core_color = Qt::white;
 
-        if ( color.valueF() <= 0.5 && color.alphaF() >= 0.5 )
-            std::swap(core_color, border_color);
+//        if ( color.valueF() <= 0.5 && color.alphaF() >= 0.5 )
+//            std::swap(core_color, border_color);
 
-        QPointF p1 = QPointF(2.5, 2.5) + QPointF(pos, 0);
-        QPointF p2 = p1 + QPointF(0, geometry().height() - 5);
+//        QPointF p1 = QPointF(2.5, 2.5) + QPointF(pos, 0);
+//        QPointF p2 = p1 + QPointF(0, geometry().height() - 5);
+
+
+
         if ( i == p->selected )
         {
-            painter.setPen(QPen(border_color, 5));
-            painter.drawLine(p1, p2);
-            painter.setPen(QPen(core_color, 3));
-            painter.drawLine(p1, p2);
+//            painter.setPen(QPen(border_color, 5));
+//            painter.drawLine(p1, p2);
+//            painter.setPen(QPen(core_color, 3));
+//            painter.drawLine(p1, p2);
+            painter.setPen(QPen(QColor(0, 128, 255), 1));
         }
         else if ( i == p->highlighted )
         {
-            painter.setPen(QPen(border_color, 3));
-            painter.drawLine(p1, p2);
-            painter.setPen(QPen(core_color, 1));
-            painter.drawLine(p1, p2);
+//            painter.setPen(QPen(border_color, 3));
+//            painter.drawLine(p1, p2);
+//            painter.setPen(QPen(core_color, 1));
+//            painter.drawLine(p1, p2);
+            painter.setPen(QPen(QColor(0, 128, 255), 1));
         }
         else
         {
-            painter.setPen(QPen(border_color, 3));
-            painter.drawLine(p1, p2);
+//            painter.setPen(QPen(border_color, 3));
+//            painter.drawLine(p1, p2);
+            painter.setPen(QPen(Qt::darkGray, 1));
         }
+
+
+
+
+        painter.setBrush(QBrush(Qt::white));
+        painter.drawEllipse(QPointF(pos, height()/2), selectorSize,selectorSize);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(QBrush(color));
+        painter.drawEllipse(QPointF(pos, height()/2), selectorSize-3,selectorSize-3);
+
+
 
         i++;
     }
 
+
+
+
+
     if ( p->drop_index != -1 && p->drop_color.isValid() )
     {
         qreal pos = p->drop_pos * (geometry().width() - 5);
-        painter.setPen(QPen(p->drop_color, 3));
+        painter.setPen(QPen(p->drop_color, 4));
         QPointF p1 = QPointF(2.5, 2.5) + QPointF(pos, 0);
         QPointF p2 = p1 + QPointF(0, geometry().height() - 5);
         painter.drawLine(p1, p2);

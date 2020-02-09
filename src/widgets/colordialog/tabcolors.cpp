@@ -34,7 +34,6 @@ TabColors::TabColors(QWidget *parent) :
 
     m_colorMap2D = new color_widgets::Color2DSlider();
 
-
     ui->sectionColorMap->setText(tr("Color Picker"));
     ui->sectionColorMap->addWidget(m_colorMap2D);
 
@@ -77,7 +76,6 @@ void TabColors::enableGradientControls(bool enabled)
 void TabColors::connectSlots()
 {
     connect(ui->colorInput, &ColorInput::colorChanged, this, &TabColors::updateColor);
-//    connect(ui->colorInput, &ColorInput::alphaChanged, this, &TabColors::updateAlpha);
     connect(m_colorMap2D, &color_widgets::Color2DSlider::colorChanged, this, &TabColors::updateColor);
     connect(ui->hueSlider, &color_widgets::HueSlider::colorHueChanged, this, &TabColors::updateHue);
     connect(ui->alphaSlider, &color_widgets::GradientSlider::valueChanged, this, &TabColors::updateAlpha);
@@ -90,7 +88,6 @@ void TabColors::connectSlots()
 void TabColors::disconnectSlots()
 {
     disconnect(ui->colorInput, &ColorInput::colorChanged, this, &TabColors::updateColor);
-//    disconnect(ui->colorInput, &ColorInput::alphaChanged, this, &TabColors::updateAlpha);
     disconnect(m_colorMap2D, &color_widgets::Color2DSlider::colorChanged, this, &TabColors::updateColor);
     disconnect(ui->hueSlider, &color_widgets::HueSlider::colorHueChanged, this, &TabColors::updateHue);
     disconnect(ui->alphaSlider, &color_widgets::GradientSlider::valueChanged, this, &TabColors::updateAlpha);
