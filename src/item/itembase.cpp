@@ -757,9 +757,9 @@ void ItemBase::calculateRenderRect()
 {
     m_shadowPath = QPainterPath();
 
-    if(m_hasFills){
+ //   if(m_hasFills){
         m_shadowPath = shape();
-    }
+ //   }
 
     if(m_hasStrokes){
         m_shadowPath.addPath(strokeShape());

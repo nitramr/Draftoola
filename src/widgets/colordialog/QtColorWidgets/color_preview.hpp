@@ -74,6 +74,8 @@ public:
     QSize sizeHint () const;
 
     void paint(QPainter &painter, QRect rect) const;
+
+    void setOrientation(Qt::Orientation orientation);
     
 public Q_SLOTS:
     /// Set current color

@@ -265,7 +265,7 @@ void Color2DSlider::paintEvent(QPaintEvent*)
     painter.setBrush(QBrush(Qt::white));
     painter.drawEllipse(p->selectorPos(size()), selectorSize,selectorSize);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QBrush(color()));
+    painter.setBrush( QBrush( QColor::fromRgb(color().red(), color().green(), color().blue()) ) );
     painter.drawEllipse(p->selectorPos(size()), selectorSize-3,selectorSize-3);
 
 

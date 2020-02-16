@@ -232,10 +232,10 @@ void MainWindow::tmpSetup(int offsetX, int offsetY)
     m_canvas->addItem(artboard, 0+offsetX, 0+offsetY);
 //    m_outliner->addNode(artboard);
 
-    QByteArray ar;
-    QDataStream stream(&ar, QIODevice::ReadWrite);
-    stream << artboard;
-    stream.device()->seek(0);
+//    QByteArray ar;
+//    QDataStream stream(&ar, QIODevice::ReadWrite);
+//    stream << artboard;
+//    stream.device()->seek(0);
 
     // https://forum.qt.io/topic/78161/custom-class-serialize-with-qdatastream/2
 //    QVariant TempVariant;
@@ -311,6 +311,30 @@ void MainWindow::tmpSetup(int offsetX, int offsetY)
     pentagon->addFills(Fills("color", Color("yellow",255,200,0)));
     pentagon->addShadow(Shadow("shadow", Color("black",0,0,0), 10, QPointF(0,0)));
     m_canvas->addItem(pentagon, 200,300, artboard);
+
+
+
+    // Object Rects
+    ItemRect *rectTrans = new ItemRect(70,140);
+    rectTrans->setRadius(8);
+    rectTrans->setTransform( QTransform().rotate(60, Qt::XAxis).rotate(45, Qt::ZAxis).translate(-rectTrans->rect().width()/2,-rectTrans->rect().height()/2) );
+    rectTrans->setName("Rect Transformed");
+    rectTrans->addShadow( Shadow("shadowSoft", Color("black",0,0,0, qRound(255*0.2) ), 16, QPointF(0,0)) );
+    rectTrans->addShadow( Shadow("shadowCore", Color("black",0,0,0, qRound(255*0.5) ), 16, QPointF(0,0), -4) );
+    m_canvas->addItem(rectTrans, 180,300, artboard2);
+
+
+    QLinearGradient GrTrans(0,0,50,50);
+    GrTrans.setColorAt(0, QColor(255,159,3));
+    GrTrans.setColorAt(1, QColor(255,104,3, qRound(255*0.7) ));
+
+    // Object Rects
+    ItemRect *rectTrans2 = new ItemRect(70,140);
+    rectTrans2->setRadius(8);
+    rectTrans2->setTransform( QTransform().rotate(60, Qt::XAxis).rotate(45, Qt::ZAxis).translate(-rectTrans->rect().width()/2,-rectTrans->rect().height()/2) );
+    rectTrans2->setName("Rect2 Transformed");
+    rectTrans2->addFills( Fills("color", Gradient("GrTrans", GrTrans)) );
+    m_canvas->addItem(rectTrans2, 180,290, artboard2);
 
 
 //	stroke.setStrokePosition(StrokePosition::Outer);

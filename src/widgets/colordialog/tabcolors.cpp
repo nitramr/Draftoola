@@ -45,6 +45,7 @@ TabColors::TabColors(QWidget *parent) :
     ui->alphaSlider->setRange(0,100);
     ui->preview->setBackground( checkPattern );
     ui->preview->setDisplayMode(color_widgets::ColorPreview::DisplayMode::SplitAlpha);
+    ui->preview->setOrientation(Qt::Vertical);
 
     connectSlots();
 }

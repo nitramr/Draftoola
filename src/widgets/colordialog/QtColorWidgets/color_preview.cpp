@@ -37,8 +37,9 @@ public:
     QColor comparison; ///< comparison color
     QBrush back;///< Background brush, visible on a transparent color
     DisplayMode display_mode; ///< How the color(s) are to be shown
+    Qt::Orientation orientation;
 
-    Private() : col(Qt::red), back(Qt::darkGray, Qt::DiagCrossPattern), display_mode(NoAlpha)
+    Private() : col(Qt::red), back(Qt::darkGray, Qt::DiagCrossPattern), display_mode(NoAlpha), orientation(Qt::Horizontal)
     {}
 };
 
@@ -124,10 +125,24 @@ void ColorPreview::paint(QPainter &painter, QRect rect) const
     if ( c1.alpha() < 255 || c2.alpha() < 255 )
         painter.fillRect(0, 0, rect.width(), rect.height(), p->back);
 
-    int w = rect.width() / 2;
-    int h = rect.height();
-    painter.fillRect(0, 0, w, h, c1);
-    painter.fillRect(w, 0, w, h, c2);
+    int w ,h;
+
+    if(p->orientation == Qt::Horizontal){
+        w = rect.width() / 2;
+        h = rect.height();
+        painter.fillRect(0, 0, w, h, c1);
+        painter.fillRect(w, 0, w, h, c2);
+    }else{
+        w = rect.width();
+        h = rect.height() / 2;
+        painter.fillRect(0, 0, w, h, c1);
+        painter.fillRect(0, h, w, h, c2);
+    }
+}
+
+void ColorPreview::setOrientation(Qt::Orientation orientation)
+{
+    p->orientation = orientation;
 }
 
 void ColorPreview::setColor(const QColor &c)
