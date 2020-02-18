@@ -43,7 +43,7 @@ class Fills : public AbstractItemProperty
     Q_PROPERTY(FillMode fillMode READ fillMode WRITE setFillMode)
     Q_PROPERTY(Gradient gradient READ gradient WRITE setGradient)
     Q_PROPERTY(Color color READ color WRITE setColor)
-    Q_PROPERTY(QPixmap image READ pixmap WRITE setPixmap)
+    Q_PROPERTY(QString path READ imagePath WRITE setImagePath)
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
 
@@ -61,8 +61,7 @@ public:
     Fills();
     Fills(const QString name);
     Fills(const QString name, const Color & color);
-    Fills(const QString name, const QPixmap & pixmap, const FillMode fillMode = FillMode::Fill);
-    Fills(const QString name, const QImage & image, const FillMode fillMode = FillMode::Fill);
+    Fills(const QString name, const QString &path, const FillMode fillMode = FillMode::Fill);
     Fills(const QString name, const Gradient & gradient);
     Fills(const Fills &) = default;
 
@@ -87,7 +86,9 @@ public:
     void setColor(Color color);
     Color color() const;
 
-    void setPixmap(QPixmap pixmap);
+    void setImagePath(const QString path);
+    QString imagePath() const;
+
     QPixmap pixmap() const;
 
     void setOpacity(qreal opacity);
@@ -110,6 +111,7 @@ private:
     Gradient m_gradient;
     Color m_color;
     QPixmap m_pixmap;
+    QString m_imagePath;
     qreal m_opacity;
 
     void fromObject(AbstractItemProperty object);

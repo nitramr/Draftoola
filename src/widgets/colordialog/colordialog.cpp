@@ -49,7 +49,7 @@ ColorDialog::ColorDialog(QWidget *parent) :
 
     m_tabBar = new QTabBar();
     m_tabBar->setIconSize(QSize(24,24));
-    m_tabBar->setStyleSheet(tabStyle);
+//    m_tabBar->setStyleSheet(tabStyle);
     m_tabBar->setExpanding(false);
 
     m_tabBar->addTab(QIcon(":icons/dark/colordialog/color.svg"), QString());
@@ -73,6 +73,7 @@ ColorDialog::ColorDialog(QWidget *parent) :
     connect(m_tabBar, &QTabBar::currentChanged, this, &ColorDialog::changeTabs);
     connect(ui->tabColor, &TabColors::colorChanged, this, &ColorDialog::updateProperty);
     connect(ui->tabGradient, &TabColors::gradientChanged, this, &ColorDialog::updateProperty);
+    connect(ui->tabImage, &TabImage::imageChanged, this, &ColorDialog::updateProperty);
 
 }
 
@@ -105,9 +106,9 @@ Color ColorDialog::color() const
     return m_color;
 }
 
-QPixmap ColorDialog::pixmap() const
+QString ColorDialog::imagePath() const
 {
-    return m_pixmap;
+    return m_imagePath;
 }
 
 qreal ColorDialog::opacity() const
@@ -118,6 +119,11 @@ qreal ColorDialog::opacity() const
 FillType ColorDialog::fillType() const
 {
     return m_fillType;
+}
+
+Fills::FillMode ColorDialog::fillMode() const
+{
+    return m_fillMode;
 }
 
 void ColorDialog::setProperty(AbstractItemProperty *property)
@@ -133,13 +139,16 @@ void ColorDialog::setProperty(AbstractItemProperty *property)
         if(prop){
 
             m_fillType = prop->fillType();
-            m_pixmap = prop->pixmap();
+            m_imagePath = prop->imagePath();
             m_gradient = prop->gradient();
             m_color = prop->color();
             m_opacity = prop->opacity();
+            m_fillMode = prop->fillMode();
 
             ui->tabColor->setColor(m_color);
             ui->tabGradient->setGradient(m_gradient);
+            ui->tabImage->setImagePath(m_imagePath);
+            ui->tabImage->setFillMode(m_fillMode);
 
             m_mode = Mode::FillLayout;
 
@@ -271,6 +280,8 @@ void ColorDialog::updateProperty()
 {
     m_color = ui->tabColor->color();
     m_gradient = ui->tabGradient->gradient();
+    m_imagePath = ui->tabImage->imagePath();
+    m_fillMode = ui->tabImage->fillMode();
 
     emit propertyChanged();
 }

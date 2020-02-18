@@ -23,7 +23,10 @@
 #ifndef TABIMAGE_H
 #define TABIMAGE_H
 
+#include <QComboBox>
+#include <QLabel>
 #include <QWidget>
+#include <fills.h>
 
 namespace Ui {
 class TabImage;
@@ -37,8 +40,37 @@ public:
     explicit TabImage(QWidget *parent = nullptr);
     ~TabImage();
 
+    QString imagePath() const;
+    void setImagePath(const QString path);
+
+    Fills::FillMode fillMode() const;
+    void setFillMode(Fills::FillMode fillMode);
+
 private:
     Ui::TabImage *ui;
+
+    QString m_imagePath;
+    Fills::FillMode m_fillMode;
+    QComboBox *m_comboFillMode;
+    QLabel *m_labelFillMode;
+    QLabel *m_preview;
+
+    void connectSlots();
+    void disconnectSlots();
+
+    bool loadFile(const QString &fileName);
+
+public slots:
+
+    void updateProperty();
+
+private slots:
+    void open();
+
+
+signals:
+    void imageChanged();
+
 };
 
 #endif // TABIMAGE_H

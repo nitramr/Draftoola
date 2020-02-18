@@ -598,6 +598,7 @@ QRectF ItemBase::drawFills(Fills fills, QPainter *painter)
                 // nothing to do
                 break;
             case Fills::Tile:
+                painter->setClipPath(shape(), Qt::ClipOperation::IntersectClip);
                 painter->drawTiledPixmap(shapeRect.toRect(), texture);
                 painter->restore();
 

@@ -22,6 +22,7 @@
 
 #include "fills.h"
 #include <QDebug>
+#include <QImageReader>
 #include <QLinearGradient>
 
 /***************************************************
@@ -42,22 +43,9 @@ Fills::Fills(const QString name, const Color &color) : AbstractItemProperty(name
     m_opacity = 1.0;
 }
 
-// Image (Pixmap)
-Fills::Fills(const QString name, const QPixmap &pixmap, const FillMode fillMode) :  Fills(name, Color()){
-    setPixmap(pixmap);
-    m_fillMode = fillMode;
-}
-
-// Image
-Fills::Fills(const QString name, const QImage &image, const FillMode fillMode) : Fills(name, Color()){
-
-    QPixmap pixmap(image.size());
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
-    painter.drawImage(0,0,image);
-    painter.end();
-
-    setPixmap(pixmap);
+// Image (Path)
+Fills::Fills(const QString name, const QString &path, const FillMode fillMode) :  Fills(name, Color()){
+    setImagePath(path);
     m_fillMode = fillMode;
 }
 
@@ -115,15 +103,26 @@ Color Fills::color() const
     return m_color;
 }
 
-void Fills::setPixmap(QPixmap pixmap)
+void Fills::setImagePath(const QString path)
 {
-    m_pixmap = pixmap;
+    m_imagePath = path;
+    m_pixmap = QPixmap();
     setFillType(FillType::Image);
 }
 
-QPixmap Fills::pixmap() const
+QString Fills::imagePath() const
 {
-    return m_pixmap;
+    return m_imagePath;
+}
+
+
+QPixmap Fills::pixmap() const
+{   
+    if(m_pixmap.isNull()){
+        QImageReader reader(m_imagePath);
+        reader.setAutoTransform(true);
+        return QPixmap::fromImageReader(&reader);
+    }else return m_pixmap;
 }
 
 void Fills::setOpacity(qreal opacity)
@@ -156,7 +155,7 @@ bool Fills::operator==(const Fills &other) const
             m_fillMode == other.m_fillMode &&
             m_gradient == other.m_gradient &&
             m_color == other.m_color &&
-            m_pixmap.toImage() == other.m_pixmap.toImage() &&
+            m_imagePath == other.m_imagePath &&
             m_opacity == other.m_opacity &&
             AbstractItemProperty::operator==(other);
 }
@@ -171,7 +170,7 @@ QDebug operator<<(QDebug dbg, const Fills &obj)
            (int)obj.fillMode() <<
            obj.gradient() <<
            obj.color() <<
-           obj.pixmap() <<
+           obj.imagePath() <<
            obj.opacity() <<
            ")";
     return dbg.maybeSpace();
@@ -185,7 +184,7 @@ QDataStream &operator<<(QDataStream &out, const Fills &obj)
         << (int)obj.fillType()
         << (int)obj.fillMode()
         << obj.color()
-        << obj.pixmap()
+        << obj.imagePath()
         << obj.opacity()
         << obj.gradient();
 
@@ -197,18 +196,18 @@ QDataStream &operator>>(QDataStream &in, Fills &obj)
     AbstractItemProperty aip;
     Color color;
     Gradient gradient;
-    QPixmap pixmap;
+    QString imagePath;
     qreal opacity;
     int fillMode;
     int fillType;
 
 
-    in >> aip >> fillType >> fillMode >> color >> pixmap >> opacity >> gradient;
+    in >> aip >> fillType >> fillMode >> color >> imagePath >> opacity >> gradient;
 
     obj.fromObject(aip);
     obj.m_color = color;
     obj.m_opacity = opacity;
-    obj.m_pixmap = pixmap;
+    obj.m_imagePath = imagePath;
     obj.m_fillMode = Fills::FillMode(fillMode);
     obj.m_fillType = FillType(fillType);
     obj.m_gradient = gradient;

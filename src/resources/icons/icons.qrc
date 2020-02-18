@@ -29,5 +29,6 @@
         <file>dark/colordialog/linear_gradient.png</file>
         <file>dark/colordialog/radial_gradient.png</file>
         <file>dark/colordialog/radial_gradient_alt.png</file>
+        <file>dark/folder-open.svg</file>
     </qresource>
 </RCC>

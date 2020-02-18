@@ -176,8 +176,9 @@ void PropertyFill::updateFill()
 {    
     m_property.setColor(m_colorDialog->color());
     m_property.setOpacity(m_colorDialog->opacity());
-    m_property.setPixmap(m_colorDialog->pixmap());
+    m_property.setImagePath(m_colorDialog->imagePath());
     m_property.setGradient(m_colorDialog->gradient());
+    m_property.setFillMode(m_colorDialog->fillMode());
     m_property.setFillType(m_colorDialog->fillType()); // set which type should used
 
     disconnectSlots();

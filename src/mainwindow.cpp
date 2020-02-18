@@ -203,9 +203,9 @@ void MainWindow::tmpSetup(int offsetX, int offsetY)
 
 
     // Fills - Image
-    QImage fillImage("sun.jpg");
+//    QImage fillImage("sun.jpg");
 
-    Fills fill("rect",fillImage);
+    Fills fill("rect","sun.jpg");
     fill.setBlendMode(QPainter::CompositionMode_SourceOver);
 //    fill.setFillMode(FillMode::Stretch);
 

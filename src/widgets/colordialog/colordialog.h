@@ -1,4 +1,4 @@
-/*************************************************************************************
+﻿/*************************************************************************************
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
@@ -54,22 +54,24 @@ public:
 
     Gradient gradient() const;
     Color color() const;
-    QPixmap pixmap() const;
+    QString imagePath() const;
     qreal opacity() const;
     FillType fillType() const;
+    Fills::FillMode fillMode() const;
 
     Mode mode() const;
 
 private:
     Ui::ColorDialog *ui;
 
-    Mode        m_mode;
-    FillType    m_fillType;
-    Color       m_color;
-    Gradient    m_gradient;
-    QPixmap     m_pixmap;
-    qreal       m_opacity;
-    QTabBar    *m_tabBar;
+    Mode            m_mode;
+    FillType        m_fillType;
+    Fills::FillMode m_fillMode;
+    Color           m_color;
+    Gradient        m_gradient;
+    QString         m_imagePath;
+    qreal           m_opacity;
+    QTabBar        *m_tabBar;
 
     void configurateDialog();
     void selectTab();
