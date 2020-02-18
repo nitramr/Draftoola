@@ -102,6 +102,9 @@ public:
     virtual QRectF boundingRect() const override;
     virtual QRectF renderRect() const = 0;
 
+    QPainterPath transformedPath() const;
+    void applyTransformation();
+
     void setFrameType(FrameType frameType );
     FrameType frameType();
 

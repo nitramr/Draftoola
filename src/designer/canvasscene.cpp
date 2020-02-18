@@ -284,10 +284,8 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setPen(highlightPen);
         painter->setBrush(Qt::NoBrush);
-        //        painter->setTransform(m_hoverTransform);
-        painter->translate(m_hoverPoint);
-        painter->rotate(m_hoverRotation);
-        painter->drawPath(m_hoverPath);
+        painter->translate(m_hoverPoint -QPointF(m_hoverTransform.dx(), m_hoverTransform.dy()) );
+        painter->drawPath( m_hoverPath /*m_hoverTransform.map(m_hoverPath)*/ );
         painter->restore();
     }
 
@@ -329,10 +327,9 @@ void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         if(item->shape().contains(item->mapFromScene(mousePos)) ){
             QPainterPath shape = m_hoverPath;
-            m_hoverPath = item->shape();
+            m_hoverPath = item->transformedPath();//item->shape();
             m_hoverPoint = item->scenePos();
             m_hoverTransform = item->transform();
-            m_hoverRotation = item->rotation();
 
             if(m_hoverPath != shape){
                 invalidate(QRectF(), QGraphicsScene::ForegroundLayer);

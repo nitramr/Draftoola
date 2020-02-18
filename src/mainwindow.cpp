@@ -332,6 +332,7 @@ void MainWindow::tmpSetup(int offsetX, int offsetY)
     ItemRect *rectTrans2 = new ItemRect(70,140);
     rectTrans2->setRadius(8);
     rectTrans2->setTransform( QTransform().rotate(60, Qt::XAxis).rotate(45, Qt::ZAxis).translate(-rectTrans->rect().width()/2,-rectTrans->rect().height()/2) );
+    rectTrans2->applyTransformation();
     rectTrans2->setName("Rect2 Transformed");
     rectTrans2->addFills( Fills("color", Gradient("GrTrans", GrTrans)) );
     m_canvas->addItem(rectTrans2, 180,290, artboard2);
