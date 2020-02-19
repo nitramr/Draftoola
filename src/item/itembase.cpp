@@ -22,7 +22,7 @@
 
 #include <itembase.h>
 #include <QDebug>
-#include <path/pathhandler.h>
+#include <path/pathprocessor.h>
 #include <QGraphicsEffect>
 #include <QGraphicsBlurEffect>
 #include <QGraphicsSceneMouseEvent>
@@ -392,7 +392,7 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
 {
     if(!shadow.isOn()) return QRectF();
 
-    PathHandler pHandler;
+    PathProcessor pHandler;
 
     painter->save();
     painter->setBrush(Qt::NoBrush);
@@ -423,7 +423,7 @@ QRectF ItemBase::drawShadow(Shadow shadow, QPainter *painter)
     if(m_hasFills){
         QPainterPath clip;
         clip.addRect(target);
-        clip = pHandler.combine(clip, shape(), PathHandler::Booleans::Subtract);
+        clip = pHandler.combine(clip, shape(), PathProcessor::Booleans::Subtract);
         painter->setClipPath(clip, Qt::ClipOperation::IntersectClip);
     }
 
@@ -465,7 +465,7 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
 {
     if(!shadow.isOn() || rect().width() == 0 || rect().height() == 0) return QRectF();
 
-    PathHandler pHandler;
+    PathProcessor pHandler;
 
     painter->save();
     painter->setBrush(Qt::NoBrush);
@@ -510,7 +510,7 @@ QRectF ItemBase::drawInnerShadow(Shadow shadow, QPainter *painter)
 
     }else{
         painter->setBrush(m_color);
-        QPainterPath invMask = pHandler.combine(shape(), mask, PathHandler::Booleans::Subtract);
+        QPainterPath invMask = pHandler.combine(shape(), mask, PathProcessor::Booleans::Subtract);
         painter->drawPath(invMask);
     }
 
@@ -631,7 +631,7 @@ QRectF ItemBase::drawStrokes(Stroke stroke, QPainter *painter)
 
     if(!stroke.isOn() || stroke.widthF() <= 0) return QRectF();
 
-    PathHandler pHandler;
+    PathProcessor pHandler;
 
     painter->save();
     painter->setBrush(Qt::NoBrush);
@@ -692,7 +692,7 @@ QPainterPath ItemBase::strokeShape() const
     QPainterPath strokeShape;
 
     if(m_hasStrokes){
-        PathHandler pHandler;
+        PathProcessor pHandler;
         QPainterPath pathMask = shape();
 
         foreach(Stroke stroke, strokeList()) {
@@ -700,10 +700,10 @@ QPainterPath ItemBase::strokeShape() const
                 qreal width = stroke.widthF();
                 switch(stroke.strokePosition()){
                 case Stroke::Inner:
-                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathHandler::Booleans::Intersect);
+                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathProcessor::Booleans::Intersect);
                     break;
                 case Stroke::Outer:{
-                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathHandler::Booleans::Subtract);
+                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathProcessor::Booleans::Subtract);
                     break;
                 }
                 case Stroke::Center:
@@ -711,7 +711,7 @@ QPainterPath ItemBase::strokeShape() const
                     break;
                 }
 
-                strokeShape = pHandler.combine(strokeShape, pathMask, PathHandler::Booleans::Unite);
+                strokeShape = pHandler.combine(strokeShape, pathMask, PathProcessor::Booleans::Unite);
             }
         }
     }
@@ -780,7 +780,7 @@ void ItemBase::calculateRenderRect()
 QRectF ItemBase::calculateShadowPaths()
 {
     m_shadowPathList.clear();
-    PathHandler pHandler;
+    PathProcessor pHandler;
     QRectF bound = m_shadowPath.boundingRect();
 
     foreach(Shadow shadow, m_shadowList){
@@ -802,7 +802,7 @@ QRectF ItemBase::calculateShadowPaths()
 void ItemBase::calculateInnerShadowPaths()
 {
     m_innerShadowPathList.clear();
-    PathHandler pHandler;   
+    PathProcessor pHandler;   
 
     foreach(Shadow shadow, m_innerShadowList){
         if(shadow.isOn()){

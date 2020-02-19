@@ -2,7 +2,7 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
-   Copyright (C) 2019 Martin Reininger <nitramr>
+   Copyright (C) 2020 Martin Reininger <nitramr>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,27 +20,21 @@
 
 **************************************************************************************/
 
-#ifndef PATHHANDLER_H
-#define PATHHANDLER_H
+#ifndef SKIA2QT_H
+#define SKIA2QT_H
 
-#include <QPainterPath>
+struct SkPoint;
+class SkPath;
 
-class PathHandler
-{
-public:
-    PathHandler();
+class QPointF;
+class QPainterPath;
 
-    enum class Booleans {
-        Unite = 0,
-        Subtract = 1,
-        Intersect = 2,
-        InvertIntersect = 3
-    };
+namespace skia{
 
-    static QPainterPath combine(const QPainterPath &path1, const QPainterPath &path2, Booleans boolOperator = Booleans::Unite);
-    QPainterPath scale( const QPainterPath & path, qreal amount) const;
-    QPainterPath simplify(QPainterPath path) const;
+    QPointF qtPoint (const SkPoint &skpoint);
+    QPainterPath qtPath (const SkPath &skpath);
+    int qtFillRule (int rule);
 
 };
 
-#endif // PATHHANDLER_H
+#endif // SKIA2QT_H

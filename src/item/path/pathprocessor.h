@@ -20,50 +20,27 @@
 
 **************************************************************************************/
 
-#ifndef ITEMSTRUCT_H
-#define ITEMSTRUCT_H
+#ifndef PATHHANDLER_H
+#define PATHHANDLER_H
 
-#include <QMetaType>
-#include <QPainter>
-#include <QDebug>
+#include <QPainterPath>
 
-#include <math.h>
-
-#define MINIMAL_FOR_COMPARISON 1e-6
-
-static inline bool are_equal (double first, double second)
+class PathProcessor
 {
-  return 3 * fabs (first - second) < (first + second + 1.0) * MINIMAL_FOR_COMPARISON;
-}
+public:
+    PathProcessor();
 
-static inline double cubed (double x) { return x * x * x; }
-static inline double squared (double x) { return x * x; }
+    enum class Booleans {
+        Unite = 0,
+        Subtract = 1,
+        Intersect = 2,
+        InvertIntersect = 3
+    };
 
-
-
-enum class FillType {
-    Color = 0,
-    Image = 1,
-    LinearGradient = 2,
-    RadialGradient = 3,
-    ConicalGradient = 4,
-    Pattern = 5
+    static QPainterPath combine(const QPainterPath &path1, const QPainterPath &path2, Booleans boolOperator = Booleans::Unite);
+    static QPainterPath scale( const QPainterPath & path, qreal amount);
+    static QPainterPath simplify(QPainterPath path);
 
 };
-Q_DECLARE_METATYPE(FillType)
 
-
-inline QPixmap paintGrid(int blockSize = 6){
-
-    QPixmap pixmap(blockSize*2,blockSize*2);
-    QPainter painter(&pixmap);
-    painter.fillRect(pixmap.rect(), Qt::white);
-
-    painter.fillRect(QRect(blockSize,0,blockSize,blockSize), Qt::lightGray);
-    painter.fillRect(QRect(0,blockSize,blockSize,blockSize), Qt::lightGray);
-
-    return pixmap;
-}
-
-
-#endif // ITEMSTRUCT_H
+#endif // PATHHANDLER_H

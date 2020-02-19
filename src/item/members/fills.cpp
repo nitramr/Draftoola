@@ -66,20 +66,24 @@ void Fills::setFillType(FillType filltype)
     m_fillType = filltype;
 }
 
+
 FillType Fills::fillType() const
 {
     return m_fillType;
 }
+
 
 void Fills::setFillMode(FillMode fillMode)
 {
     m_fillMode = fillMode;
 }
 
+
 Fills::FillMode Fills::fillMode() const
 {
     return m_fillMode;
 }
+
 
 void Fills::setGradient(Gradient gradient)
 {
@@ -87,10 +91,12 @@ void Fills::setGradient(Gradient gradient)
     setFillType(m_gradient.type());
 }
 
+
 Gradient Fills::gradient() const
 {
     return m_gradient;
 }
+
 
 void Fills::setColor(Color color)
 {
@@ -98,17 +104,25 @@ void Fills::setColor(Color color)
     setFillType(FillType::Color);
 }
 
+
 Color Fills::color() const
 {
     return m_color;
 }
 
+
 void Fills::setImagePath(const QString path)
 {
     m_imagePath = path;
-    m_pixmap = QPixmap();
+
+    QImageReader reader(m_imagePath);
+    reader.setAutoTransform(true);
+
+    m_pixmap = QPixmap::fromImageReader(&reader);
+
     setFillType(FillType::Image);
 }
+
 
 QString Fills::imagePath() const
 {
@@ -118,11 +132,7 @@ QString Fills::imagePath() const
 
 QPixmap Fills::pixmap() const
 {   
-    if(m_pixmap.isNull()){
-        QImageReader reader(m_imagePath);
-        reader.setAutoTransform(true);
-        return QPixmap::fromImageReader(&reader);
-    }else return m_pixmap;
+    return m_pixmap;
 }
 
 void Fills::setOpacity(qreal opacity)

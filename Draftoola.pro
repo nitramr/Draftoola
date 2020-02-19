@@ -4,10 +4,12 @@
 #
 #-------------------------------------------------
 
-QT += core gui widgets svg designer
+QT += core gui widgets svg designer opengl
 #QT += gui-private # add private classes
 QT += script
 #qtHaveModule(printsupport): QT += printsupport
+
+include (skia.pri)
 
 CONFIG += c++17
 
@@ -18,6 +20,7 @@ SOURCES += src/main.cpp\
     src/item/members/properties/abstractproperty.cpp \
     src/item/members/properties/color.cpp \
     src/item/itempolygon.cpp \
+    src/item/path/pathprocessor.cpp \
     src/mainwindow.cpp \
     src/designer/canvasscene.cpp \
     src/designer/canvasview.cpp \
@@ -36,8 +39,9 @@ SOURCES += src/main.cpp\
     src/item/itemgroup.cpp \
     src/item/members/shadow.cpp \
     src/item/members/stroke.cpp \
-    src/item/path/pathhandler.cpp \
     src/item/path/roundedpolygon.cpp \
+    src/manager/qt2skia.cpp \
+    src/manager/skia2qt.cpp \
     src/manager/stylefactory.cpp \
     src/widgets/buttongroup.cpp \
     src/widgets/colorbutton.cpp \
@@ -92,8 +96,11 @@ HEADERS  +=     src/mainwindow.h \
     src/item/itemgroup.h \
     src/item/members/shadow.h \
     src/item/members/stroke.h \
-    src/item/path/pathhandler.h \
+    src/item/path/pathprocessor.h \
     src/item/path/roundedpolygon.h \
+    src/manager/qt2skia.h \
+    src/manager/skia2qt.h \
+    src/manager/skia_includes.h \
     src/utilities.h \
     src/manager/stylefactory.h \
     src/widgets/buttongroup.h \

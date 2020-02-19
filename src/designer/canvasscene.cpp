@@ -275,67 +275,67 @@ void CanvasScene::drawForeground(QPainter *painter, const QRectF &rect)
     }
 
 
-    // hover highlight
-    if(!m_hoverPath.isEmpty()){
-        painter->save();
-        QPen highlightPen(m_color);
-        highlightPen.setWidthF(2/scaleFactor());
+//    // hover highlight
+//    if(!m_hoverPath.isEmpty()){
+//        painter->save();
+//        QPen highlightPen(m_color);
+//        highlightPen.setWidthF(2/scaleFactor());
 
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->setPen(highlightPen);
-        painter->setBrush(Qt::NoBrush);
-        painter->translate(m_hoverPoint -QPointF(m_hoverTransform.dx(), m_hoverTransform.dy()) );
-        painter->drawPath( m_hoverPath /*m_hoverTransform.map(m_hoverPath)*/ );
-        painter->restore();
-    }
+//        painter->setRenderHint(QPainter::Antialiasing, true);
+//        painter->setPen(highlightPen);
+//        painter->setBrush(Qt::NoBrush);
+//        painter->translate(m_hoverPoint -QPointF(m_hoverTransform.dx(), m_hoverTransform.dy()) );
+//        painter->drawPath( m_hoverPath /*m_hoverTransform.map(m_hoverPath)*/ );
+//        painter->restore();
+//    }
 
 
 }
 
 void CanvasScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsScene::mouseMoveEvent(event);
+//    QGraphicsScene::mouseMoveEvent(event);
 
-    QPoint mousePos = event->scenePos().toPoint();
+//    QPoint mousePos = event->scenePos().toPoint();
 
-    QList<QGraphicsItem*> list = this->items(mousePos,Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform() );
+//    QList<QGraphicsItem*> list = this->items(mousePos,Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform() );
 
-    if(m_hoverPath != QPainterPath()){
-        m_hoverPath = QPainterPath();
-        invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
-    }
+//    if(m_hoverPath != QPainterPath()){
+//        m_hoverPath = QPainterPath();
+//        invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+//    }
 
-    if(list.isEmpty()) return;
+//    if(list.isEmpty()) return;
 
-    QGraphicsItem * cgItem = list.first();
+//    QGraphicsItem * cgItem = list.first();
 
-    if(cgItem->type() == HandleFrame::Type::Handle && list.count() >1){
-        cgItem = list[1]; // skip handleFrame
-    }
+//    if(cgItem->type() == HandleFrame::Type::Handle && list.count() >1){
+//        cgItem = list[1]; // skip handleFrame
+//    }
 
-    if(cgItem->type() == ArtboardCanvas::Type::Canvas){
-        Artboard * artboard = dynamic_cast<Artboard*>(cgItem->parentItem());
-        if(artboard && cgItem->childItems().isEmpty()){
-            cgItem = cgItem->parentItem(); // get Artboard instead of canvas
-        }
+//    if(cgItem->type() == ArtboardCanvas::Type::Canvas){
+//        Artboard * artboard = dynamic_cast<Artboard*>(cgItem->parentItem());
+//        if(artboard && cgItem->childItems().isEmpty()){
+//            cgItem = cgItem->parentItem(); // get Artboard instead of canvas
+//        }
 
-    }
+//    }
 
-    AbstractItemBase * item = dynamic_cast<AbstractItemBase*>(cgItem);
+//    AbstractItemBase * item = dynamic_cast<AbstractItemBase*>(cgItem);
 
-    if(item){
+//    if(item){
 
-        if(item->shape().contains(item->mapFromScene(mousePos)) ){
-            QPainterPath shape = m_hoverPath;
-            m_hoverPath = item->transformedPath();//item->shape();
-            m_hoverPoint = item->scenePos();
-            m_hoverTransform = item->transform();
+//        if(item->shape().contains(item->mapFromScene(mousePos)) ){
+//            QPainterPath shape = m_hoverPath;
+//            m_hoverPath = item->transformedPath();//item->shape();
+//            m_hoverPoint = item->scenePos();
+//            m_hoverTransform = item->transform();
 
-            if(m_hoverPath != shape){
-                invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
-            }
-        }
-    }
+//            if(m_hoverPath != shape){
+//                invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+//            }
+//        }
+//    }
 
 }
 
