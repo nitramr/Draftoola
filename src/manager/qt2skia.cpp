@@ -18,6 +18,8 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+   Base on https://github.com/telishev/sneakPic/blob/master/src/renderer/qt2skia.cpp
+
 **************************************************************************************/
 
 #include "qt2skia.h"
