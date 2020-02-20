@@ -27,12 +27,6 @@
 
 #include <QDebug>
 
-
-PathProcessor::PathProcessor()
-{
-
-}
-
 QPainterPath PathProcessor::combine(const QPainterPath &path1, const QPainterPath &path2, PathProcessor::Booleans boolOperator)
 {
     return skia::qtPath( combine(
@@ -68,7 +62,7 @@ SkPath PathProcessor::combine(const SkPath &path1, const SkPath &path2, PathProc
         break;
     }
 
-    return result;
+    return simplify(result);
 }
 
 
@@ -87,6 +81,7 @@ QPainterPath PathProcessor::scale( const QPainterPath & path, qreal amount){
         const QPainterPath stroked = stroker.createStroke( path );
         return combine(path, stroked, PathProcessor::Booleans::Subtract);
     }else return path;
+
 
 }
 

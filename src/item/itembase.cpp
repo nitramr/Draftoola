@@ -22,7 +22,7 @@
 
 #include <itembase.h>
 #include <QDebug>
-#include <path/pathprocessor.h>
+#include <pathprocessor.h>
 #include <QGraphicsEffect>
 #include <QGraphicsBlurEffect>
 #include <QGraphicsSceneMouseEvent>
@@ -48,10 +48,6 @@ ItemBase::ItemBase(const QRectF rect, QGraphicsItem *parent) : AbstractItemBase(
     this->setFlag(QGraphicsItem::ItemIsSelectable, true);
     this->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
     this->setFlag(QGraphicsItem::ItemContainsChildrenInShape, true);
-
-//    QGraphicsBlurEffect *blur = new QGraphicsBlurEffect();
-//    blur->setBlurRadius(20);
-//    setGraphicsEffect(blur);
 
 }
 
@@ -780,12 +776,11 @@ void ItemBase::calculateRenderRect()
 QRectF ItemBase::calculateShadowPaths()
 {
     m_shadowPathList.clear();
-    PathProcessor pHandler;
     QRectF bound = m_shadowPath.boundingRect();
 
     foreach(Shadow shadow, m_shadowList){
         if(shadow.isOn()){
-            QPainterPath mask = pHandler.scale(m_shadowPath, shadow.spread()*2);
+            QPainterPath mask = PathProcessor::scale(m_shadowPath, shadow.spread()*2);
             m_shadowPathList.insert(shadow.ID(),mask);
 
             qreal radius = shadow.radius();

@@ -20,7 +20,7 @@ exists ($$QMAKE_SKIA_DIR) {
 }
 
 
-LIBS += -L$$QMAKE_SKIA_DIR/out/Release/
+LIBS += -L$$QMAKE_SKIA_DIR/out/Release
 INCLUDEPATH += $$QMAKE_SKIA_DIR/out/Release
 DEPENDPATH += $$QMAKE_SKIA_DIR/out/Release
 

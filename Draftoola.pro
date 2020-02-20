@@ -16,158 +16,155 @@ CONFIG += c++17
 TARGET = Draftoola
 TEMPLATE = app
 
-SOURCES += src/main.cpp\
-    src/item/members/properties/abstractproperty.cpp \
-    src/item/members/properties/color.cpp \
-    src/item/itempolygon.cpp \
-    src/item/path/pathprocessor.cpp \
-    src/mainwindow.cpp \
+SOURCES += \
     src/designer/canvasscene.cpp \
     src/designer/canvasview.cpp \
     src/designer/handleframe.cpp \
     src/designer/ruler.cpp \
+    src/gui/colordialog/QtColorWidgets/color_2d_slider.cpp \
+    src/gui/colordialog/QtColorWidgets/color_line_edit.cpp \
+    src/gui/colordialog/QtColorWidgets/color_names.cpp \
+    src/gui/colordialog/QtColorWidgets/color_preview.cpp \
+    src/gui/colordialog/QtColorWidgets/gradient_editor.cpp \
+    src/gui/colordialog/QtColorWidgets/gradient_slider.cpp \
+    src/gui/colordialog/QtColorWidgets/hue_slider.cpp \
+    src/gui/colordialog/colordialog.cpp \
+    src/gui/colordialog/colorinput.cpp \
+    src/gui/colordialog/tabcolors.cpp \
+    src/gui/colordialog/tabimage.cpp \
+    src/gui/tool_itemproperties.cpp \
+    src/gui/tool_itemproperties/ip_exportlevel.cpp \
+    src/gui/tool_itemproperties/ip_fills.cpp \
+    src/gui/tool_itemproperties/ip_geometry.cpp \
+    src/gui/tool_itemproperties/ip_innershadows.cpp \
+    src/gui/tool_itemproperties/ip_shadows.cpp \
+    src/gui/tool_itemproperties/ip_strokes.cpp \
+    src/gui/tool_itemproperties/propertyexportlevel.cpp \
+    src/gui/tool_itemproperties/propertyfill.cpp \
+    src/gui/tool_itemproperties/propertyshadow.cpp \
+    src/gui/tool_itemproperties/propertystroke.cpp \
+    src/gui/tool_outliner.cpp \
+    src/gui/widgets/buttongroup.cpp \
+    src/gui/widgets/colorbutton.cpp \
+    src/gui/widgets/flowlayout.cpp \
+    src/gui/widgets/intelligentspinbox.cpp \
+    src/gui/widgets/layoutsection.cpp \
+    src/gui/widgets/popupmenu.cpp \
     src/item/abstractitembase.cpp \
     src/item/artboard.cpp \
-    src/item/members/properties/exportlevel.cpp \
-    src/item/members/fills.cpp \
-    src/item/members/properties/gradient.cpp \
     src/item/itembase.cpp \
-    src/item/members/itemeffects.cpp \
-    src/item/itemtext.cpp \
-    src/item/itemrect.cpp \
-    src/item/itemoval.cpp \
     src/item/itemgroup.cpp \
+    src/item/itemoval.cpp \
+    src/item/itempolygon.cpp \
+    src/item/itemrect.cpp \
+    src/item/itemtext.cpp \
+    src/item/members/abstractitemproperty.cpp \
+    src/item/members/abstractproperty.cpp \
+    src/item/members/color.cpp \
+    src/item/members/exportlevel.cpp \
+    src/item/members/fills.cpp \
+    src/item/members/gradient.cpp \
+    src/item/members/pathprocessor.cpp \
     src/item/members/shadow.cpp \
     src/item/members/stroke.cpp \
-    src/item/path/roundedpolygon.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp \
     src/manager/qt2skia.cpp \
     src/manager/skia2qt.cpp \
-    src/manager/stylefactory.cpp \
-    src/widgets/buttongroup.cpp \
-    src/widgets/colorbutton.cpp \
-    src/widgets/colordialog/QtColorWidgets/color_2d_slider.cpp \
-    src/widgets/colordialog/QtColorWidgets/color_line_edit.cpp \
-    src/widgets/colordialog/QtColorWidgets/color_names.cpp \
-    src/widgets/colordialog/QtColorWidgets/color_preview.cpp \
-    src/widgets/colordialog/QtColorWidgets/gradient_editor.cpp \
-    src/widgets/colordialog/QtColorWidgets/gradient_slider.cpp \
-    src/widgets/colordialog/QtColorWidgets/hue_slider.cpp \
-    src/widgets/colordialog/colordialog.cpp \
-    src/widgets/colordialog/colorinput.cpp \
-    src/widgets/colordialog/gradienteditor.cpp \
-    src/widgets/colordialog/tabcolors.cpp \
-    src/widgets/colordialog/tabimage.cpp \
-    src/widgets/flowlayout.cpp \
-    src/widgets/intelligentspinbox.cpp \
-    src/widgets/layoutsection.cpp \
-    src/widgets/popupmenu.cpp \
-    src/workspace/tool_itemproperties.cpp \
-    src/workspace/tool_outliner.cpp \
-    src/workspace/components/propertyexportlevel.cpp \
-    src/workspace/components/propertyfill.cpp \
-    src/workspace/components/propertyshadow.cpp \
-    src/workspace/components/propertystroke.cpp \
-    src/workspace/tool_itemproperties/ip_geometry.cpp \
-    src/workspace/tool_itemproperties/ip_fills.cpp \
-    src/workspace/tool_itemproperties/ip_exportlevel.cpp \
-    src/workspace/tool_itemproperties/ip_shadows.cpp \
-    src/workspace/tool_itemproperties/ip_strokes.cpp \
-    src/item/members/abstractitemproperty.cpp \
-    src/workspace/tool_itemproperties/ip_innershadows.cpp
+    src/manager/stylefactory.cpp
 
-HEADERS  +=     src/mainwindow.h \
+HEADERS  += \
+    src/common/skia_includes.h \
+    src/common/utilities.h \
     src/designer/canvasscene.h \
     src/designer/canvasview.h \
     src/designer/handleframe.h \
     src/designer/ruler.h \
+    src/gui/colordialog/QtColorWidgets/color_2d_slider.hpp \
+    src/gui/colordialog/QtColorWidgets/color_line_edit.hpp \
+    src/gui/colordialog/QtColorWidgets/color_names.hpp \
+    src/gui/colordialog/QtColorWidgets/color_preview.hpp \
+    src/gui/colordialog/QtColorWidgets/color_utils.hpp \
+    src/gui/colordialog/QtColorWidgets/colorwidgets_global.hpp \
+    src/gui/colordialog/QtColorWidgets/gradient_editor.hpp \
+    src/gui/colordialog/QtColorWidgets/gradient_helper.hpp \
+    src/gui/colordialog/QtColorWidgets/gradient_slider.hpp \
+    src/gui/colordialog/QtColorWidgets/hue_slider.hpp \
+    src/gui/colordialog/colordialog.h \
+    src/gui/colordialog/colorinput.h \
+    src/gui/colordialog/tabcolors.h \
+    src/gui/colordialog/tabimage.h \
+    src/gui/tool_itemproperties.h \
+    src/gui/tool_itemproperties/ip_exportlevel.h \
+    src/gui/tool_itemproperties/ip_fills.h \
+    src/gui/tool_itemproperties/ip_geometry.h \
+    src/gui/tool_itemproperties/ip_innershadows.h \
+    src/gui/tool_itemproperties/ip_shadows.h \
+    src/gui/tool_itemproperties/ip_strokes.h \
+    src/gui/tool_itemproperties/propertyexportlevel.h \
+    src/gui/tool_itemproperties/propertyfill.h \
+    src/gui/tool_itemproperties/propertyshadow.h \
+    src/gui/tool_itemproperties/propertystroke.h \
+    src/gui/tool_outliner.h \
+    src/gui/widgets/buttongroup.h \
+    src/gui/widgets/colorbutton.h \
+    src/gui/widgets/flowlayout.h \
+    src/gui/widgets/intelligentspinbox.h \
+    src/gui/widgets/layoutsection.h \
+    src/gui/widgets/layoutsegment.h \
+    src/gui/widgets/popupmenu.h \
     src/item/abstractitembase.h \
-    src/item/members/properties/abstractproperty.h \
     src/item/artboard.h \
-    src/item/members/properties/color.h \
-    src/item/members/properties/exportlevel.h \
-    src/item/members/fills.h \
-    src/item/members/properties/gradient.h \
     src/item/itembase.h \
-    src/item/members/itemeffects.h \
-    src/item/itempolygon.h \
-    src/item/itemtext.h \
-    src/item/itemrect.h \
-    src/item/itemoval.h \
     src/item/itemgroup.h \
+    src/item/itemoval.h \
+    src/item/itempolygon.h \
+    src/item/itemrect.h \
+    src/item/itemtext.h \
+    src/item/members/abstractitemproperty.h \
+    src/item/members/abstractproperty.h \
+    src/item/members/color.h \
+    src/item/members/exportlevel.h \
+    src/item/members/fills.h \
+    src/item/members/gradient.h \
+    src/item/members/pathprocessor.h \
     src/item/members/shadow.h \
     src/item/members/stroke.h \
-    src/item/path/pathprocessor.h \
-    src/item/path/roundedpolygon.h \
+    src/mainwindow.h \
     src/manager/qt2skia.h \
     src/manager/skia2qt.h \
-    src/manager/skia_includes.h \
-    src/utilities.h \
-    src/manager/stylefactory.h \
-    src/widgets/buttongroup.h \
-    src/widgets/colorbutton.h \
-    src/widgets/colordialog/QtColorWidgets/color_2d_slider.hpp \
-    src/widgets/colordialog/QtColorWidgets/color_line_edit.hpp \
-    src/widgets/colordialog/QtColorWidgets/color_names.hpp \
-    src/widgets/colordialog/QtColorWidgets/color_preview.hpp \
-    src/widgets/colordialog/QtColorWidgets/color_utils.hpp \
-    src/widgets/colordialog/QtColorWidgets/colorwidgets_global.hpp \
-    src/widgets/colordialog/QtColorWidgets/gradient_editor.hpp \
-    src/widgets/colordialog/QtColorWidgets/gradient_helper.hpp \
-    src/widgets/colordialog/QtColorWidgets/gradient_slider.hpp \
-    src/widgets/colordialog/QtColorWidgets/hue_slider.hpp \
-    src/widgets/colordialog/colordialog.h \
-    src/widgets/colordialog/colorinput.h \
-    src/widgets/colordialog/gradienteditor.h \
-    src/widgets/colordialog/tabcolors.h \
-    src/widgets/colordialog/tabimage.h \
-    src/widgets/flowlayout.h \
-    src/widgets/intelligentspinbox.h \
-    src/widgets/layoutsection.h \
-    src/widgets/popupmenu.h \
-    src/workspace/tool_itemproperties.h \
-    src/workspace/tool_outliner.h \
-    src/workspace/components/propertyexportlevel.h \
-    src/workspace/components/propertyfill.h \
-    src/workspace/components/propertyshadow.h \
-    src/workspace/components/propertystroke.h \
-    src/workspace/tool_itemproperties/ip_geometry.h \
-    src/workspace/tool_itemproperties/ip_fills.h \
-    src/workspace/tool_itemproperties/ip_exportlevel.h \
-    src/workspace/tool_itemproperties/ip_shadows.h \
-    src/workspace/tool_itemproperties/ip_strokes.h \
-    src/item/members/abstractitemproperty.h \
-    src/workspace/tool_itemproperties/ip_innershadows.h
+    src/manager/stylefactory.h
 
-FORMS    += src/mainwindow.ui \
-    src/widgets/colordialog/colordialog.ui \
-    src/widgets/colordialog/colorinput.ui \
-    src/widgets/colordialog/tabcolors.ui \
-    src/widgets/colordialog/tabimage.ui \
-    src/workspace/tool_itemproperties.ui \
-    src/workspace/tool_outliner.ui \
-    src/workspace/components/propertyfill.ui \
-    src/workspace/components/propertystroke.ui \
-    src/workspace/components/propertyexportlevel.ui \
-    src/workspace/components/propertyshadow.ui \
-    src/workspace/tool_itemproperties/ip_exportlevel.ui \
-    src/workspace/tool_itemproperties/ip_fills.ui \
-    src/workspace/tool_itemproperties/ip_geometry.ui \
-    src/workspace/tool_itemproperties/ip_shadows.ui \
-    src/workspace/tool_itemproperties/ip_strokes.ui
+FORMS    += \
+    src/gui/colordialog/colordialog.ui \
+    src/gui/colordialog/colorinput.ui \
+    src/gui/colordialog/tabcolors.ui \
+    src/gui/colordialog/tabimage.ui \
+    src/gui/tool_itemproperties.ui \
+    src/gui/tool_itemproperties/ip_exportlevel.ui \
+    src/gui/tool_itemproperties/ip_fills.ui \
+    src/gui/tool_itemproperties/ip_geometry.ui \
+    src/gui/tool_itemproperties/ip_shadows.ui \
+    src/gui/tool_itemproperties/ip_strokes.ui \
+    src/gui/tool_itemproperties/propertyexportlevel.ui \
+    src/gui/tool_itemproperties/propertyfill.ui \
+    src/gui/tool_itemproperties/propertyshadow.ui \
+    src/gui/tool_itemproperties/propertystroke.ui \
+    src/gui/tool_outliner.ui \
+    src/mainwindow.ui
 
 RESOURCES += \
     src/resources/icons/icons.qrc
 
 INCLUDEPATH += \
     $$PWD/src \
+    $$PWD/src/common \    
+    $$PWD/src/designer \
+    $$PWD/src/gui \
+    $$PWD/src/gui/colordialog \
+    $$PWD/src/gui/colordialog/QtColorWidgets \    
+    $$PWD/src/gui/tool_itemproperties \
+    $$PWD/src/gui/widgets \
     $$PWD/src/item \
     $$PWD/src/item/members \
-    $$PWD/src/item/members/properties \
-    $$PWD/src/widgets \
-    $$PWD/src/widgets/colordialog \
-    $$PWD/src/widgets/colordialog/QtColorWidgets \
-    $$PWD/src/manager \
-    $$PWD/src/designer \
-    $$PWD/src/workspace \
-    $$PWD/src/workspace/components \
-    $$PWD/src/workspace/tool_itemproperties
+    $$PWD/src/manager

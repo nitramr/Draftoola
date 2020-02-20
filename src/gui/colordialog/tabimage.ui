@@ -51,7 +51,7 @@
   <customwidget>
    <class>LayoutSection</class>
    <extends>QWidget</extends>
-   <header>src/widgets/layoutsection.h</header>
+   <header>src/gui/widgets/layoutsection.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

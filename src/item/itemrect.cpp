@@ -21,6 +21,7 @@
 **************************************************************************************/
 
 #include <itemrect.h>
+#include <pathprocessor.h>
 
 ItemRect::ItemRect(QGraphicsItem *parent) : ItemRect(0,0,80,80, parent){}
 ItemRect::ItemRect(qreal x, qreal y, qreal width, qreal height, QGraphicsItem *parent) : ItemRect(QRectF(x,y,width,height), parent){}

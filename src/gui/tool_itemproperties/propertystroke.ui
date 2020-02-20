@@ -213,12 +213,12 @@
   <customwidget>
    <class>ColorButton</class>
    <extends>QToolButton</extends>
-   <header location="global">src/widgets/colorbutton.h</header>
+   <header>src/gui/widgets/colorbutton.h</header>
   </customwidget>
   <customwidget>
    <class>IntelligentSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>src/widgets/intelligentspinbox.h</header>
+   <header>src/gui/widgets/intelligentspinbox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

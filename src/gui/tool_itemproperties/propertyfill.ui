@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>propertyShadow</class>
- <widget class="QWidget" name="propertyShadow">
+ <class>propertyFill</class>
+ <widget class="QWidget" name="propertyFill">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
+    <width>256</width>
     <height>48</height>
    </rect>
   </property>
@@ -72,6 +72,12 @@
      </property>
      <item>
       <widget class="ColorButton" name="btn_color">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -106,27 +112,12 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="IntelligentSpinBox" name="sb_xOffset">
+      <widget class="QComboBox" name="combo_blending">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="minimum">
-        <double>-999.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>999.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -138,92 +129,7 @@
         </font>
        </property>
        <property name="text">
-        <string>X</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignHCenter|Qt::AlignTop</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_5">
-     <property name="spacing">
-      <number>1</number>
-     </property>
-     <item>
-      <widget class="IntelligentSpinBox" name="sb_yOffset">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="minimum">
-        <double>-999.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>999.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Y</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignHCenter|Qt::AlignTop</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_6">
-     <property name="spacing">
-      <number>1</number>
-     </property>
-     <item>
-      <widget class="IntelligentSpinBox" name="sb_blur">
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <double>999.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Blur</string>
+        <string>Blending</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignHCenter|Qt::AlignTop</set>
@@ -238,21 +144,12 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="IntelligentSpinBox" name="sb_spread">
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="minimum">
-        <double>-999.000000000000000</double>
+      <widget class="QSpinBox" name="sb_opacity">
+       <property name="suffix">
+        <string>%</string>
        </property>
        <property name="maximum">
-        <double>999.000000000000000</double>
+        <number>100</number>
        </property>
       </widget>
      </item>
@@ -264,7 +161,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Spread</string>
+        <string>Opacity</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignHCenter|Qt::AlignTop</set>
@@ -274,7 +171,20 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_7">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_5">
      <property name="spacing">
       <number>1</number>
      </property>
@@ -310,31 +220,13 @@
      </item>
     </layout>
    </item>
-   <item>
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>IntelligentSpinBox</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>src/widgets/intelligentspinbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>ColorButton</class>
    <extends>QToolButton</extends>
-   <header>src/widgets/colorbutton.h</header>
+   <header>src/gui/widgets/colorbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

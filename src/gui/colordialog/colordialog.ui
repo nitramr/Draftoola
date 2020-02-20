@@ -111,13 +111,13 @@
   <customwidget>
    <class>TabImage</class>
    <extends>QWidget</extends>
-   <header>src/widgets/colordialog/tabimage.h</header>
+   <header>src/gui/colordialog/tabimage.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>TabColors</class>
    <extends>QWidget</extends>
-   <header>src/widgets/colordialog/tabcolors.h</header>
+   <header>src/gui/colordialog/tabcolors.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

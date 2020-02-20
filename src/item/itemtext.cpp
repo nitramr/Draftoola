@@ -102,7 +102,7 @@ void ItemText::setRect(QRectF rect)
 
     QPainterPath path;
     path.addRect(rect);
-    setShape(path);
+    ItemBase::setShape(path);
 
     calculateRenderRect();
 }

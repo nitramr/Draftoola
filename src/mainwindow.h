@@ -26,14 +26,14 @@
 #include <QMainWindow>
 #include <QDockWidget>
 
-#include "workspace/tool_itemproperties.h"
-#include "workspace/tool_outliner.h"
-//#include "designer/canvas.h"
-//#include "designer/canvasframe.h"
-#include "item/itembase.h"
-#include "item/artboard.h"
-#include "designer/canvasscene.h"
-#include "designer/canvasview.h"
+#include <tool_itemproperties.h>
+#include <tool_outliner.h>
+//#include <canvas.h>
+//#include <canvasframe.h>
+#include <itembase.h>
+#include <artboard.h>
+#include <canvasscene.h>
+#include <canvasview.h>
 
 namespace Ui {
 class MainWindow;

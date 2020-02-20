@@ -176,7 +176,7 @@
   <customwidget>
    <class>color_widgets::ColorLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>src/widgets/colordialog/QtColorWidgets/color_line_edit.hpp</header>
+   <header>src/gui/colordialog/QtColorWidgets/color_line_edit.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

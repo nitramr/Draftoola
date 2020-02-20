@@ -24,7 +24,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QtWidgets>
-#include <path/pathprocessor.h>
+#include <pathprocessor.h>
 
 AbstractItemBase::AbstractItemBase() : AbstractItemBase(QRect()){}
 AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : QGraphicsObject(parent)

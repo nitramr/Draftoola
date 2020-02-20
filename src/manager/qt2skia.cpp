@@ -29,6 +29,7 @@
 
 #include <QPointF>
 #include <QPainterPath>
+#include <QTransform>
 
 #include <skia_includes.h>
 
