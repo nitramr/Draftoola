@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QtWidgets>
+#include <path/pathprocessor.h>
 
 AbstractItemBase::AbstractItemBase() : AbstractItemBase(QRect()){}
 AbstractItemBase::AbstractItemBase(const QRectF rect, QGraphicsItem *parent) : QGraphicsObject(parent)
@@ -158,7 +159,7 @@ QRectF AbstractItemBase::boundingRect() const
 
 QPainterPath AbstractItemBase::transformedPath() const
 {
-    return transform().map(shape());
+    return PathProcessor::map(transform(), shape());
 }
 
 void AbstractItemBase::applyTransformation()

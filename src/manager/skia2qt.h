@@ -2,7 +2,10 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
+   Copyright (C) 2014 Alexey Telishev <telishev>
    Copyright (C) 2020 Martin Reininger <nitramr>
+
+   Base on https://github.com/telishev/sneakPic/blob/master/src/renderer/qt2skia.h
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,12 +28,15 @@
 
 struct SkPoint;
 class SkPath;
+class SkMatrix;
 
 class QPointF;
 class QPainterPath;
+class QTransform;
 
 namespace skia{
 
+    QTransform qtMatrix (const SkMatrix &tr);
     QPointF qtPoint (const SkPoint &skpoint);
     QPainterPath qtPath (const SkPath &skpath);
     int qtFillRule (int rule);

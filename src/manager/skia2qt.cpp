@@ -2,7 +2,10 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
+   Copyright (C) 2014 Alexey Telishev <telishev>
    Copyright (C) 2020 Martin Reininger <nitramr>
+
+   Base on https://github.com/telishev/sneakPic/blob/master/src/renderer/qt2skia.cpp
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,9 +32,20 @@
 #include <QRectF>
 #include <QDebug>
 
-#include "skia_includes.h"
+#include <skia_includes.h>
 
 namespace skia{
+
+QTransform qtMatrix (const SkMatrix &tr)
+{
+  QTransform matrix;
+  // scaleX, skewX, transX, skewY, scaleY, transY, persp0, persp1, persp2
+  // m11, m21, m31, m12, m22, m32, m13, m23, m33
+//  matrix.setMatrix(tr.getScaleX(), tr.getSkewX(), tr.getTranslateX(), tr.getSkewY(), tr.getScaleY(), tr.getTranslateY(), tr.getPerspX(), tr.getPerspY(), tr.get(8));
+  matrix.setMatrix(tr.get(0), tr.get(1), tr.get(2), tr.get(3), tr.get(4), tr.get(5), tr.get(6), tr.get(7), tr.get(8));
+  return matrix;
+}
+
 
 int qtFillRule (int rule)
 {
@@ -62,26 +76,26 @@ QPainterPath qtPath(const SkPath &skpath)
     for (int i = 0; i < max; ++i) {
 
         switch( verbs[i] ){
-        case 0: // move 1
+        case 0: // move
             path.moveTo(qtPoint(skpath.getPoint(count)));
             count +=1;
             break;
-        case 1: // line 2
+        case 1: // line
             path.lineTo(qtPoint(skpath.getPoint(count)));
             count +=1;
             break;
-        case 2: // quad 3
+        case 2: // quad
             path.quadTo(
                         qtPoint(skpath.getPoint(count)),
                         qtPoint(skpath.getPoint(count+1))
                         );
             count +=2;
             break;
-        case 3: // conic 4
-            qDebug() << "conicTo" + QString::number(i);
+        case 3: // conic
+            qDebug() << "conicTo";
             count +=3;
             break;
-        case 4: // cubic 4
+        case 4: // cubic
             path.cubicTo(
                         qtPoint(skpath.getPoint(count)),
                         qtPoint(skpath.getPoint(count+1)),
@@ -89,24 +103,11 @@ QPainterPath qtPath(const SkPath &skpath)
                         );
             count +=3;
             break;
-        case 5: // close 1
-        case 6: // done 0
+        case 5: // close
+        case 6: // done
             break;
         }
     }
-
-
-    //    if (count == 1)
-    //      {
-    //        path.lineTo (skPoint (qpath.elementAt (0)));
-    //        path.close ();
-    //      }
-
-    //    if (   count > 3
-    //           && are_equal (qpath.elementAt (count - 1).x, qpath.elementAt (0).x)
-    //           && are_equal (qpath.elementAt (count - 1).y, qpath.elementAt (0).y)
-    //       )
-    //      path.close ();
 
     path.setFillRule( (Qt::FillRule)qtFillRule((int)skpath.getFillType()) );
     return path;

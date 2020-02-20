@@ -9,14 +9,14 @@ Open Source UI and UX prototyping tool for designing static and animated layouts
 ![Bildschirmfoto von 2019-05-05 12-56-01](https://user-images.githubusercontent.com/15112256/71785561-5b1dc680-3001-11ea-818f-7623ac3dc898.png)
 
 ## Dependencies
-Draftoola requires minimum Qt 5.14 - https://www.qt.io/download
+Draftoola requires minimum Qt 5.14 - https://www.qt.io/download \
 Draftoola requires Skia - https://skia.org/
 
 ## Prepare Skia library
 
 ### Download Skia
 Download Skia somewhere on your local machine by following instructions. \
-Draftool code is tested with "chrome/m81" branch from Skia library. You can use a later one, but it is not tested. \
+Draftoola code is tested with "chrome/m81" branch from Skia library. You can use a later one, but it is not tested. \
 Open your terminal and navigate to your preferred folder where Skia should be downloaded.
 
 ```
@@ -38,7 +38,7 @@ tools/install_dependencies.sh
 
 ### Precompile Skia
 
-Now Skia have to precompiled as a static library. You can follow the official instructions on https://skia.org/user/build. \
+Now Skia have to precompiled as a static library. You can follow the official instructions on https://skia.org/user/build.
 
 #### Example for Ubuntu
 

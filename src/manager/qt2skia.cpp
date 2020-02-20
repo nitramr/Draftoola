@@ -2,7 +2,10 @@
 
    Draftoola - UI and UX prototyping tool for designing static and animated layouts.
 
+   Copyright (C) 2014 Alexey Telishev <telishev>
    Copyright (C) 2020 Martin Reininger <nitramr>
+
+   Base on https://github.com/telishev/sneakPic/blob/master/src/renderer/qt2skia.cpp
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,8 +21,6 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-   Base on https://github.com/telishev/sneakPic/blob/master/src/renderer/qt2skia.cpp
-
 **************************************************************************************/
 
 #include "qt2skia.h"
@@ -33,13 +34,21 @@
 
 namespace skia{
 
-
-SkPoint skPoint (const QPointF &point)
+SkMatrix skMatrix(const QTransform &tr)
 {
-  return SkPoint::Make(SkFloatToScalar (point.x ()), SkFloatToScalar (point.y ()));
+  SkMatrix matrix;
+  // scaleX, skewX, transX, skewY, scaleY, transY, persp0, persp1, persp2
+  // m11, m21, m31, m12, m22, m32, m13, m23, m33
+  matrix.setAll(tr.m11(), tr.m21(), tr.m31(), tr.m12(), tr.m22(), tr.m32(), tr.m13(), tr.m23(), tr.m33());
+  return matrix;
 }
 
-int skFillRule (int rule)
+SkPoint skPoint(const QPointF &point)
+{
+  return SkPoint::Make(SkFloatToScalar(point.x()), SkFloatToScalar(point.y()));
+}
+
+int skFillRule(int rule)
 {
   switch(rule)
     {
@@ -47,11 +56,11 @@ int skFillRule (int rule)
       return (int)SkPathFillType::kEvenOdd;
     case Qt::FillRule::WindingFill:
   default:
-      return (int)SkPathFillType::kWinding ;
+      return (int)SkPathFillType::kWinding;
     }
 }
 
-SkPath skPath (const QPainterPath &qpath)
+SkPath skPath(const QPainterPath &qpath)
 {
   SkPath path;
   int count = qpath.elementCount();

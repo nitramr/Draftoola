@@ -35,10 +35,15 @@ PathProcessor::PathProcessor()
 
 QPainterPath PathProcessor::combine(const QPainterPath &path1, const QPainterPath &path2, PathProcessor::Booleans boolOperator)
 {
+    return skia::qtPath( combine(
+                             skia::skPath(path1),
+                             skia::skPath(path2),
+                             boolOperator)
+                         );
+}
 
-    SkPath skpath1 = skia::skPath(path1);
-    SkPath skpath2 = skia::skPath(path2);
-
+SkPath PathProcessor::combine(const SkPath &path1, const SkPath &path2, PathProcessor::Booleans boolOperator)
+{
     SkPath result;
 
     //    kDifference_SkPathOp,         //!< subtract the op path from the first path
@@ -49,21 +54,21 @@ QPainterPath PathProcessor::combine(const QPainterPath &path1, const QPainterPat
 
     switch (boolOperator) {
     case Booleans::Subtract:
-        Op(skpath1, skpath2, SkPathOp::kDifference_SkPathOp, &result);
+        Op(path1, path2, SkPathOp::kDifference_SkPathOp, &result);
         break;
     case Booleans::Intersect:
-        Op(skpath1, skpath2, SkPathOp::kIntersect_SkPathOp, &result);
+        Op(path1, path2, SkPathOp::kIntersect_SkPathOp, &result);
         break;
     case Booleans::InvertIntersect:
-        Op(skpath1, skpath2, SkPathOp::kXOR_SkPathOp, &result);
+        Op(path1, path2, SkPathOp::kXOR_SkPathOp, &result);
         break;
     case Booleans::Unite:
     default:
-        Op(skpath1, skpath2, SkPathOp::kUnion_SkPathOp, &result);
+        Op(path1, path2, SkPathOp::kUnion_SkPathOp, &result);
         break;
     }
 
-    return skia::qtPath(result);
+    return result;
 }
 
 
@@ -87,9 +92,25 @@ QPainterPath PathProcessor::scale( const QPainterPath & path, qreal amount){
 
 QPainterPath PathProcessor::simplify(QPainterPath path)
 {
-    SkPath skpath = skia::skPath(path);
-    SkPath result;
-    Simplify(skpath, &result);
+    return skia::qtPath( simplify(skia::skPath(path)) );
+}
 
-    return skia::qtPath(result);
+SkPath PathProcessor::simplify(SkPath path)
+{
+    SkPath result;
+    Simplify(path, &result);
+    return result;
+}
+
+QPainterPath PathProcessor::map(QTransform transform, QPainterPath sourcePath)
+{
+    return skia::qtPath( map( skia::skMatrix(transform), skia::skPath(sourcePath) ) );
+}
+
+SkPath PathProcessor::map(SkMatrix matrix, SkPath sourcePath)
+{
+    SkPath path;
+    sourcePath.transform(matrix, &path);
+    return path;
+
 }

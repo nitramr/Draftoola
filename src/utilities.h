@@ -39,6 +39,18 @@ static inline bool are_equal (double first, double second)
 static inline double cubed (double x) { return x * x * x; }
 static inline double squared (double x) { return x * x; }
 
+static inline QPixmap paintGrid(int blockSize = 6){
+
+    QPixmap pixmap(blockSize*2,blockSize*2);
+    QPainter painter(&pixmap);
+    painter.fillRect(pixmap.rect(), Qt::white);
+
+    painter.fillRect(QRect(blockSize,0,blockSize,blockSize), Qt::lightGray);
+    painter.fillRect(QRect(0,blockSize,blockSize,blockSize), Qt::lightGray);
+
+    return pixmap;
+}
+
 
 
 enum class FillType {
@@ -51,19 +63,6 @@ enum class FillType {
 
 };
 Q_DECLARE_METATYPE(FillType)
-
-
-inline QPixmap paintGrid(int blockSize = 6){
-
-    QPixmap pixmap(blockSize*2,blockSize*2);
-    QPainter painter(&pixmap);
-    painter.fillRect(pixmap.rect(), Qt::white);
-
-    painter.fillRect(QRect(blockSize,0,blockSize,blockSize), Qt::lightGray);
-    painter.fillRect(QRect(0,blockSize,blockSize,blockSize), Qt::lightGray);
-
-    return pixmap;
-}
 
 
 #endif // ITEMSTRUCT_H
