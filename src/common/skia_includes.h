@@ -28,5 +28,9 @@
 #include <SkPath.h>
 #include <SkPathTypes.h>
 #include <SkPathOps.h>
+#include <SkStrokeRec.h>
+#include <SkPathEffect.h>
+#include <SkDashPathEffect.h>
+#include <Sk1DPathEffect.h>
 
 #endif // SKIAINCLUDES_H

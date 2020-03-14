@@ -19,16 +19,15 @@ exists ($$QMAKE_SKIA_DIR) {
   message ("Please, specify skia dir using environment variable SKIA_DIR")
 }
 
-
 LIBS += -L$$QMAKE_SKIA_DIR/out/Release
 INCLUDEPATH += $$QMAKE_SKIA_DIR/out/Release
 DEPENDPATH += $$QMAKE_SKIA_DIR/out/Release
 
 win32:*msvc* {
-  LIBS *=  skia.lib
+  LIBS *=  usp10.lib skia.lib zlib.lib opengl32.lib
 }
 
 *g++* | *clang* {
-  LIBS *= -lskia
+  LIBS *= -lskia -lpthread -lgif -lpng -lz -lfontconfig -ldl -lfreetype -lGL -lGLU -lX11
 }
 

@@ -27,6 +27,8 @@
 #include <QGraphicsBlurEffect>
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
+#include <qt2skia.h>
+#include <skia2qt.h>
 
 QT_BEGIN_NAMESPACE
 // https://code.woboq.org/qt5/qtbase/src/widgets/effects/qpixmapfilter.cpp.html
@@ -627,8 +629,6 @@ QRectF ItemBase::drawStrokes(Stroke stroke, QPainter *painter)
 
     if(!stroke.isOn() || stroke.widthF() <= 0) return QRectF();
 
-    PathProcessor pHandler;
-
     painter->save();
     painter->setBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
@@ -643,15 +643,19 @@ QRectF ItemBase::drawStrokes(Stroke stroke, QPainter *painter)
     switch(stroke.strokePosition()){
     case Stroke::Inner:
         offset = 0;
-        stroke.setWidthF(width * 2);
-        painter->setClipPath(shape(), Qt::ClipOperation::IntersectClip);
+//        stroke.setWidthF(width * 2);
+//        painter->setClipPath(shape(), Qt::ClipOperation::IntersectClip);
+
+        pathStroke = PathProcessor::normalOffset(pathStroke, -width);
+
         break;
     case Stroke::Outer:{
         offset = width;
-        stroke.setWidthF(width * 2);
-        QPainterPath tmpMask;
-        tmpMask.addRect(boundingBox.adjusted(-offset,-offset,offset,offset));
-        painter->setClipPath(tmpMask.subtracted(shape()), Qt::ClipOperation::IntersectClip);
+//        stroke.setWidthF(width * 2);
+//        QPainterPath tmpMask;
+//        tmpMask.addRect(boundingBox.adjusted(-offset,-offset,offset,offset));
+//        painter->setClipPath(tmpMask.subtracted(shape()), Qt::ClipOperation::IntersectClip);
+        pathStroke = PathProcessor::normalOffset(pathStroke, width);
         break;
     }
     case Stroke::Center:
@@ -681,38 +685,6 @@ QRectF ItemBase::drawBlur(qreal radius, QPainter* painter)
     painter->restore();
 
     return boundingBox;
-}
-
-QPainterPath ItemBase::strokeShape() const
-{
-    QPainterPath strokeShape;
-
-    if(m_hasStrokes){
-        PathProcessor pHandler;
-        QPainterPath pathMask = shape();
-
-        foreach(Stroke stroke, strokeList()) {
-            if(stroke.isOn()){
-                qreal width = stroke.widthF();
-                switch(stroke.strokePosition()){
-                case Stroke::Inner:
-                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathProcessor::Booleans::Intersect);
-                    break;
-                case Stroke::Outer:{
-                    pathMask = pHandler.combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathProcessor::Booleans::Subtract);
-                    break;
-                }
-                case Stroke::Center:
-                    pathMask = scaleStroke(shape(), width, stroke.pen());
-                    break;
-                }
-
-                strokeShape = pHandler.combine(strokeShape, pathMask, PathProcessor::Booleans::Unite);
-            }
-        }
-    }
-
-    return strokeShape;
 }
 
 
@@ -750,18 +722,62 @@ QImage ItemBase::blurShadow(QPainterPath shape, QSize size, qreal radius, qreal 
 }
 
 
-void ItemBase::calculateRenderRect()
+SkPath ItemBase::strokeShape() const
 {
-    m_shadowPath = QPainterPath();
-
- //   if(m_hasFills){
-        m_shadowPath = shape();
- //   }
+    SkPath strokeShape;
 
     if(m_hasStrokes){
-        m_shadowPath.addPath(strokeShape());
+        SkPath shape = skshape();
+        SkPath pathMask;
+
+        foreach(Stroke stroke, strokeList()) {
+            if(stroke.isOn()){
+                qreal width = stroke.widthF();
+//                switch(stroke.strokePosition()){
+//                case Stroke::Inner:
+//                    pathMask = PathProcessor::combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathProcessor::Booleans::Intersect);
+//                    break;
+//                case Stroke::Outer:
+//                    pathMask = PathProcessor::combine(scaleStroke(shape(), width*2, stroke.pen()), shape(), PathProcessor::Booleans::Subtract);
+//                    break;
+//                case Stroke::Center:
+//                    pathMask = scaleStroke(shape(), width, stroke.pen());
+//                    break;
+//                }
+
+                switch(stroke.strokePosition()){
+                case Stroke::Inner:
+                    pathMask = PathProcessor::normalOffset(shape, -width);
+                    break;
+                case Stroke::Outer:
+                    pathMask = PathProcessor::normalOffset(shape, width);
+                    break;
+                case Stroke::Center:
+                    pathMask = shape;
+                    break;
+                }
+                strokeShape = PathProcessor::simplify(PathProcessor::combine(strokeShape,
+                                                                             PathProcessor::stroker(pathMask, stroke.pen()),
+                                                                             PathProcessor::Booleans::Unite));
+
+               // strokeShape.addPath(PathProcessor::stroker(pathMask, stroke.pen()));
+            }
+        }
+
+        //strokeShape = PathProcessor::simplify(strokeShape);
     }
 
+    return strokeShape;
+}
+
+SkPath ItemBase::skshape() const
+{
+    return skia::skPath(shape());
+}
+
+
+void ItemBase::calculateRenderRect()
+{
     // Calculate inner shadow paths
     calculateInnerShadowPaths();
 
@@ -776,12 +792,30 @@ void ItemBase::calculateRenderRect()
 QRectF ItemBase::calculateShadowPaths()
 {
     m_shadowPathList.clear();
-    QRectF bound = m_shadowPath.boundingRect();
+
+    m_shadowPath = SkPath();
+    m_shadowPath.setFillType(SkPathFillType::kEvenOdd);
+
+    if(m_hasFills && !m_hasStrokes){
+        m_shadowPath = skshape();
+    }
+
+    if(m_hasStrokes && !m_hasFills){
+        m_shadowPath = strokeShape();
+    }
+
+    if(m_hasStrokes){
+        m_shadowPath = PathProcessor::combine(strokeShape(), m_shadowPath, PathProcessor::Booleans::Unite);
+    }
+
+    m_shadowPath = PathProcessor::simplify(m_shadowPath);
+
+    QRectF bound = skia::qtPath(m_shadowPath).boundingRect();
 
     foreach(Shadow shadow, m_shadowList){
         if(shadow.isOn()){
-            QPainterPath mask = PathProcessor::scale(m_shadowPath, shadow.spread()*2);
-            m_shadowPathList.insert(shadow.ID(),mask);
+            QPainterPath mask = skia::qtPath(PathProcessor::normalOffset(m_shadowPath, shadow.spread()*2));
+            m_shadowPathList.insert(shadow.ID(), mask);
 
             qreal radius = shadow.radius();
             QRectF shadowRect = mask.boundingRect();
@@ -794,14 +828,14 @@ QRectF ItemBase::calculateShadowPaths()
     return bound;
 }
 
+
 void ItemBase::calculateInnerShadowPaths()
 {
     m_innerShadowPathList.clear();
-    PathProcessor pHandler;   
 
     foreach(Shadow shadow, m_innerShadowList){
         if(shadow.isOn()){
-            QPainterPath mask = pHandler.scale(shape(), -shadow.radius() - shadow.spread());
+            QPainterPath mask = PathProcessor::normalOffset(shape(), -shadow.radius() / 2 - shadow.spread());
             m_innerShadowPathList.insert(shadow.ID(),mask);
         }
     }
@@ -838,7 +872,19 @@ void ItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     if(m_hasStrokes){
         foreach(Stroke stroke, this->strokeList())
             drawStrokes(stroke, painter);
-        }
+    }
+
+
+    QPainterPath shadow = skia::qtPath(m_shadowPath);
+
+    for ( int i = 0; i < shadow.elementCount(); ++i){
+        QPointF point = shadow.elementAt(i);
+
+        painter->setBrush(Qt::blue);
+        painter->drawEllipse(point, 1,1);
+
+    }
+
 }
 
 void ItemBase::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

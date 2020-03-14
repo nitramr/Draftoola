@@ -36,6 +36,7 @@
 #include <gradient.h>
 #include <shadow.h>
 #include <abstractitembase.h>
+#include <SkPath.h>
 
 class ItemBase : public AbstractItemBase
 {
@@ -100,7 +101,7 @@ public:
 private:
 	// Properties
     Stroke::StrokePosition m_strokePosition;
-    QPainterPath m_shadowPath;
+    SkPath m_shadowPath;
     QRectF m_renderRect;
 
     // Members
@@ -110,6 +111,7 @@ private:
     QList<Shadow>               m_innerShadowList;
     QMap<QString,QPainterPath>  m_shadowPathList;
     QMap<QString,QPainterPath>  m_innerShadowPathList;
+    SkPath                      m_skshape;
 
     bool m_hasFills;
     bool m_hasStrokes;
@@ -118,7 +120,9 @@ private:
 
 
     qreal lod();
-    QPainterPath strokeShape() const;
+    SkPath strokeShape() const;
+
+    SkPath skshape() const;
 
     // functions    
     QImage blurShadow(QPainterPath shape, QSize size, qreal radius, qreal lod, QPainter::CompositionMode compositionMode, QColor tintColor = Qt::black) const;

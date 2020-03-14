@@ -62,9 +62,9 @@ MainWindow::MainWindow(QWidget *parent) :
     int offsetY = 0;
 
     // TODO: delete function for release
-    for(int y = 0; y <10; y++){
+    for(int y = 0; y <1; y++){
 
-        for(int x = 0; x <10; x++){
+        for(int x = 0; x <1; x++){
         tmpSetup(offsetX,offsetY);
 
         offsetX += 1000;

@@ -38,78 +38,88 @@ namespace skia{
 
 QTransform qtMatrix (const SkMatrix &tr)
 {
-  QTransform matrix;
-  // scaleX, skewX, transX, skewY, scaleY, transY, persp0, persp1, persp2
-  // m11, m21, m31, m12, m22, m32, m13, m23, m33
-//  matrix.setMatrix(tr.getScaleX(), tr.getSkewX(), tr.getTranslateX(), tr.getSkewY(), tr.getScaleY(), tr.getTranslateY(), tr.getPerspX(), tr.getPerspY(), tr.get(8));
-  matrix.setMatrix(tr.get(0), tr.get(1), tr.get(2), tr.get(3), tr.get(4), tr.get(5), tr.get(6), tr.get(7), tr.get(8));
-  return matrix;
+    QTransform matrix;
+    // scaleX, skewX, transX, skewY, scaleY, transY, persp0, persp1, persp2
+    // m11, m21, m31, m12, m22, m32, m13, m23, m33
+    //  matrix.setMatrix(tr.getScaleX(), tr.getSkewX(), tr.getTranslateX(), tr.getSkewY(), tr.getScaleY(), tr.getTranslateY(), tr.getPerspX(), tr.getPerspY(), tr.get(8));
+    matrix.setMatrix(tr.get(0), tr.get(1), tr.get(2), tr.get(3), tr.get(4), tr.get(5), tr.get(6), tr.get(7), tr.get(8));
+    return matrix;
 }
 
 
 int qtFillRule (int rule)
 {
-  switch (SkPathFillType(rule))
+    switch (SkPathFillType(rule))
     {
     case SkPathFillType::kEvenOdd:
-      return Qt::FillRule::OddEvenFill;
+        return Qt::FillRule::OddEvenFill;
     case SkPathFillType::kWinding:
     default:
-      return Qt::FillRule::WindingFill;
+        return Qt::FillRule::WindingFill;
     }
 }
+
 
 QPointF qtPoint (const SkPoint &skpoint)
 {
     return QPointF(skpoint.x(), skpoint.y());
 }
 
+
 QPainterPath qtPath(const SkPath &skpath)
 {
     QPainterPath path;
-    int max = skpath.countVerbs();
-    uint8_t verbs[max];
-    skpath.getVerbs(verbs, max);
 
-    int count = 0;
+    SkPath::Iter iter(skpath, true);
+    SkPath::Verb verb;
 
-    for (int i = 0; i < max; ++i) {
+    do {
+        SkPoint points[4];
+        verb = iter.next(points);
 
-        switch( verbs[i] ){
+        switch( (int)verb ){
         case 0: // move
-            path.moveTo(qtPoint(skpath.getPoint(count)));
-            count +=1;
+            path.moveTo(qtPoint(points[0]));
             break;
         case 1: // line
-            path.lineTo(qtPoint(skpath.getPoint(count)));
-            count +=1;
+            path.lineTo(qtPoint(points[1]));
             break;
         case 2: // quad
             path.quadTo(
-                        qtPoint(skpath.getPoint(count)),
-                        qtPoint(skpath.getPoint(count+1))
-                        );
-            count +=2;
+                        qtPoint(points[1]),
+                        qtPoint(points[2])
+                    );
             break;
-        case 3: // conic
-            qDebug() << "conicTo";
-            count +=3;
+        case 3:{ // conic
+            SkPoint quads[5];
+            SkPath::ConvertConicToQuads(points[0], points[1], points[2], iter.conicWeight(), quads, 1);
+            path.quadTo(
+                        qtPoint(quads[1]),
+                        qtPoint(quads[2])
+                    );
+            path.quadTo(
+                        qtPoint(quads[3]),
+                        qtPoint(quads[4])
+                    );
             break;
+        }
         case 4: // cubic
             path.cubicTo(
-                        qtPoint(skpath.getPoint(count)),
-                        qtPoint(skpath.getPoint(count+1)),
-                        qtPoint(skpath.getPoint(count+2))
-                        );
-            count +=3;
+                        qtPoint(points[1]),
+                        qtPoint(points[2]),
+                        qtPoint(points[3])
+                    );
             break;
         case 5: // close
         case 6: // done
             break;
         }
-    }
+
+    } while (SkPath::kDone_Verb != verb);
+
 
     path.setFillRule( (Qt::FillRule)qtFillRule((int)skpath.getFillType()) );
+    path.closeSubpath();
     return path;
 }
 

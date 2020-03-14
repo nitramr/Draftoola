@@ -66,23 +66,109 @@ SkPath PathProcessor::combine(const SkPath &path1, const SkPath &path2, PathProc
 }
 
 
-QPainterPath PathProcessor::scale( const QPainterPath & path, qreal amount){
+QPainterPath PathProcessor::normalOffset( const QPainterPath &path, qreal amount){
 
-    QPainterPathStroker stroker;
-    stroker.setJoinStyle(Qt::PenJoinStyle::MiterJoin);
-    // Stroke width of PathStroker will be 50% of each side
+    //    QPainterPathStroker stroker;
+    //    stroker.setJoinStyle(Qt::PenJoinStyle::MiterJoin);
+    //    // Stroke width of PathStroker will be 50% of each side
+
+    //    if(amount > 0){
+    //        stroker.setWidth( amount );
+    //        const QPainterPath stroked = stroker.createStroke( path );
+    //        return combine(path, stroked, PathProcessor::Booleans::Unite);
+    //    }else if(amount < 0){
+    //        stroker.setWidth( -amount );
+    //        const QPainterPath stroked = stroker.createStroke( path );
+    //        return combine(path, stroked, PathProcessor::Booleans::Subtract);
+    //    }else return path;
+
+
+    return skia::qtPath( normalOffset( skia::skPath(path), amount) );
+
+
+}
+
+SkPath PathProcessor::normalOffset(const SkPath &path, qreal amount)
+{
+    SkPath target = path;
+
+    QPen pen;
+    pen.setJoinStyle(Qt::MiterJoin);
+
 
     if(amount > 0){
-        stroker.setWidth( amount );
-        const QPainterPath stroked = stroker.createStroke( path );
-        return combine(path, stroked, PathProcessor::Booleans::Unite);
+        pen.setWidthF(amount);
+        target = combine(path, stroker(path, pen), PathProcessor::Booleans::Unite);
     }else if(amount < 0){
-        stroker.setWidth( -amount );
-        const QPainterPath stroked = stroker.createStroke( path );
-        return combine(path, stroked, PathProcessor::Booleans::Subtract);
-    }else return path;
+        pen.setWidthF(-amount);
+        target = combine(path, stroker(path, pen), PathProcessor::Booleans::Subtract);
+    }
+
+    return target;
+}
+
+QPainterPath PathProcessor::stroker(const QPainterPath &path, QPen pen)
+{
+    //    QPainterPathStroker stroker(pen);
+    //    return stroker.createStroke(path);
+
+    return skia::qtPath( stroker( skia::skPath(path), pen) );
+}
+
+SkPath PathProcessor::stroker(const SkPath &path, QPen pen)
+{
+    SkPath target;
+
+    SkPaint::Cap cap;
+    SkPaint::Join join;
+
+    switch(pen.capStyle()){
+    default:
+    case Qt::FlatCap:
+        cap = SkPaint::Cap::kButt_Cap;
+        break;
+    case Qt::RoundCap:
+        cap = SkPaint::Cap::kRound_Cap;
+        break;
+    case Qt::SquareCap:
+        cap = SkPaint::Cap::kSquare_Cap;
+        break;
+    }
+
+    switch(pen.joinStyle()){
+    default:
+    case Qt::MiterJoin:
+        join = SkPaint::Join::kMiter_Join;
+        break;
+    case Qt::BevelJoin:
+        join = SkPaint::Join::kBevel_Join;
+        break;
+    case Qt::RoundJoin:
+        join = SkPaint::Join::kRound_Join;
+        break;
+    }
 
 
+    QVector<qreal> pattern = pen.dashPattern();
+    int pLenght = pattern.size();
+
+    SkScalar intervals[pLenght];
+    for(int i=0; i<pLenght; ++i){
+        intervals[i] = SkFloatToScalar(pattern[i] * pen.widthF());
+    }
+
+    size_t count = sizeof(intervals) / sizeof(intervals[0]);
+
+    SkPaint paint;
+    paint.setPathEffect(SkDashPathEffect::Make(intervals, count, 0.0f));
+    paint.setStyle(SkPaint::kStroke_Style);
+    paint.setStrokeWidth(pen.widthF());
+    paint.setStrokeCap(cap);
+    paint.setStrokeJoin(join);
+    paint.setStrokeMiter(pen.miterLimit());
+    paint.getFillPath(path, &target);
+
+    return simplify(target);
 }
 
 QPainterPath PathProcessor::simplify(QPainterPath path)

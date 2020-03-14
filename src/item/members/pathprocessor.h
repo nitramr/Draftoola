@@ -25,6 +25,7 @@
 
 #include <QPainterPath>
 #include <QTransform>
+#include <QPen>
 #include <skia_includes.h>
 
 class PathProcessor
@@ -40,7 +41,11 @@ public:
     static QPainterPath combine(const QPainterPath &path1, const QPainterPath &path2, Booleans boolOperator = Booleans::Unite);
     static SkPath combine(const SkPath &path1, const SkPath &path2, Booleans boolOperator = Booleans::Unite);
 
-    static QPainterPath scale( const QPainterPath &path, qreal amount);
+    static QPainterPath normalOffset( const QPainterPath &path, qreal amount);
+    static SkPath normalOffset( const SkPath &path, qreal amount);
+
+    static QPainterPath stroker(const QPainterPath &path, QPen pen);
+    static SkPath stroker(const SkPath &path, QPen pen);
 
     static QPainterPath simplify(QPainterPath path);
     static SkPath simplify(SkPath path);
